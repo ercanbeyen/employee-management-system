@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "UserTable")
+@Table(name = "`USER`")
 @Data // adds all the setters, getters ... etc. If you want to add them separately, you may user @Getter, @Setter annotations
 public class User extends BaseEntity {
     @Id
@@ -17,4 +17,8 @@ public class User extends BaseEntity {
     private String firstName;
     @Column(name = "SURNAME", length = 100)
     private String lastName;
+    @Column(name = "JOB")
+    private String job;
+    @Column(name = "GPA")
+    private double gpa;
 }

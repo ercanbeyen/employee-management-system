@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController // this api might be opened to outside
 @RequestMapping("/user") // for specifying the broadcast address
@@ -29,8 +30,8 @@ public class UserController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<UserDto>> getUsers() {
-        List<UserDto> users = userService.getUsers();
+    public ResponseEntity<List<UserDto>> getUsers(@PathVariable("limit") @RequestParam(required = false) Optional<Integer> limit) {
+        List<UserDto> users = userService.getUsers(limit);
         return ResponseEntity.ok(users);
     }
 
@@ -75,5 +76,10 @@ public class UserController {
         Boolean status = userService.deleteUser(id);
         return ResponseEntity.ok(status);
         //return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/top/{limit}")
+    public ResponseEntity<List<UserDto>> getTopUsers(@PathVariable("limit") int limit) {
+        return null;
     }
 }

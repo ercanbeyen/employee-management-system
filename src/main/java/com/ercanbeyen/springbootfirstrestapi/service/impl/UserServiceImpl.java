@@ -12,10 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,9 +31,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsers() {
+    public List<UserDto> getUsers(Optional<Integer> limit) {
         List<User> users = userRepository.findAll();
-        List<UserDto> userDtos = users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
+        int userLimit;
+
+        if (limit.isPresent()) {
+            userLimit = limit.get();
+        }
+        else {
+            userLimit = users.size();
+        }
+
+        List<User> topGpa_list = users.stream().sorted(Comparator.comparing(User::getGpa).reversed()).limit(userLimit).collect(Collectors.toList());
+        List<UserDto> userDtos = topGpa_list.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
         return userDtos;
         //return userRepository.findAll();
     }
