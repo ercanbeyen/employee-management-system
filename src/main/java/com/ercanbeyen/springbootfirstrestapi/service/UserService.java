@@ -11,8 +11,7 @@ import java.util.Optional;
 
 public interface UserService {
     UserDto createUser(UserDto user); // default types are public and abstract
-    List<UserDto> getUsers(Optional<Integer> limit);
-    List<UserDto> filterByJob(String job);
+    List<UserDto> getUsers(String job, Optional<Integer> limit);
     UserDto getUser(Long id);
     UserDto updateUser(Long id, UserDto user);
     Boolean deleteUser(Long id);

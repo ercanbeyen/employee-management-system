@@ -31,29 +31,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsers(Optional<Integer> limit) {
+    public List<UserDto> getUsers(String job, Optional<Integer> limit) {
         List<User> users = userRepository.findAll();
         int userLimit;
 
-        if (limit.isPresent()) {
-            userLimit = limit.get();
-        }
-        else {
-            userLimit = users.size();
+        if (job != null) { // filter users based on job
+            users = users.stream().filter(user -> user.getJob().equals(job)).toList();
         }
 
-        List<User> topGpa_list = users.stream().sorted(Comparator.comparing(User::getGpa).reversed()).limit(userLimit).collect(Collectors.toList());
-        List<UserDto> userDtos = topGpa_list.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
+        if (limit.isPresent()) { // get users with highest gpa
+            userLimit = limit.get();
+            users = users.stream().sorted(Comparator.comparing(User::getGpa).reversed()).limit(userLimit).collect(Collectors.toList());
+        }
+
+        List<UserDto> userDtos = users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
         return userDtos;
         //return userRepository.findAll();
-    }
-
-    @Override
-    public List<UserDto> filterByJob(String job) {
-        List<User> users = userRepository.findAll();
-        List<User> filtered_users = users.stream().filter(user -> user.getJob().equals(job)).toList();
-        List<UserDto> userDtos = filtered_users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
-        return userDtos;
     }
 
     @Override

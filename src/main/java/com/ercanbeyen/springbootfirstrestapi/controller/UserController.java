@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController // this api might be opened to outside
-@RequestMapping("/user") // for specifying the broadcast address
+@RequestMapping("/users") // for specifying the broadcast address
 public class UserController {
 
     private final UserService userService;
@@ -23,25 +23,25 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/create")
+    @PostMapping("")
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto user) {
         UserDto createdUser = userService.createUser(user);
         return ResponseEntity.ok(createdUser);
     }
 
-    @GetMapping("/getAll")
-    public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) Optional<Integer> limit) {
-        List<UserDto> users = userService.getUsers(limit);
+    @GetMapping("")
+    public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) String job, @RequestParam(required = false) Optional<Integer> limit) {
+        List<UserDto> users = userService.getUsers(job, limit);
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/getById/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable("id") Long id) {
         UserDto user = userService.getUser(id);
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/edit/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id, @RequestBody UserDto user) {
         UserDto updatedUser = userService.updateUser(id, user);
         return ResponseEntity.ok(updatedUser);
@@ -71,22 +71,11 @@ public class UserController {
         return ResponseEntity.ok(customPage);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteUser(@PathVariable("id") Long id) {
         Boolean status = userService.deleteUser(id);
         return ResponseEntity.ok(status);
         //return ResponseEntity.badRequest().build();
     }
-/*
-    @GetMapping("/top/{limit}")
-    public ResponseEntity<List<UserDto>> getTopUsers(@PathVariable("limit") int limit) {
-        return null;
-    }
 
- */
-    @GetMapping("/filter")
-    public ResponseEntity<List<UserDto>> filterByJob(@RequestParam(required = true) String job) {
-        List<UserDto> users = userService.filterByJob(job);
-        return ResponseEntity.ok(users);
-    }
 }
