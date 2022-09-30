@@ -49,6 +49,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDto> filterByJob(String job) {
+        List<User> users = userRepository.findAll();
+        List<User> filtered_users = users.stream().filter(user -> user.getJob().equals(job)).toList();
+        List<UserDto> userDtos = filtered_users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
+        return userDtos;
+    }
+
+    @Override
     public UserDto getUser(Long id) {
         Optional<User> user = userRepository.findById(id);
 

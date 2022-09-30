@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<UserDto>> getUsers(@PathVariable("limit") @RequestParam(required = false) Optional<Integer> limit) {
+    public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) Optional<Integer> limit) {
         List<UserDto> users = userService.getUsers(limit);
         return ResponseEntity.ok(users);
     }
@@ -77,9 +77,16 @@ public class UserController {
         return ResponseEntity.ok(status);
         //return ResponseEntity.badRequest().build();
     }
-
+/*
     @GetMapping("/top/{limit}")
     public ResponseEntity<List<UserDto>> getTopUsers(@PathVariable("limit") int limit) {
         return null;
+    }
+
+ */
+    @GetMapping("/filter")
+    public ResponseEntity<List<UserDto>> filterByJob(@RequestParam(required = true) String job) {
+        List<UserDto> users = userService.filterByJob(job);
+        return ResponseEntity.ok(users);
     }
 }
