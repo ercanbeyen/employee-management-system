@@ -7,6 +7,7 @@ import com.ercanbeyen.springbootfirstrestapi.service.UserService;
 import com.ercanbeyen.springbootfirstrestapi.util.CustomPage;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,16 +19,27 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor // same as constructor injection
 public class UserServiceImpl implements UserService {
+    @Autowired
     private final UserRepository userRepository;
+    @Autowired
     private final ModelMapper modelMapper;
 
     @Override
     public UserDto createUser(UserDto userDto) {
         User user = modelMapper.map(userDto, User.class);
+        //user.setId(100L);
+        /*User user = new User();
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setJob(userDto.getJob());
+        user.setGpa(userDto.getGpa());
+        System.out.println(user);*/
         user.setCreatedAt(new Date());
         user.setCreatedBy("Admin");
         //return userRepository.save(user);
-        return modelMapper.map(userRepository.save(user), UserDto.class);
+        UserDto resultDto = modelMapper.map(userRepository.save(user), UserDto.class);
+        return resultDto;
+        //return userDto;
     }
 
     @Override
