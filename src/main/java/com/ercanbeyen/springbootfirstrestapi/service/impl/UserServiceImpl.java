@@ -1,5 +1,6 @@
 package com.ercanbeyen.springbootfirstrestapi.service.impl;
 
+import com.ercanbeyen.springbootfirstrestapi.exception.UserNotFound;
 import com.ercanbeyen.springbootfirstrestapi.dto.UserDto;
 import com.ercanbeyen.springbootfirstrestapi.entity.User;
 import com.ercanbeyen.springbootfirstrestapi.repository.UserRepository;
@@ -27,19 +28,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
         User user = modelMapper.map(userDto, User.class);
-        //user.setId(100L);
-        /*User user = new User();
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setJob(userDto.getJob());
-        user.setGpa(userDto.getGpa());
-        System.out.println(user);*/
         user.setCreatedAt(new Date());
         user.setCreatedBy("Admin");
-        //return userRepository.save(user);
-        UserDto resultDto = modelMapper.map(userRepository.save(user), UserDto.class);
-        return resultDto;
-        //return userDto;
+        return modelMapper.map(userRepository.save(user), UserDto.class);
     }
 
     @Override
@@ -58,7 +49,6 @@ public class UserServiceImpl implements UserService {
 
         List<UserDto> userDtos = users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
         return userDtos;
-        //return userRepository.findAll();
     }
 
     @Override
@@ -66,14 +56,10 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findById(id);
 
         if (user.isPresent()) {
-            //return user.get();
             return modelMapper.map(user.get(), UserDto.class);
         }
 
-        //return null;
-        //throw new IllegalArgumentException("User is not found");
-        //throw new UserNotFound("User is not found");
-        throw new RuntimeException("User is not found");
+        throw new UserNotFound("User with id " + id + " is not found");
     }
 
     @Override
@@ -87,10 +73,9 @@ public class UserServiceImpl implements UserService {
             userInDb.setUpdatedAt(new Date());
             userInDb.setUpdatedBy("Admin");
             return modelMapper.map(userRepository.save(userInDb), UserDto.class);
-            //return userRepository.save(userInDb);
         }
 
-        return null;
+        throw new UserNotFound("User with id " + id + " is not found");
     }
 
     @Override
@@ -102,7 +87,7 @@ public class UserServiceImpl implements UserService {
             return true;
         }
 
-        return false;
+        throw new UserNotFound("User with id " + id + " is not found");
     }
 
     @Override

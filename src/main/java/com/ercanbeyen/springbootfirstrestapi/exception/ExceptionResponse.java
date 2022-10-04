@@ -1,4 +1,4 @@
-package com.ercanbeyen.springbootfirstrestapi.advice;
+package com.ercanbeyen.springbootfirstrestapi.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,5 +12,4 @@ import java.time.LocalDateTime;
 public class ExceptionResponse {
     private LocalDateTime timestamp;
     private String message;
-    private String code;
 }
