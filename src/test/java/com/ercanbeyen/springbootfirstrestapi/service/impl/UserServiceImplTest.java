@@ -34,6 +34,8 @@ public class UserServiceImplTest {
         UserDto userDto = new UserDto();
         userDto.setFirstName("Test-FirstName");
         userDto.setLastName("Test-LastName");
+        userDto.setEmail("test@email.com");
+        userDto.setNationality("Test-Nation");
         userDto.setJob("Test-Developer");
         userDto.setGpa(3.2);
 
@@ -41,6 +43,8 @@ public class UserServiceImplTest {
         user.setId(100L);
         user.setFirstName("Test-FirstName");
         user.setLastName("Test-LastName");
+        userDto.setEmail("test@email.com");
+        userDto.setNationality("Test-Nation");
         user.setJob("Test-Developer");
         user.setGpa(3.2);
 
@@ -81,6 +85,8 @@ public class UserServiceImplTest {
         user.setId(100L);
         user.setFirstName("Test-FirstName");
         user.setLastName("Test-LastName");
+        user.setEmail("test@email.com");
+        user.setNationality("Test-Nation");
         user.setJob("Test-Developer");
         user.setGpa(3.2);
 
@@ -88,6 +94,8 @@ public class UserServiceImplTest {
         userDto.setFirstName("Test-FirstName");
         userDto.setLastName("Test-LastName");
         userDto.setJob("Test-Developer");
+        userDto.setEmail("test@email.com");
+        userDto.setNationality("Test-Nation");
         userDto.setGpa(3.2);
 
         Optional<User> optionalUser = Optional.of(user);
