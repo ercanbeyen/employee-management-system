@@ -7,6 +7,8 @@ import com.ercanbeyen.springbootfirstrestapi.repository.UserRepository;
 import com.ercanbeyen.springbootfirstrestapi.service.UserService;
 import com.ercanbeyen.springbootfirstrestapi.util.CustomPage;
 import lombok.RequiredArgsConstructor;
+
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor // same as constructor injection
@@ -34,11 +37,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsers(String job, Optional<Integer> limit) {
+    public List<UserDto> getUsers(String nationality, String job, Optional<Integer> limit) {
         List<User> users = userRepository.findAll();
         int userLimit;
 
-        if (job != null) { // filter users based on job
+        if (StringUtils.isNotBlank(nationality)) {
+            users = users.stream().filter(user -> user.getNationality().equals(nationality)).toList();
+        }
+
+        if (StringUtils.isNotBlank(job)) { // filter users based on job
             users = users.stream().filter(user -> user.getJob().equals(job)).toList();
         }
 
@@ -112,4 +119,5 @@ public class UserServiceImpl implements UserService {
         UserDto[] userDtos = modelMapper.map(page.getContent(), UserDto[].class);
         return new CustomPage<UserDto>(page, Arrays.asList(userDtos));
     }
+
 }

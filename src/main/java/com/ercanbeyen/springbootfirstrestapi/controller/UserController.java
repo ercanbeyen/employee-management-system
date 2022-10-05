@@ -28,13 +28,12 @@ public class UserController {
     @PostMapping("")
     public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto user) {
         UserDto createdUser = userService.createUser(user);
-        //return ResponseEntity.ok(createdUser);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @GetMapping("")
-    public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) String job, @RequestParam(required = false) Optional<Integer> limit) {
-        List<UserDto> users = userService.getUsers(job, limit);
+    public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) String nationality, @RequestParam(required = false) String job, @RequestParam(required = false) Optional<Integer> limit) {
+        List<UserDto> users = userService.getUsers(nationality, job, limit);
         return ResponseEntity.ok(users);
     }
 
