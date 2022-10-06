@@ -4,14 +4,20 @@ import com.ercanbeyen.springbootfirstrestapi.dto.UserDto;
 import com.ercanbeyen.springbootfirstrestapi.entity.User;
 import com.ercanbeyen.springbootfirstrestapi.repository.UserRepository;
 
+import org.hibernate.mapping.Array;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,7 +46,7 @@ public class UserServiceImplTest {
         userDto.setGpa(3.2);
 
         User user = new User();
-        user.setId(100L);
+        user.setId(1L);
         user.setFirstName("Test-FirstName");
         user.setLastName("Test-LastName");
         userDto.setEmail("test@email.com");
@@ -79,10 +85,10 @@ public class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("When Create User Called With Valid It Should Return UserDto")
-    public void whenCreateUserCalledWithValidId_itShouldReturnUserDto() {
+    @DisplayName("When Get User Called With Valid It Should Return UserDto")
+    public void whenGetUserCalledWithValidId_itShouldReturnUserDto() {
         User user = new User();
-        user.setId(100L);
+        user.setId(1L);
         user.setFirstName("Test-FirstName");
         user.setLastName("Test-LastName");
         user.setEmail("test@email.com");
@@ -100,13 +106,83 @@ public class UserServiceImplTest {
 
         Optional<User> optionalUser = Optional.of(user);
 
-        Mockito.when(userRepository.findById(100L)).thenReturn(optionalUser);
+        Mockito.when(userRepository.findById(1L)).thenReturn(optionalUser);
         Mockito.when(modelMapper.map(user, UserDto.class)).thenReturn(userDto);
 
-        UserDto result = userService.getUser(100L);
+        UserDto result = userService.getUser(1L);
         assertEquals(userDto, result);
 
-        Mockito.verify(userRepository).findById(100L);
+        Mockito.verify(userRepository).findById(1L);
         Mockito.verify(modelMapper).map(user, UserDto.class);
+    }
+
+    @Test
+    @DisplayName("When GetUsers Called With Non Null Parameters It Should Return UserDtos")
+    public void whenGetUsersCalledWithNonNullParameters_itShouldReturnUserDtos() {
+
+        UserDto userDto1 = new UserDto();
+        userDto1.setFirstName("Test-FirstName1");
+        userDto1.setLastName("Test-LastName1");
+        userDto1.setEmail("test1@email.com");
+        userDto1.setNationality("Test-Nation");
+        userDto1.setJob("Test-Developer");
+        userDto1.setGpa(3.4);
+
+        UserDto userDto2 = new UserDto();
+        userDto2.setFirstName("Test-FirstName2");
+        userDto2.setLastName("Test-LastName2");
+        userDto2.setEmail("test2@email.com");
+        userDto2.setNationality("Test-Nation");
+        userDto2.setJob("Test-Developer");
+        userDto2.setGpa(3.2);
+
+        List<UserDto> userDtos = Arrays.asList(userDto1, userDto2);
+
+        User user1 = new User();
+        user1.setId(1L);
+        user1.setFirstName("Test-FirstName1");
+        user1.setLastName("Test-LastName1");
+        user1.setEmail("test1@email.com");
+        user1.setNationality("Test-Nation");
+        user1.setJob("Test-Developer");
+        user1.setGpa(3.4);
+
+        User user2 = new User();
+        user2.setId(2L);
+        user2.setFirstName("Test-FirstName2");
+        user2.setLastName("Test-LastName2");
+        user2.setEmail("test2@email.com");
+        user2.setNationality("Test-Nation");
+        user2.setJob("Test-Developer");
+        user2.setGpa(3.2);
+
+        List<User> users = Arrays.asList(user1, user2);
+
+        Optional<Integer> limit = Optional.of(2);
+
+        Mockito.when(userRepository.findAll()).thenReturn(users);
+
+        //Mockito.when(modelMapper.map(users, UserDto.class)).thenReturn(userDtos); // Wrong
+        Mockito.when(modelMapper.map(users, new TypeToken<List<UserDto>>(){}.getType())).thenReturn(userDtos);
+
+        /*
+        // Works
+        Mockito.when(modelMapper.map(user1, UserDto.class)).thenReturn(userDto1);
+        Mockito.when(modelMapper.map(user2, UserDto.class)).thenReturn(userDto2);
+
+         */
+
+        List<UserDto> result = userService.getUsers("Test-Nation", "Test-Developer", limit);
+
+        assertEquals(userDtos, result);
+        Mockito.verify(userRepository).findAll();
+
+        Mockito.verify(modelMapper).map(users, new TypeToken<List<UserDto>>(){}.getType());
+
+        /*
+        // Works
+                Mockito.verify(modelMapper).map(user1, UserDto.class);
+        Mockito.verify(modelMapper).map(user2, UserDto.class);
+         */
     }
 }

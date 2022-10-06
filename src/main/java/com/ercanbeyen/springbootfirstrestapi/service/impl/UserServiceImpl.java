@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,7 +42,7 @@ public class UserServiceImpl implements UserService {
         List<User> users = userRepository.findAll();
         int userLimit;
 
-        if (StringUtils.isNotBlank(nationality)) {
+        if (StringUtils.isNotBlank(nationality)) { // filter users based on nationality
             users = users.stream().filter(user -> user.getNationality().equals(nationality)).toList();
         }
 
@@ -54,8 +55,8 @@ public class UserServiceImpl implements UserService {
             users = users.stream().sorted(Comparator.comparing(User::getGpa).reversed()).limit(userLimit).collect(Collectors.toList());
         }
 
-        List<UserDto> userDtos = users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
-        return userDtos;
+        //return users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
+        return modelMapper.map(users, new TypeToken<List<UserDto>>(){}.getType());
     }
 
     @Override
@@ -77,6 +78,9 @@ public class UserServiceImpl implements UserService {
             User userInDb = requestedUser.get();
             userInDb.setFirstName(user.getFirstName());
             userInDb.setLastName(user.getLastName());
+            userInDb.setNationality(user.getNationality());
+            userInDb.setJob(user.getJob());
+            userInDb.setGpa(user.getGpa());
             userInDb.setUpdatedAt(new Date());
             userInDb.setUpdatedBy("Admin");
             return modelMapper.map(userRepository.save(userInDb), UserDto.class);
