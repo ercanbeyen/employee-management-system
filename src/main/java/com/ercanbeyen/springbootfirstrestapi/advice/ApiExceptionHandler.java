@@ -1,7 +1,8 @@
 package com.ercanbeyen.springbootfirstrestapi.advice;
 
+import com.ercanbeyen.springbootfirstrestapi.exception.EmployeeForbidden;
 import com.ercanbeyen.springbootfirstrestapi.exception.ExceptionResponse;
-import com.ercanbeyen.springbootfirstrestapi.exception.UserNotFound;
+import com.ercanbeyen.springbootfirstrestapi.exception.EmployeeNotFound;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -51,10 +52,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(UserNotFound.class) // custom class
-    public final ResponseEntity<?> handleUserNotFound(Exception exception) {
+    @ExceptionHandler(EmployeeNotFound.class) // custom class
+    public final ResponseEntity<?> handleEmployeeNotFound(Exception exception) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EmployeeForbidden.class)
+    public final ResponseEntity<?> handleEmployeeForbidden(Exception exception) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class) // general class (used if exception is other than the handled ones)

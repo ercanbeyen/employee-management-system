@@ -1,9 +1,9 @@
 package com.ercanbeyen.springbootfirstrestapi.repository;
 
-import com.ercanbeyen.springbootfirstrestapi.entity.User;
+import com.ercanbeyen.springbootfirstrestapi.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> { // JpaRepository<Used class, Primary key>
+public interface EmployeeRepository extends JpaRepository<Employee, Long> { // JpaRepository<Used class, Primary key>
     /*
     User findByFirstName(String firstname);
     User findByLastName(String lastname);
