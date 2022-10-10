@@ -1,6 +1,8 @@
 package com.ercanbeyen.springbootfirstrestapi.service.impl;
 
 import com.ercanbeyen.springbootfirstrestapi.entity.Employee;
+import com.ercanbeyen.springbootfirstrestapi.entity.Job;
+import com.ercanbeyen.springbootfirstrestapi.entity.Salary;
 import com.ercanbeyen.springbootfirstrestapi.exception.EmployeeForbidden;
 import com.ercanbeyen.springbootfirstrestapi.exception.EmployeeNotFound;
 import com.ercanbeyen.springbootfirstrestapi.dto.EmployeeDto;
@@ -33,13 +35,40 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
         Employee employee = modelMapper.map(employeeDto, Employee.class);
+
+        /*Job job = new Job();
+        job.setDepartment(employeeDto.getDepartment());
+        job.setRole(employeeDto.getRole());
+        job.setLevel(employeeDto.getLevel());
+
+        Currency currency = Currency.getInstance(employeeDto.getCurrencyCode());
+        Salary salary = new Salary();
+        salary.setAmount(employeeDto.getSalaryAmount());
+        salary.setCurrency(currency);
+
+        employee.setJob(job);
+        employee.setSalary(salary);*/
+
+        Date createdDate = new Date();
+        String createdBy = "Admin";
+
+        employee.setJob(employeeDto.getJob());
+        employee.setSalary(employeeDto.getSalary());
+
+        employee.getJob().setCreatedAt(createdDate);
+        employee.getJob().setCreatedBy(createdBy);
+
+        employee.getSalary().setCreatedAt(createdDate);
+        employee.getSalary().setCreatedBy(createdBy);
+
         employee.setCreatedAt(new Date());
         employee.setCreatedBy("Admin");
+
         return modelMapper.map(employeeRepository.save(employee), EmployeeDto.class);
     }
 
     @Override
-    public List<EmployeeDto> getEmployees(String department, String position, Optional<Integer> limit) {
+    public List<EmployeeDto> getEmployees(String department, String role, String currency, Optional<Integer> limit) {
         List<Employee> employees = employeeRepository
                 .findAll()
                 .stream()
@@ -48,23 +77,46 @@ public class EmployeeServiceImpl implements EmployeeService {
         int userLimit;
 
         if (StringUtils.isNotBlank(department)) { // filter employees based on department
-            employees = employees.stream().filter(employee -> employee.getDepartment().equals(department)).collect(Collectors.toList());
+            employees = employees
+                    .stream()
+                    .filter(employee -> employee.getJob().getDepartment().equals(department))
+                    .collect(Collectors.toList());
         }
 
-        if (StringUtils.isNotBlank(position)) { // filter users based on job
-            employees = employees.stream().filter(user -> user.getPosition().equals(position)).toList();
+        if (StringUtils.isNotBlank(role)) { // filter employees based on position
+            employees = employees
+                    .stream()
+                    .filter(user -> user.getJob().getRole().equals(role))
+                    .toList();
         }
 
-        if (limit.isPresent()) { // get users with highest gpa
-            userLimit = limit.get();
-            employees = employees.stream().sorted(Comparator.comparing(Employee::getSalary).reversed()).limit(userLimit).collect(Collectors.toList());
+        if (StringUtils.isNotBlank(currency)) {
+            employees = employees
+                    .stream()
+                    .filter(employee -> employee.getSalary().getCurrency().getCurrencyCode().equals(currency))
+                    .toList();
+
+            if (limit.isPresent()) { // get employees with the highest salary
+                userLimit = limit.get();
+                employees = employees
+                        .stream()
+                        //.sorted(Comparator.comparingDouble(employee -> employee.getSalary().getAmount()).reversed())
+                        //.sorted(Comparator.reverseOrder())
+                        .sorted((employee1, employee2) -> {
+                            double salaryAmount1 = employee1.getSalary().getAmount();
+                            double salaryAmount2 = employee2.getSalary().getAmount();
+                            return Double.compare(salaryAmount2, salaryAmount1); // reverse sorting with changing place of the parameters
+                        })
+                        .limit(userLimit)
+                        .collect(Collectors.toList());
+            }
         }
 
         return modelMapper.map(employees, new TypeToken<List<EmployeeDto>>(){}.getType());
     }
 
     @Override
-    public EmployeeDto getEmployee(Long id) {
+    public EmployeeDto getEmployee(int id) {
         Optional<Employee> user = employeeRepository.findById(id);
 
         if (user.isPresent()) {
@@ -75,32 +127,49 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDto updateEmployee(Long id, EmployeeDto user) {
-        Optional<Employee> requestedUser = employeeRepository.findById(id);
+    public EmployeeDto updateEmployee(int id, EmployeeDto employee) {
+        Optional<Employee> requestedEmployee = employeeRepository.findById(id);
 
-        if (requestedUser.isEmpty()) {
+        if (requestedEmployee.isEmpty()) {
             throw new EmployeeNotFound("User with id " + id + " is not found");
         }
 
-        Employee employeeInDb = requestedUser.get();
+        Employee employeeInDb = requestedEmployee.get();
 
         if (!employeeInDb.isActive()) {
             throw new EmployeeForbidden("User with id " + id + " is deactivated");
         }
 
-        employeeInDb.setFirstName(user.getFirstName());
-        employeeInDb.setLastName(user.getLastName());
-        employeeInDb.setNationality(user.getNationality());
-        employeeInDb.setDepartment(user.getDepartment());
-        employeeInDb.setPosition(user.getPosition());
-        employeeInDb.setSalary(user.getSalary());
-        employeeInDb.setUpdatedAt(new Date());
-        employeeInDb.setUpdatedBy("Admin");
+        /*Salary updatedSalary = employeeInDb.getSalary();
+        Currency currency = Currency.getInstance(employee.getCurrencyCode());
+        updatedSalary.setAmount(employee.getSalaryAmount());
+        updatedSalary.setCurrency(currency);
+
+
+        employeeInDb.getJob().setDepartment(employee.getDepartment());
+        employeeInDb.getJob().setRole(employee.getRole());
+        employeeInDb.setSalary(updatedSalary);*/
+
+        employeeInDb.setFirstName(employee.getFirstName());
+        employeeInDb.setLastName(employee.getLastName());
+        employeeInDb.setEmail(employee.getEmail());
+        employeeInDb.setNationality(employee.getNationality());
+        employeeInDb.setJob(employee.getJob());
+        employeeInDb.setSalary(employee.getSalary());
+
+        Date updatedDate = new Date();
+        String updatedBy = "Admin";
+
+        employeeInDb.getJob().setUpdatedAt(updatedDate);
+        employeeInDb.getSalary().setUpdatedAt(updatedDate);
+        employeeInDb.setUpdatedAt(updatedDate);
+        employeeInDb.setUpdatedBy(updatedBy);
+
         return modelMapper.map(employeeRepository.save(employeeInDb), EmployeeDto.class);
     }
 
     @Override
-    public void deleteUser(Long id) {
+    public void deleteUser(int id) {
         employeeRepository.deleteById(id);
     }
 
@@ -128,7 +197,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void changeStatus(Long id) {
+    public void changeStatus(int id) {
         employeeRepository.findById(id).ifPresentOrElse(employee -> {
             boolean previousStatus = employee.isActive();
             employee.setActive(!previousStatus);

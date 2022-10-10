@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "User API", version = "1.0", description = "User Information"))
+@OpenAPIDefinition(info = @Info(title = "Employee API", version = "1.0", description = "Employee Information"))
 public class SpringBootFirstRestApiApplication {
 
 	public static void main(String[] args) {

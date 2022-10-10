@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeService {
-    EmployeeDto createEmployee(EmployeeDto user); // default types are public and abstract
-    List<EmployeeDto> getEmployees(String department, String job, Optional<Integer> limit);
-    EmployeeDto getEmployee(Long id);
-    EmployeeDto updateEmployee(Long id, EmployeeDto user);
-    void deleteUser(Long id);
+    EmployeeDto createEmployee(EmployeeDto user);
+    List<EmployeeDto> getEmployees(String department, String role, String currencyCode, Optional<Integer> limit);
+    EmployeeDto getEmployee(int id);
+    EmployeeDto updateEmployee(int id, EmployeeDto user);
+    void deleteUser(int id);
     Page<Employee> pagination(int currentPage, int pageSize);
     Page<Employee> pagination(Pageable pageable);
     Page<Employee> slice(Pageable pageable);
     CustomPage<EmployeeDto> customPagination(Pageable pageable);
-    void changeStatus(Long id);
+    void changeStatus(int id);
 }

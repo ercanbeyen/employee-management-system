@@ -1,5 +1,7 @@
 package com.ercanbeyen.springbootfirstrestapi.config;
 
+import com.ercanbeyen.springbootfirstrestapi.dto.EmployeeDto;
+import com.ercanbeyen.springbootfirstrestapi.entity.Employee;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;

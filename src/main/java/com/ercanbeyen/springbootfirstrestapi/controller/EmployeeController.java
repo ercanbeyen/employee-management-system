@@ -35,19 +35,20 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeDto>> getEmployees(
             @RequestParam(required = false) String department,
             @RequestParam(required = false) String position,
+            @RequestParam(required = false) String currency,
             @RequestParam(required = false) Optional<Integer> limit) {
-        List<EmployeeDto> employees = employeeService.getEmployees(department, position, limit);
+        List<EmployeeDto> employees = employeeService.getEmployees(department, position, currency, limit);
         return ResponseEntity.ok(employees);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeDto> getEmployee(@PathVariable("id") Long id) {
+    public ResponseEntity<EmployeeDto> getEmployee(@PathVariable("id") int id) {
         EmployeeDto employee = employeeService.getEmployee(id);
         return ResponseEntity.ok(employee);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable("id") Long id, @RequestBody @Valid EmployeeDto user) {
+    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable("id") int id, @RequestBody @Valid EmployeeDto user) {
         EmployeeDto updatedEmployee = employeeService.updateEmployee(id, user);
         return ResponseEntity.ok(updatedEmployee);
     }
@@ -77,13 +78,13 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteEmployee(@PathVariable("id") int id) {
         employeeService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping("/activations/{id}")
-    public ResponseEntity<Void> changeStatus(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> changeStatus(@PathVariable("id") int id) {
         employeeService.changeStatus(id);
         //return ResponseEntity.ok().build();
         return new ResponseEntity<>(HttpStatus.OK);
