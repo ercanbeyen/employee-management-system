@@ -1,6 +1,7 @@
 package com.ercanbeyen.springbootfirstrestapi.service;
 
 import com.ercanbeyen.springbootfirstrestapi.dto.EmployeeDto;
+import com.ercanbeyen.springbootfirstrestapi.entity.Currency;
 import com.ercanbeyen.springbootfirstrestapi.entity.Employee;
 import com.ercanbeyen.springbootfirstrestapi.util.CustomPage;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,7 @@ import java.util.Optional;
 
 public interface EmployeeService {
     EmployeeDto createEmployee(EmployeeDto user);
-    List<EmployeeDto> getEmployees(String department, String role, String currencyCode, Optional<Integer> limit);
+    List<EmployeeDto> getEmployees(String department, String role, Currency currency, Optional<Integer> limit);
     EmployeeDto getEmployee(int id);
     EmployeeDto updateEmployee(int id, EmployeeDto user);
     void deleteUser(int id);

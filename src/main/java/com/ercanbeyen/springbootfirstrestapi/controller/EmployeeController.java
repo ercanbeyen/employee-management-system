@@ -1,6 +1,7 @@
 package com.ercanbeyen.springbootfirstrestapi.controller;
 
 import com.ercanbeyen.springbootfirstrestapi.dto.EmployeeDto;
+import com.ercanbeyen.springbootfirstrestapi.entity.Currency;
 import com.ercanbeyen.springbootfirstrestapi.entity.Employee;
 import com.ercanbeyen.springbootfirstrestapi.util.CustomPage;
 import com.ercanbeyen.springbootfirstrestapi.service.EmployeeService;
@@ -35,7 +36,7 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeDto>> getEmployees(
             @RequestParam(required = false) String department,
             @RequestParam(required = false) String position,
-            @RequestParam(required = false) String currency,
+            @RequestParam(required = false) Currency currency,
             @RequestParam(required = false) Optional<Integer> limit) {
         List<EmployeeDto> employees = employeeService.getEmployees(department, position, currency, limit);
         return ResponseEntity.ok(employees);
@@ -86,7 +87,6 @@ public class EmployeeController {
     @PatchMapping("/activations/{id}")
     public ResponseEntity<Void> changeStatus(@PathVariable("id") int id) {
         employeeService.changeStatus(id);
-        //return ResponseEntity.ok().build();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

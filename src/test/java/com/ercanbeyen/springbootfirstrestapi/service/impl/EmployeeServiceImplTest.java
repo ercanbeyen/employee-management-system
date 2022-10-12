@@ -6,6 +6,7 @@ import com.ercanbeyen.springbootfirstrestapi.entity.Job;
 import com.ercanbeyen.springbootfirstrestapi.entity.Salary;
 import com.ercanbeyen.springbootfirstrestapi.exception.EmployeeNotFound;
 import com.ercanbeyen.springbootfirstrestapi.repository.EmployeeRepository;
+import com.ercanbeyen.springbootfirstrestapi.entity.Currency;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,6 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.*;
 
@@ -33,12 +33,12 @@ public class EmployeeServiceImplTest {
     private ModelMapper modelMapper;
 
     private List<EmployeeDto> getMockEmployeesDtos() {
-        String currencyCode = "TRY";
         String nationality = "TestLand";
         String department = "IT";
-        String role = "Test-Developer";
+        String role = "Developer";
         String level = "Beginner";
         boolean status = true;
+        Currency currency = Currency.TRY;
         int id = 1;
 
         Job job1 = new Job();
@@ -47,7 +47,6 @@ public class EmployeeServiceImplTest {
         job1.setRole(role);
         job1.setLevel(level);
 
-        Currency currency = Currency.getInstance(currencyCode);
         Salary salary1 = new Salary();
         salary1.setId(id);
         salary1.setCurrency(currency);
@@ -90,16 +89,15 @@ public class EmployeeServiceImplTest {
 
     private List<Employee> getMockEmployees() {
         int id = 1;
-        String currencyCode = "TRY";
         String nationality = "TestLand";
         String department = "IT";
-        String role = "Test-Developer";
+        String role = "Developer";
         String level = "Beginner";
         boolean status = true;
         Date createdAt = new Date();
         String createdBy = "Admin";
 
-        Currency currency = Currency.getInstance(currencyCode);
+        Currency currency = Currency.TRY;
 
         Job job1 = new Job();
         job1.setId(id);
@@ -192,7 +190,7 @@ public class EmployeeServiceImplTest {
     }
 
     @Test
-    @DisplayName("When GetEmployees Called With Non Null Parameters It Should Return EmployeesDtos")
+    @DisplayName("When GetEmployees Called With Same Non Null Parameters It Should Return Both EmployeesDtos")
     public void whenGetEmployeesCalledWithNonNullParameters_itShouldReturnUserDtos() {
         List<EmployeeDto> employeeDtos = getMockEmployeesDtos();
         List<Employee> employees = getMockEmployees();
@@ -205,8 +203,8 @@ public class EmployeeServiceImplTest {
         Mockito.when(modelMapper.map(employees, new TypeToken<List<EmployeeDto>>(){}.getType())).thenReturn(employeeDtos);
 
         String department = "IT";
-        String currency = "TRY";
-        String role = "Test-Developer";
+        Currency currency = Currency.TRY;
+        String role = "Developer";
 
 
         List<EmployeeDto> result = employeeService.getEmployees(department, role, currency, limit);
@@ -215,6 +213,41 @@ public class EmployeeServiceImplTest {
 
         Mockito.verify(employeeRepository).findAll();
         Mockito.verify(modelMapper).map(employees, new TypeToken<List<EmployeeDto>>(){}.getType());
+    }
+
+    @Test
+    @DisplayName("When GetEmployees Called With Different Parameters It Should Return The Requested EmployeeDto")
+    public void whenGetEmployeesCalledWithDifferentParameters_itShouldReturnTheRequestedEmployeeDto() {
+        String role = "Business Analyst";
+        String department = "IT";
+        int employeeIndex = 0;
+
+        List<EmployeeDto> employeeDtos = getMockEmployeesDtos();
+        //employeeDtos.get(employeeIndex).getJob().setRole(role);
+        //employeeDtos.remove(++employeeIndex); --> Arrays.asList creates unmodifiable list
+
+        EmployeeDto employeeDto = employeeDtos.get(employeeIndex);
+        employeeDto.getJob().setRole(role);
+
+        List<Employee> employees = getMockEmployees();
+        employees.get(employeeIndex).getJob().setRole(role);
+
+        Employee employee = employees.get(employeeIndex);
+        employee.getJob().setRole(role);
+
+        List<Employee> requestedEmployees = List.of(employee);
+        List<EmployeeDto> requestedEmployeeDtos = List.of(employeeDto);
+
+        Mockito.when(employeeRepository.findAll()).thenReturn(requestedEmployees);
+        Mockito.when(modelMapper.map(requestedEmployees, new TypeToken<List<EmployeeDto>>(){}.getType())).thenReturn(requestedEmployeeDtos);
+
+
+        List<EmployeeDto> result = employeeService.getEmployees(department, role, null, Optional.empty());
+
+        assertEquals(result, requestedEmployeeDtos);
+
+        Mockito.verify(employeeRepository).findAll();
+        Mockito.verify(modelMapper).map(requestedEmployees, new TypeToken<List<EmployeeDto>>(){}.getType());
     }
 
     @Test
