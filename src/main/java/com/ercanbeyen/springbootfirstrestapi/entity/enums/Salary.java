@@ -1,9 +1,9 @@
-package com.ercanbeyen.springbootfirstrestapi.entity;
+package com.ercanbeyen.springbootfirstrestapi.entity.enums;
 
+import com.ercanbeyen.springbootfirstrestapi.entity.BaseEntity;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 

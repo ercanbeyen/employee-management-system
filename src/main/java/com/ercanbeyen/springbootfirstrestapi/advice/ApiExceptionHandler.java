@@ -33,7 +33,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             return "Field is null";
         }
 
-        String[] fields = new String[] {"Email", "Currency"};
+        String[] fields = new String[] {"Email", "Currency", "Department", "Role", "Level", "Gender"};
 
         for (String field : fields) {
             Pattern pattern = Pattern.compile(field, Pattern.CASE_INSENSITIVE); // configure matching criteria

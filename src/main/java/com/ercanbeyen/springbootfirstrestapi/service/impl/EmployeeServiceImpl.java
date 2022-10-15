@@ -1,7 +1,9 @@
 package com.ercanbeyen.springbootfirstrestapi.service.impl;
 
-import com.ercanbeyen.springbootfirstrestapi.entity.Currency;
-import com.ercanbeyen.springbootfirstrestapi.entity.Employee;
+import com.ercanbeyen.springbootfirstrestapi.entity.*;
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Currency;
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Department;
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Role;
 import com.ercanbeyen.springbootfirstrestapi.exception.EmployeeForbidden;
 import com.ercanbeyen.springbootfirstrestapi.exception.EmployeeNotFound;
 import com.ercanbeyen.springbootfirstrestapi.dto.EmployeeDto;
@@ -38,11 +40,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         Date createdDate = new Date();
         String createdBy = "Admin";
 
-        employee.setJob(employeeDto.getJob());
+        employee.setOccupation(employeeDto.getOccupation());
         employee.setSalary(employeeDto.getSalary());
 
-        employee.getJob().setCreatedAt(createdDate);
-        employee.getJob().setCreatedBy(createdBy);
+        employee.getOccupation().setCreatedAt(createdDate);
+        employee.getOccupation().setCreatedBy(createdBy);
 
         employee.getSalary().setCreatedAt(createdDate);
         employee.getSalary().setCreatedBy(createdBy);
@@ -54,25 +56,22 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDto> getEmployees(String department, String role, Currency currency, Optional<Integer> limit) {
-        List<Employee> employees = employeeRepository
-                .findAll()
-                .stream()
-                .filter(Employee::isActive)
-                .collect(Collectors.toList());
+    public List<EmployeeDto> filterEmployees(Department department, Role role, Currency currency, Optional<Integer> limit) {
+        List<Employee> employees = employeeRepository.findAllByStatus(true);
+
         int userLimit;
 
-        if (StringUtils.isNotBlank(department)) { // filter employees based on department
+        if (department != null) { // filter employees based on department
             employees = employees
                     .stream()
-                    .filter(employee -> employee.getJob().getDepartment().equals(department))
+                    .filter(employee -> employee.getOccupation().getDepartment() == department)
                     .collect(Collectors.toList());
         }
 
-        if (StringUtils.isNotBlank(role)) { // filter employees based on position
+        if (role != null) { // filter employees based on position
             employees = employees
                     .stream()
-                    .filter(user -> user.getJob().getRole().equals(role))
+                    .filter(user -> user.getOccupation().getRole() == role)
                     .toList();
         }
 
@@ -81,19 +80,47 @@ public class EmployeeServiceImpl implements EmployeeService {
                     .stream()
                     .filter(employee -> employee.getSalary().getCurrency().equals(currency))
                     .toList();
+        }
 
-            if (limit.isPresent()) { // get employees with the highest salary
-                userLimit = limit.get();
-                employees = employees
-                        .stream()
-                        .sorted((employee1, employee2) -> {
-                            double salaryAmount1 = employee1.getSalary().getAmount();
-                            double salaryAmount2 = employee2.getSalary().getAmount();
-                            return Double.compare(salaryAmount2, salaryAmount1); // reverse sorting with changing place of the parameters
-                        })
-                        .limit(userLimit)
-                        .collect(Collectors.toList());
+        if (limit.isPresent()) { // get employees with the highest salary
+            userLimit = limit.get();
+            employees = employees
+                    .stream()
+                    .sorted((employee1, employee2) -> {
+                        double salaryAmount1 = employee1.getSalary().getAmount();
+                        double salaryAmount2 = employee2.getSalary().getAmount();
+                        return Double.compare(salaryAmount2, salaryAmount1); // reverse sorting with changing place of the parameters
+                    })
+                    .limit(userLimit)
+                    .collect(Collectors.toList());
+        }
+
+        return modelMapper.map(employees, new TypeToken<List<EmployeeDto>>(){}.getType());
+    }
+
+    @Override
+    public List<EmployeeDto> searchEmployees(String firstName, String lastName) {
+        boolean isFirstNameFull = StringUtils.isNotBlank(firstName);
+        boolean isLastNameFull = StringUtils.isNotBlank(lastName);
+        List<Employee> employees;
+
+        if (!isFirstNameFull && !isLastNameFull) {
+            employees = new ArrayList<>();
+        }
+        else {
+            if (isFirstNameFull && isLastNameFull) { // search by first name and last name
+                employees = employeeRepository.findAllByFirstNameAndLastName(firstName, lastName);
             }
+            else if (isFirstNameFull) { // search by first name
+                employees = employeeRepository.findAllByFirstName(firstName);
+            }
+            else { // search by last name
+                employees = employeeRepository.findAllByLastName(lastName);
+            }
+            employees = employees // at the end, filter by status
+                    .stream()
+                    .filter(Employee::isStatus)
+                    .collect(Collectors.toList());
         }
 
         return modelMapper.map(employees, new TypeToken<List<EmployeeDto>>(){}.getType());
@@ -120,7 +147,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employeeInDb = requestedEmployee.get();
 
-        if (!employeeInDb.isActive()) {
+        if (!employeeInDb.isStatus()) {
             throw new EmployeeForbidden("User with id " + id + " is deactivated");
         }
 
@@ -128,13 +155,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeInDb.setLastName(employee.getLastName());
         employeeInDb.setEmail(employee.getEmail());
         employeeInDb.setNationality(employee.getNationality());
-        employeeInDb.setJob(employee.getJob());
+        employeeInDb.setOccupation(employee.getOccupation());
         employeeInDb.setSalary(employee.getSalary());
 
         Date updatedDate = new Date();
         String updatedBy = "Admin";
 
-        employeeInDb.getJob().setUpdatedAt(updatedDate);
+        employeeInDb.getOccupation().setUpdatedAt(updatedDate);
         employeeInDb.getSalary().setUpdatedAt(updatedDate);
         employeeInDb.setUpdatedAt(updatedDate);
         employeeInDb.setUpdatedBy(updatedBy);
@@ -143,8 +170,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void deleteUser(int id) {
-        employeeRepository.deleteById(id);
+    public void deleteEmployee(int id) {
+        employeeRepository.findById(id).ifPresentOrElse(
+                employee -> {
+                    if (employee.isStatus()) {
+                        throw new EmployeeForbidden("Active employees cannot be deleted");
+                    }
+                    employeeRepository.deleteById(id);
+                    },
+                () -> {
+            throw new EmployeeNotFound("Employee with id " + id + " is not found");
+                });
     }
 
     @Override
@@ -171,15 +207,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void changeStatus(int id) {
-        employeeRepository.findById(id).ifPresentOrElse(employee -> {
-            boolean previousStatus = employee.isActive();
-            employee.setActive(!previousStatus);
-            employeeRepository.save(employee);
-        },
-        () -> {
-            throw new EmployeeNotFound("User with id " + id + " is not found");
-        });
+    public boolean changeStatus(int id) {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
+
+        if (optionalEmployee.isEmpty()) {
+            throw new EmployeeNotFound("Employee with id " + id + " is not found");
+        }
+
+        Employee employee = optionalEmployee.get();
+        boolean nextStatus = !employee.isStatus();
+        employee.setStatus(nextStatus);
+        employeeRepository.save(employee);
+
+        return nextStatus;
     }
 
 }

@@ -1,12 +1,14 @@
 package com.ercanbeyen.springbootfirstrestapi.service.impl;
 
 import com.ercanbeyen.springbootfirstrestapi.dto.EmployeeDto;
-import com.ercanbeyen.springbootfirstrestapi.entity.Employee;
-import com.ercanbeyen.springbootfirstrestapi.entity.Job;
-import com.ercanbeyen.springbootfirstrestapi.entity.Salary;
+import com.ercanbeyen.springbootfirstrestapi.entity.*;
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Currency;
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Department;
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Level;
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Role;
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Salary;
 import com.ercanbeyen.springbootfirstrestapi.exception.EmployeeNotFound;
 import com.ercanbeyen.springbootfirstrestapi.repository.EmployeeRepository;
-import com.ercanbeyen.springbootfirstrestapi.entity.Currency;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,19 +35,19 @@ public class EmployeeServiceImplTest {
     private ModelMapper modelMapper;
 
     private List<EmployeeDto> getMockEmployeesDtos() {
-        String nationality = "TestLand";
-        String department = "IT";
-        String role = "Developer";
-        String level = "Beginner";
+        String nationality = "Turkey";
+        Department department = Department.IT;
+        Role role = Role.DEVELOPER;
+        Level level = Level.BEGINNER;
         boolean status = true;
         Currency currency = Currency.TRY;
         int id = 1;
 
-        Job job1 = new Job();
-        job1.setId(id);
-        job1.setDepartment(department);
-        job1.setRole(role);
-        job1.setLevel(level);
+        Occupation occupation1 = new Occupation();
+        occupation1.setId(id);
+        occupation1.setDepartment(department);
+        occupation1.setRole(role);
+        occupation1.setLevel(level);
 
         Salary salary1 = new Salary();
         salary1.setId(id);
@@ -58,16 +60,16 @@ public class EmployeeServiceImplTest {
         employee1.setEmail("test1@email.com");
         employee1.setNationality(nationality);
         employee1.setActive(status);
-        employee1.setJob(job1);
+        employee1.setOccupation(occupation1);
         employee1.setSalary(salary1);
 
         id++;
 
-        Job job2 = new Job();
-        job2.setId(id);
-        job2.setDepartment(department);
-        job2.setRole(role);
-        job2.setLevel(level);
+        Occupation occupation2 = new Occupation();
+        occupation2.setId(id);
+        occupation2.setDepartment(department);
+        occupation2.setRole(role);
+        occupation2.setLevel(level);
 
         Salary salary2 = new Salary();
         salary2.setId(id);
@@ -81,7 +83,7 @@ public class EmployeeServiceImplTest {
         employee2.setEmail("test2@email.com");
         employee2.setNationality(nationality);
         employee2.setActive(status);
-        employee2.setJob(job2);
+        employee2.setOccupation(occupation2);
         employee2.setSalary(salary2);
 
         return Arrays.asList(employee1, employee2);
@@ -89,21 +91,21 @@ public class EmployeeServiceImplTest {
 
     private List<Employee> getMockEmployees() {
         int id = 1;
-        String nationality = "TestLand";
-        String department = "IT";
-        String role = "Developer";
-        String level = "Beginner";
+        String nationality = "Turkey";
+        Department department = Department.IT;
+        Role role = Role.DEVELOPER;
+        Level level = Level.BEGINNER;
         boolean status = true;
         Date createdAt = new Date();
         String createdBy = "Admin";
 
         Currency currency = Currency.TRY;
 
-        Job job1 = new Job();
-        job1.setId(id);
-        job1.setDepartment(department);
-        job1.setRole(role);
-        job1.setLevel(level);
+        Occupation occupation1 = new Occupation();
+        occupation1.setId(id);
+        occupation1.setDepartment(department);
+        occupation1.setRole(role);
+        occupation1.setLevel(level);
 
         Salary salary1 = new Salary();
         salary1.setId(id);
@@ -116,19 +118,19 @@ public class EmployeeServiceImplTest {
         employee1.setLastName("Test-LastName1");
         employee1.setEmail("test1@email.com");
         employee1.setNationality(nationality);
-        employee1.setActive(status);
-        employee1.setJob(job1);
+        employee1.setStatus(status);
+        employee1.setOccupation(occupation1);
         employee1.setSalary(salary1);
         employee1.setCreatedAt(createdAt);
         employee1.setCreatedBy(createdBy);
 
         id++;
 
-        Job job2 = new Job();
-        job2.setDepartment(department);
-        job2.setId(id);
-        job2.setRole(role);
-        job2.setLevel(level);
+        Occupation occupation2 = new Occupation();
+        occupation2.setDepartment(department);
+        occupation2.setId(id);
+        occupation2.setRole(role);
+        occupation2.setLevel(level);
 
         Salary salary2 = new Salary();
         salary2.setId(id);
@@ -141,8 +143,8 @@ public class EmployeeServiceImplTest {
         employee2.setLastName("Test-LastName2");
         employee2.setEmail("test2@email.com");
         employee2.setNationality(nationality);
-        employee2.setActive(status);
-        employee2.setJob(job2);
+        employee2.setStatus(status);
+        employee2.setOccupation(occupation2);
         employee2.setSalary(salary2);
         employee2.setCreatedAt(createdAt);
         employee2.setCreatedBy(createdBy);
@@ -190,63 +192,64 @@ public class EmployeeServiceImplTest {
     }
 
     @Test
-    @DisplayName("When GetEmployees Called With Same Non Null Parameters It Should Return Both EmployeesDtos")
-    public void whenGetEmployeesCalledWithNonNullParameters_itShouldReturnUserDtos() {
+    @DisplayName("When FilterEmployees Called With Same Non Null Parameters It Should Return Both EmployeesDtos")
+    public void whenFilterEmployeesCalledWithNonNullParameters_itShouldReturnUserDtos() {
         List<EmployeeDto> employeeDtos = getMockEmployeesDtos();
         List<Employee> employees = getMockEmployees();
 
+        boolean status = true;
         int threshold = 2;
 
         Optional<Integer> limit = Optional.of(threshold);
 
-        Mockito.when(employeeRepository.findAll()).thenReturn(employees);
+        Mockito.when(employeeRepository.findAllByStatus(status)).thenReturn(employees);
+
         Mockito.when(modelMapper.map(employees, new TypeToken<List<EmployeeDto>>(){}.getType())).thenReturn(employeeDtos);
 
-        String department = "IT";
+        Department department = Department.IT;
         Currency currency = Currency.TRY;
-        String role = "Developer";
+        Role role = Role.DEVELOPER;
 
 
-        List<EmployeeDto> result = employeeService.getEmployees(department, role, currency, limit);
+        List<EmployeeDto> result = employeeService.filterEmployees(department, role, currency, limit);
 
         assertEquals(employeeDtos, result);
 
-        Mockito.verify(employeeRepository).findAll();
+        Mockito.verify(employeeRepository).findAllByStatus(status);
         Mockito.verify(modelMapper).map(employees, new TypeToken<List<EmployeeDto>>(){}.getType());
     }
 
     @Test
     @DisplayName("When GetEmployees Called With Different Parameters It Should Return The Requested EmployeeDto")
     public void whenGetEmployeesCalledWithDifferentParameters_itShouldReturnTheRequestedEmployeeDto() {
-        String role = "Business Analyst";
-        String department = "IT";
+        Role role = Role.BUSINESS_ANALYST;
+        Department department = Department.IT;
         int employeeIndex = 0;
+        boolean status = true;
 
         List<EmployeeDto> employeeDtos = getMockEmployeesDtos();
-        //employeeDtos.get(employeeIndex).getJob().setRole(role);
-        //employeeDtos.remove(++employeeIndex); --> Arrays.asList creates unmodifiable list
 
         EmployeeDto employeeDto = employeeDtos.get(employeeIndex);
-        employeeDto.getJob().setRole(role);
+        employeeDto.getOccupation().setRole(role);
 
         List<Employee> employees = getMockEmployees();
-        employees.get(employeeIndex).getJob().setRole(role);
+        employees.get(employeeIndex).getOccupation().setRole(role);
 
         Employee employee = employees.get(employeeIndex);
-        employee.getJob().setRole(role);
+        employee.getOccupation().setRole(role);
 
         List<Employee> requestedEmployees = List.of(employee);
         List<EmployeeDto> requestedEmployeeDtos = List.of(employeeDto);
 
-        Mockito.when(employeeRepository.findAll()).thenReturn(requestedEmployees);
+        Mockito.when(employeeRepository.findAllByStatus(status)).thenReturn(requestedEmployees);
         Mockito.when(modelMapper.map(requestedEmployees, new TypeToken<List<EmployeeDto>>(){}.getType())).thenReturn(requestedEmployeeDtos);
 
 
-        List<EmployeeDto> result = employeeService.getEmployees(department, role, null, Optional.empty());
+        List<EmployeeDto> result = employeeService.filterEmployees(department, role, null, Optional.empty());
 
         assertEquals(result, requestedEmployeeDtos);
 
-        Mockito.verify(employeeRepository).findAll();
+        Mockito.verify(employeeRepository).findAllByStatus(status);
         Mockito.verify(modelMapper).map(requestedEmployees, new TypeToken<List<EmployeeDto>>(){}.getType());
     }
 
@@ -298,22 +301,49 @@ public class EmployeeServiceImplTest {
     @DisplayName("When ChangeStatus Is Called With Valid Id It Should Update The Status")
     public void whenChangeStatusIsCalledWithValidId_ItShouldUpdateTheStatus() {
         int id = 1;
+        int employeeIndex = 0;
         boolean previousStatus = false;
 
-        Employee employee = getMockEmployees().get(0);
-        employee.setActive(previousStatus);
+        Employee employee = getMockEmployees().get(employeeIndex);
+        employee.setStatus(previousStatus);
 
-        Employee updatedEmployee = getMockEmployees().get(0);
-        updatedEmployee.setActive(!previousStatus);
+        Employee updatedEmployee = getMockEmployees().get(employeeIndex);
+        updatedEmployee.setStatus(!previousStatus);
 
         Optional<Employee> optionalEmployee = Optional.of(employee);
 
         Mockito.when(employeeRepository.findById(id)).thenReturn(optionalEmployee);
         Mockito.when(employeeRepository.save(updatedEmployee)).thenReturn(updatedEmployee);
 
-        employeeService.changeStatus(id);
+        boolean result = employeeService.changeStatus(id);
+
+        assertEquals(!previousStatus, result);
 
         Mockito.verify(employeeRepository).findById(id);
         Mockito.verify(employeeRepository).save(employee);
+    }
+
+    @Test
+    @DisplayName("When SearchEmployees Called With First name And Last name It Should Return Employee Dto")
+    public void whenSearchEmployeeCalledWithFirstNameAndLastName_ItShouldReturnEmployeeDto() {
+        String firstName = "Test-FirstName1";
+        String lastName = "Test-LastName1";
+        int employeeIndex = 0;
+
+        List<EmployeeDto> employeeDtos = getMockEmployeesDtos();
+        List<Employee> employees = getMockEmployees();
+
+        List<Employee> targetEmployees = Collections.singletonList(employees.get(employeeIndex));
+        List<EmployeeDto> targetEmployeeDtos = Collections.singletonList(employeeDtos.get(employeeIndex));
+
+        Mockito.when(employeeRepository.findAllByFirstNameAndLastName(firstName, lastName)).thenReturn(targetEmployees);
+        Mockito.when(modelMapper.map(targetEmployees, new TypeToken<List<EmployeeDto>>(){}.getType())).thenReturn(targetEmployeeDtos);
+
+        List<EmployeeDto> result = employeeService.searchEmployees(firstName, lastName);
+
+        assertEquals(result, targetEmployeeDtos);
+
+        Mockito.verify(employeeRepository).findAllByFirstNameAndLastName(firstName, lastName);
+        Mockito.verify(modelMapper).map(targetEmployees, new TypeToken<List<EmployeeDto>>(){}.getType());
     }
 }

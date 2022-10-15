@@ -1,11 +1,12 @@
 package com.ercanbeyen.springbootfirstrestapi.entity;
 
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Gender;
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Salary;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Comparator;
 
 
 @Data
@@ -28,21 +29,21 @@ public class Employee extends BaseEntity {
 
     @Setter(AccessLevel.NONE)
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "job_id", referencedColumnName = "id")
-    private Job job;
+    @JoinColumn(name = "occupation_id", referencedColumnName = "id")
+    private Occupation occupation;
 
-    public void setJob(Job job) { // Override Job's set method
-        if (this.job == null) {
-            this.job = job;
+    public void setOccupation(Occupation occupation) { // Override Occupation's set method
+        if (this.occupation == null) {
+            this.occupation = occupation;
         }
         else {
-            this.job.setDepartment(job.getDepartment());
-            this.job.setRole(job.getRole());
+            this.occupation.setDepartment(occupation.getDepartment());
+            this.occupation.setRole(occupation.getRole());
         }
     }
 
     @Column(name = "STATUS")
-    private boolean active = false;
+    private boolean status = false;
 
     @Setter(AccessLevel.NONE)
     @OneToOne(cascade = CascadeType.ALL)
@@ -66,7 +67,7 @@ public class Employee extends BaseEntity {
     private String nationality;
 
     @Column(name = "GENDER")
-    private String gender;
+    private Gender gender;
 
     @Column(name = "ADDRESS")
     private String address;

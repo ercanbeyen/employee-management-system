@@ -1,8 +1,10 @@
 package com.ercanbeyen.springbootfirstrestapi.controller;
 
 import com.ercanbeyen.springbootfirstrestapi.dto.EmployeeDto;
-import com.ercanbeyen.springbootfirstrestapi.entity.Currency;
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Currency;
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Department;
 import com.ercanbeyen.springbootfirstrestapi.entity.Employee;
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Role;
 import com.ercanbeyen.springbootfirstrestapi.util.CustomPage;
 import com.ercanbeyen.springbootfirstrestapi.service.EmployeeService;
 import org.springframework.data.domain.Page;
@@ -32,13 +34,24 @@ public class EmployeeController {
         return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
     }
 
-    @GetMapping("")
-    public ResponseEntity<List<EmployeeDto>> getEmployees(
-            @RequestParam(required = false) String department,
-            @RequestParam(required = false) String position,
+    /*
+    * TODO: Remove limit query parameter from the filterEmployees service, then write another service to limit users.
+    * */
+    @GetMapping("/filter")
+    public ResponseEntity<List<EmployeeDto>> filterEmployees(
+            @RequestParam(required = false) Department department,
+            @RequestParam(required = false) Role role,
             @RequestParam(required = false) Currency currency,
             @RequestParam(required = false) Optional<Integer> limit) {
-        List<EmployeeDto> employees = employeeService.getEmployees(department, position, currency, limit);
+        List<EmployeeDto> employees = employeeService.filterEmployees(department, role, currency, limit);
+        return ResponseEntity.ok(employees);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<EmployeeDto>> searchEmployees(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName) {
+        List<EmployeeDto> employees = employeeService.searchEmployees(firstName, lastName);
         return ResponseEntity.ok(employees);
     }
 
@@ -80,14 +93,14 @@ public class EmployeeController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable("id") int id) {
-        employeeService.deleteUser(id);
+        employeeService.deleteEmployee(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping("/activations/{id}")
-    public ResponseEntity<Void> changeStatus(@PathVariable("id") int id) {
-        employeeService.changeStatus(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Boolean> changeStatus(@PathVariable("id") int id) {
+        boolean employeeStatus = employeeService.changeStatus(id);
+        return ResponseEntity.ok(employeeStatus);
     }
 
 }
