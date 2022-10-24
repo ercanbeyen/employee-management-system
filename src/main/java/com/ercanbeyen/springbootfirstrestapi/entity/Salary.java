@@ -1,6 +1,7 @@
-package com.ercanbeyen.springbootfirstrestapi.entity.enums;
+package com.ercanbeyen.springbootfirstrestapi.entity;
 
 import com.ercanbeyen.springbootfirstrestapi.entity.BaseEntity;
+import com.ercanbeyen.springbootfirstrestapi.entity.enums.Currency;
 import lombok.Data;
 
 import javax.persistence.*;

@@ -2,19 +2,16 @@ package com.ercanbeyen.springbootfirstrestapi.service;
 
 import com.ercanbeyen.springbootfirstrestapi.dto.EmployeeDto;
 import com.ercanbeyen.springbootfirstrestapi.entity.enums.Currency;
-import com.ercanbeyen.springbootfirstrestapi.entity.enums.Department;
 import com.ercanbeyen.springbootfirstrestapi.entity.Employee;
-import com.ercanbeyen.springbootfirstrestapi.entity.enums.Role;
 import com.ercanbeyen.springbootfirstrestapi.util.CustomPage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface EmployeeService {
     EmployeeDto createEmployee(EmployeeDto user);
-    List<EmployeeDto> filterEmployees(Department department, Role role, Currency currency, Optional<Integer> limit);
+    List<EmployeeDto> filterEmployees(String department, String role, Currency currency, Integer limit);
     List<EmployeeDto> searchEmployees(String firstName, String lastName);
     EmployeeDto getEmployee(int id);
     EmployeeDto updateEmployee(int id, EmployeeDto user);
@@ -23,5 +20,4 @@ public interface EmployeeService {
     Page<Employee> pagination(Pageable pageable);
     Page<Employee> slice(Pageable pageable);
     CustomPage<EmployeeDto> customPagination(Pageable pageable);
-    boolean changeStatus(int id);
 }

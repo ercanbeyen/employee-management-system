@@ -2,9 +2,7 @@ package com.ercanbeyen.springbootfirstrestapi.controller;
 
 import com.ercanbeyen.springbootfirstrestapi.dto.EmployeeDto;
 import com.ercanbeyen.springbootfirstrestapi.entity.enums.Currency;
-import com.ercanbeyen.springbootfirstrestapi.entity.enums.Department;
 import com.ercanbeyen.springbootfirstrestapi.entity.Employee;
-import com.ercanbeyen.springbootfirstrestapi.entity.enums.Role;
 import com.ercanbeyen.springbootfirstrestapi.util.CustomPage;
 import com.ercanbeyen.springbootfirstrestapi.service.EmployeeService;
 import org.springframework.data.domain.Page;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/employees")
@@ -28,7 +25,7 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<EmployeeDto> createEmployee(@RequestBody @Valid EmployeeDto employee) {
         EmployeeDto createdEmployee = employeeService.createEmployee(employee);
         return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
@@ -39,10 +36,10 @@ public class EmployeeController {
     * */
     @GetMapping("/filter")
     public ResponseEntity<List<EmployeeDto>> filterEmployees(
-            @RequestParam(required = false) Department department,
-            @RequestParam(required = false) Role role,
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) String role,
             @RequestParam(required = false) Currency currency,
-            @RequestParam(required = false) Optional<Integer> limit) {
+            @RequestParam(required = false) Integer limit) {
         List<EmployeeDto> employees = employeeService.filterEmployees(department, role, currency, limit);
         return ResponseEntity.ok(employees);
     }
@@ -95,12 +92,6 @@ public class EmployeeController {
     public ResponseEntity<Void> deleteEmployee(@PathVariable("id") int id) {
         employeeService.deleteEmployee(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @PatchMapping("/activations/{id}")
-    public ResponseEntity<Boolean> changeStatus(@PathVariable("id") int id) {
-        boolean employeeStatus = employeeService.changeStatus(id);
-        return ResponseEntity.ok(employeeStatus);
     }
 
 }

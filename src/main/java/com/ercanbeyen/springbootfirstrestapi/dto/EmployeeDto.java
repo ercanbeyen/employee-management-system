@@ -1,8 +1,10 @@
+
 package com.ercanbeyen.springbootfirstrestapi.dto;
 
-import com.ercanbeyen.springbootfirstrestapi.entity.Occupation;
+import com.ercanbeyen.springbootfirstrestapi.entity.Department;
+import com.ercanbeyen.springbootfirstrestapi.entity.Role;
 import com.ercanbeyen.springbootfirstrestapi.entity.enums.Gender;
-import com.ercanbeyen.springbootfirstrestapi.entity.enums.Salary;
+import com.ercanbeyen.springbootfirstrestapi.entity.Salary;
 import lombok.Data;
 
 import javax.validation.constraints.*;
@@ -22,13 +24,13 @@ public class EmployeeDto {
 
     private String contactNumber;
 
-    private boolean status = true;
-
     private String nationality;
 
     private Gender gender;
 
-    private Occupation occupation;
+    private String department;
+
+    private String role;
 
     private Salary salary;
 }

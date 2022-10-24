@@ -13,8 +13,6 @@ import java.util.Date;
 @Getter
 @ToString
 public class BaseEntity implements Serializable { // we may transport the object through network or read/write the object from/to disc
-    private Date createdAt;
-    private String createdBy;
-    private Date updatedAt;
-    private String updatedBy;
+    private Date latestChangeAt;
+    private String latestChangeBy;
 }
