@@ -12,6 +12,7 @@ import com.ercanbeyen.springbootfirstrestapi.service.SalaryService;
 import com.ercanbeyen.springbootfirstrestapi.util.CustomPage;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -25,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
@@ -47,27 +48,29 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional
     @Override
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
+        log.debug("Employee creation is started");
         Employee employee = modelMapper.map(employeeDto, Employee.class);
 
         Department department = departmentService.assignDepartment(employeeDto.getDepartment());
-        Role role = roleService.assignRole(employeeDto.getRole());
-        Salary salary = salaryService.createSalary(employeeDto.getSalary());
-
-        /*
-        Salary salary = employeeDto.getSalary();
-        salary.setLatestChangeAt(new Date());
-         */
-
         employee.setDepartment(department);
-        employee.setRole(role);
-        //employee.setSalary(employeeDto.getSalary());
-        employee.setSalary(salary);
+        log.debug("Department is assigned to the employee");
 
-        return modelMapper.map(employeeRepository.save(employee), EmployeeDto.class);
+        Role role = roleService.assignRole(employeeDto.getRole());
+        employee.setRole(role);
+        log.debug("Role is assigned to the employee");
+
+        Salary salary = salaryService.createSalary(employeeDto.getSalary());
+        employee.setSalary(salary);
+        log.debug("Salary is assigned to the user");
+
+        Employee newEmployee = employeeRepository.save(employee);
+        log.debug("Employee creation is completed");
+
+        return modelMapper.map(newEmployee, EmployeeDto.class);
     }
 
     public List<EmployeeDto> filterEmployees(String department, String role, Currency currency, Integer limit) {
-
+        log.debug("Employee filtering is started");
         List<Employee> employees = employeeRepository.findAll();
 
         if (department != null) {
@@ -75,13 +78,17 @@ public class EmployeeServiceImpl implements EmployeeService {
                     .stream()
                     .filter(employee -> employee.getDepartment().getName().equals(department))
                     .collect(Collectors.toList());
-        }
 
-        if (role != null) {
-            employees = employees
-                    .stream()
-                    .filter(employee -> employee.getRole().getName().equals(role))
-                    .collect(Collectors.toList());
+            log.debug("Employees are filtered by department called {}", department);
+
+            if (role != null) {
+                employees = employees
+                        .stream()
+                        .filter(employee -> employee.getRole().getName().equals(role))
+                        .collect(Collectors.toList());
+
+                log.debug("Employees are filtered by role called {}", role);
+            }
         }
 
         if (currency != null) {
@@ -89,6 +96,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                     .stream()
                     .filter(employee -> employee.getSalary().getCurrency().equals(currency))
                     .collect(Collectors.toList());
+
+            log.debug("Employees are filtered by currency called {}", currency);
 
             if (limit != null) {
                 employees = employees
@@ -100,6 +109,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                         })
                         .limit(limit)
                         .collect(Collectors.toList());
+
+                log.debug("Employee with top {} salary is selected", limit);
             }
 
         }
@@ -112,6 +123,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         boolean isLastNameFull = StringUtils.isNotBlank(lastName);
         List<Employee> employees;
 
+        log.debug("Employee search operation is started");
+
         if (isFirstNameFull && isLastNameFull) { // search by first name and last name
             employees = employeeRepository.findByFirstNameAndLastName(firstName, lastName);
         }
@@ -121,6 +134,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         else { // search by last name
             employees = employeeRepository.findByLastName(lastName);
         }
+
+        log.debug("Search operation is completed");
 
         return modelMapper.map(employees, new TypeToken<List<EmployeeDto>>(){}.getType());
     }
@@ -140,8 +155,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDto updateEmployee(int id, EmployeeDto employeeDto) {
 
+        log.debug("Employee update operation is started");
+
         Employee employee = employeeRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFound("Employee with id " + id + " not found")
+                () -> new ResourceNotFound("Employee with id " + id + " is not found")
         );
 
         employee.setFirstName(employeeDto.getFirstName());
@@ -150,16 +167,24 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setContactNumber(employee.getContactNumber());
         employee.setNationality(employeeDto.getNationality());
         employee.setGender(employeeDto.getGender());
+        log.debug("Employee details are updated");
 
         Department department = departmentService.assignDepartment(employeeDto.getDepartment());
-        Role role = roleService.assignRole(employeeDto.getRole());
-        Salary salary = salaryService.updateSalary(employee.getSalary().getId(), employeeDto.getSalary());
-
         employee.setDepartment(department);
-        employee.setRole(role);
-        employee.setSalary(salary);
+        log.debug("Department of the employee is updated to {}", department.getName());
 
-        return modelMapper.map(employeeRepository.save(employee), EmployeeDto.class);
+        Role role = roleService.assignRole(employeeDto.getRole());
+        employee.setRole(role);
+        log.debug("Role of the employee is updated to {}", role.getName());
+
+        Salary salary = salaryService.updateSalary(employee.getSalary().getId(), employeeDto.getSalary());
+        employee.setSalary(salary);
+        log.debug("Salary of the employee is updated; currency: {} and amount: {}", salary.getCurrency(), salary.getAmount());
+
+        Employee updatedEmployee = employeeRepository.save(employee);
+        log.debug("Employee update operation is completed");
+
+        return modelMapper.map(updatedEmployee, EmployeeDto.class);
     }
 
     @Override
@@ -173,6 +198,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setDepartment(null);
         employee.getRole().removeEmployee(employee);
         employee.setRole(null);
+        log.debug("Bidirectional connections are removed");
 
         employeeRepository.deleteById(id);
     }
