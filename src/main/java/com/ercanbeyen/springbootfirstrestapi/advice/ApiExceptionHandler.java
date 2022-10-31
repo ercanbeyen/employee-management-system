@@ -1,9 +1,7 @@
 package com.ercanbeyen.springbootfirstrestapi.advice;
 
-import com.ercanbeyen.springbootfirstrestapi.exception.EmployeeForbidden;
-import com.ercanbeyen.springbootfirstrestapi.exception.ExceptionResponse;
-import com.ercanbeyen.springbootfirstrestapi.exception.ResourceNotAcceptable;
-import com.ercanbeyen.springbootfirstrestapi.exception.ResourceNotFound;
+import com.ercanbeyen.springbootfirstrestapi.exception.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
@@ -87,7 +85,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ResourceNotFound.class) // custom class
+    @ExceptionHandler({EmployeeNotFound.class, DepartmentNotFound.class, RoleNotFound.class, SalaryNotFound.class}) // custom classes
     public final ResponseEntity<?> handleItemNotFound(Exception exception) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);

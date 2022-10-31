@@ -4,7 +4,8 @@ import com.ercanbeyen.springbootfirstrestapi.dto.EmployeeDto;
 import com.ercanbeyen.springbootfirstrestapi.entity.*;
 import com.ercanbeyen.springbootfirstrestapi.entity.enums.Currency;
 import com.ercanbeyen.springbootfirstrestapi.entity.Salary;
-import com.ercanbeyen.springbootfirstrestapi.exception.ResourceNotFound;
+import com.ercanbeyen.springbootfirstrestapi.exception.EmployeeNotFound;
+
 import com.ercanbeyen.springbootfirstrestapi.repository.EmployeeRepository;
 
 import org.junit.jupiter.api.DisplayName;
@@ -284,7 +285,7 @@ public class EmployeeServiceImplTest {
 
         Mockito.when(employeeRepository.findById(id)).thenReturn(optionalEmployee);
 
-        RuntimeException exception = assertThrows(ResourceNotFound.class, () -> {
+        RuntimeException exception = assertThrows(EmployeeNotFound.class, () -> {
             employeeService.updateEmployee(id, employeeDto);
         });
 

@@ -4,7 +4,7 @@ import com.ercanbeyen.springbootfirstrestapi.dto.CreateRoleRequest;
 import com.ercanbeyen.springbootfirstrestapi.dto.RoleDto;
 import com.ercanbeyen.springbootfirstrestapi.dto.UpdateRoleRequest;
 import com.ercanbeyen.springbootfirstrestapi.entity.Role;
-import com.ercanbeyen.springbootfirstrestapi.exception.ResourceNotFound;
+import com.ercanbeyen.springbootfirstrestapi.exception.RoleNotFound;
 
 import com.ercanbeyen.springbootfirstrestapi.repository.RoleRepository;
 import com.ercanbeyen.springbootfirstrestapi.service.RoleService;
@@ -37,7 +37,7 @@ public class RoleServiceImpl implements RoleService {
         String roleName = updateRoleRequest.getName();
 
         Role roleInDb = roleRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFound("Role " + roleName + " is not found")
+                () -> new RoleNotFound("Role " + roleName + " is not found")
         );
 
         roleInDb.setLatestChangeAt(new Date());
@@ -50,7 +50,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role assignRole(String roleName) {
         return roleRepository.findByName(roleName).orElseThrow(
-                () -> new ResourceNotFound("Role " + roleName + " is not found")
+                () -> new RoleNotFound("Role " + roleName + " is not found")
         );
     }
 
@@ -67,7 +67,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public RoleDto getRole(int id) {
         Role role = roleRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFound("Role with id " + id + " is not found")
+                () -> new RoleNotFound("Role with id " + id + " is not found")
         );
 
         return convertRoleToRoleDto(role);

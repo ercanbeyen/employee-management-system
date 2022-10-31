@@ -1,7 +1,7 @@
 package com.ercanbeyen.springbootfirstrestapi.service.impl;
 
 import com.ercanbeyen.springbootfirstrestapi.entity.Salary;
-import com.ercanbeyen.springbootfirstrestapi.exception.ResourceNotFound;
+import com.ercanbeyen.springbootfirstrestapi.exception.SalaryNotFound;
 import com.ercanbeyen.springbootfirstrestapi.repository.SalaryRepository;
 import com.ercanbeyen.springbootfirstrestapi.service.SalaryService;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +17,8 @@ public class SalaryServiceImpl implements SalaryService {
     @Autowired
     private final SalaryRepository salaryRepository;
 
-
     @Override
-    public Salary createSalary(Salary salary) { // Look at one-to-one relation
+    public Salary createSalary(Salary salary) {
         Salary newSalary = new Salary();
 
         newSalary.setCurrency(salary.getCurrency());
@@ -27,13 +26,13 @@ public class SalaryServiceImpl implements SalaryService {
         newSalary.setLatestChangeAt(new Date());
         newSalary.setLatestChangeBy("Admin");
 
-        return newSalary;
+        return salaryRepository.save(newSalary);
     }
 
     @Override
     public Salary getSalary(int id) {
         return salaryRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFound("Salary with id " + id + " is not found")
+                () -> new SalaryNotFound("Salary with id " + id + " is not found")
         );
     }
 
@@ -45,7 +44,7 @@ public class SalaryServiceImpl implements SalaryService {
     @Override
     public Salary updateSalary(int id, Salary salary) {
         Salary salaryInDb = salaryRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFound("Salary with id " + id + " is not found")
+                () -> new SalaryNotFound("Salary with id " + id + " is not found")
         );
 
         salaryInDb.setCurrency(salary.getCurrency());

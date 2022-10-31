@@ -26,7 +26,7 @@ public class SalaryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Salary> getSalary(int id) {
+    public ResponseEntity<Salary> getSalary(@PathVariable("id") int id) {
         Salary salary = salaryService.getSalary(id);
         return new ResponseEntity<>(salary, HttpStatus.OK);
     }

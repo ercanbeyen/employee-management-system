@@ -4,7 +4,8 @@ import com.ercanbeyen.springbootfirstrestapi.dto.CreateDepartmentRequest;
 import com.ercanbeyen.springbootfirstrestapi.dto.DepartmentDto;
 import com.ercanbeyen.springbootfirstrestapi.dto.UpdateDepartmentRequest;
 import com.ercanbeyen.springbootfirstrestapi.entity.Department;
-import com.ercanbeyen.springbootfirstrestapi.exception.ResourceNotFound;
+
+import com.ercanbeyen.springbootfirstrestapi.exception.DepartmentNotFound;
 import com.ercanbeyen.springbootfirstrestapi.repository.DepartmentRepository;
 import com.ercanbeyen.springbootfirstrestapi.service.DepartmentService;
 
@@ -25,7 +26,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public DepartmentDto createDepartment(CreateDepartmentRequest createDepartmentRequest) {
         Department department = new Department();
-        //department.setName(departmentDto.getName());
         department.setName(createDepartmentRequest.getName());
         department.setLatestChangeAt(new Date());
         department.setLatestChangeBy("Admin");
@@ -38,7 +38,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         String departmentName = updateDepartmentRequest.getName();
 
         Department departmentInDb = departmentRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFound("Department " + departmentName + " is not found")
+                () -> new DepartmentNotFound("Department called " + departmentName + " is not found")
 
         );
 
@@ -52,7 +52,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public Department assignDepartment(String departmentName) {
         return departmentRepository.findByName(departmentName).orElseThrow(
-                () -> new ResourceNotFound("Department " + departmentName + " is not found")
+                () -> new DepartmentNotFound("Department called " + departmentName + " is not found")
         );
     }
 
@@ -69,7 +69,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public DepartmentDto getDepartment(int id) {
         Department department = departmentRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFound("Department with id " + id + " is not found")
+                () -> new DepartmentNotFound("Department with id " + id + " is not found")
         );
 
         return convertDepartmentToDepartmentDto(department);

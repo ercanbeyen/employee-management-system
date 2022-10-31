@@ -2,7 +2,8 @@ package com.ercanbeyen.springbootfirstrestapi.service.impl;
 
 import com.ercanbeyen.springbootfirstrestapi.entity.*;
 import com.ercanbeyen.springbootfirstrestapi.entity.enums.Currency;
-import com.ercanbeyen.springbootfirstrestapi.exception.ResourceNotFound;
+import com.ercanbeyen.springbootfirstrestapi.exception.EmployeeNotFound;
+
 import com.ercanbeyen.springbootfirstrestapi.dto.EmployeeDto;
 import com.ercanbeyen.springbootfirstrestapi.repository.EmployeeRepository;
 import com.ercanbeyen.springbootfirstrestapi.service.DepartmentService;
@@ -148,7 +149,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             return modelMapper.map(user.get(), EmployeeDto.class);
         }
 
-        throw new ResourceNotFound("User with id " + id + " is not found");
+        throw new EmployeeNotFound("Employee with id " + id + " is not found");
     }
 
     @Transactional
@@ -157,7 +158,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.debug("Employee update operation is started");
 
         Employee employee = employeeRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFound("Employee with id " + id + " is not found")
+                () -> new EmployeeNotFound("Employee with id " + id + " is not found")
         );
 
         employee.setFirstName(employeeDto.getFirstName());
@@ -192,7 +193,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.debug("Employee salary update operation is started");
 
         Employee employee = employeeRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFound("Employee with id " + id + " is not found")
+                () -> new EmployeeNotFound("Employee with id " + id + " is not found")
         );
 
         Salary updatedSalary = salaryService.updateSalary(employee.getSalary().getId(), salary);
@@ -208,8 +209,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void deleteEmployee(int id) {
+        log.debug("Delete employee operation is started");
+
         Employee employee = employeeRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFound("Employee with id " + id + " is not found")
+                () -> new EmployeeNotFound("Employee with id " + id + " is not found")
         );
 
         // Remove bidirectional connections between employee&department and employee&role
