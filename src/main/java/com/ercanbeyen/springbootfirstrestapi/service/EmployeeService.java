@@ -1,6 +1,7 @@
 package com.ercanbeyen.springbootfirstrestapi.service;
 
 import com.ercanbeyen.springbootfirstrestapi.dto.EmployeeDto;
+import com.ercanbeyen.springbootfirstrestapi.entity.Salary;
 import com.ercanbeyen.springbootfirstrestapi.entity.enums.Currency;
 import com.ercanbeyen.springbootfirstrestapi.entity.Employee;
 import com.ercanbeyen.springbootfirstrestapi.util.CustomPage;
@@ -15,6 +16,7 @@ public interface EmployeeService {
     List<EmployeeDto> searchEmployees(String firstName, String lastName);
     EmployeeDto getEmployee(int id);
     EmployeeDto updateEmployee(int id, EmployeeDto user);
+    EmployeeDto updateSalary(int id, Salary salary);
     void deleteEmployee(int id);
     Page<Employee> pagination(int currentPage, int pageSize);
     Page<Employee> pagination(Pageable pageable);

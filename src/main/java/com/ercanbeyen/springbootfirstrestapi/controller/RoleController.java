@@ -1,7 +1,9 @@
 package com.ercanbeyen.springbootfirstrestapi.controller;
 
+import com.ercanbeyen.springbootfirstrestapi.dto.CreateRoleRequest;
 import com.ercanbeyen.springbootfirstrestapi.dto.RoleDto;
 
+import com.ercanbeyen.springbootfirstrestapi.dto.UpdateRoleRequest;
 import com.ercanbeyen.springbootfirstrestapi.service.RoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +21,8 @@ public class RoleController {
     }
 
     @PostMapping
-    public ResponseEntity<RoleDto> createRole(@RequestBody RoleDto roleDto) {
-        RoleDto createdRole = roleService.createRole(roleDto);
+    public ResponseEntity<RoleDto> createRole(@RequestBody CreateRoleRequest createRoleRequest) {
+        RoleDto createdRole = roleService.createRole(createRoleRequest);
         return new ResponseEntity<>(createdRole, HttpStatus.CREATED);
     }
 
@@ -36,9 +38,9 @@ public class RoleController {
         return ResponseEntity.ok(role);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<RoleDto> updateRole(int id, @RequestBody RoleDto roleDto) {
-        RoleDto updatedRole = roleService.updateRole(id, roleDto);
+    @PutMapping("/{id}")
+    public ResponseEntity<RoleDto> updateRole(int id, @RequestBody UpdateRoleRequest updateRoleRequest) {
+        RoleDto updatedRole = roleService.updateRole(id, updateRoleRequest);
         return ResponseEntity.ok(updatedRole);
     }
 

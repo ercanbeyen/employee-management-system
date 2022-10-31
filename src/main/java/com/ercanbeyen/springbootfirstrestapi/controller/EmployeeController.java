@@ -31,9 +31,6 @@ public class EmployeeController {
         return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
     }
 
-    /*
-    * TODO: Remove limit query parameter from the filterEmployees service, then write another service to limit users.
-    * */
     @GetMapping("/filter")
     public ResponseEntity<List<EmployeeDto>> filterEmployees(
             @RequestParam(required = false) String department,

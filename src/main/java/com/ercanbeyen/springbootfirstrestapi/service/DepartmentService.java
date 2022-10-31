@@ -1,14 +1,15 @@
 package com.ercanbeyen.springbootfirstrestapi.service;
 
+import com.ercanbeyen.springbootfirstrestapi.dto.CreateDepartmentRequest;
 import com.ercanbeyen.springbootfirstrestapi.dto.DepartmentDto;
+import com.ercanbeyen.springbootfirstrestapi.dto.UpdateDepartmentRequest;
 import com.ercanbeyen.springbootfirstrestapi.entity.Department;
-import com.ercanbeyen.springbootfirstrestapi.entity.Employee;
 
 import java.util.List;
 
 public interface DepartmentService {
-    DepartmentDto createDepartment(DepartmentDto departmentDto);
-    DepartmentDto updateDepartment(int id, DepartmentDto departmentDto);
+    DepartmentDto createDepartment(CreateDepartmentRequest createDepartmentRequest);
+    DepartmentDto updateDepartment(int id, UpdateDepartmentRequest updateDepartmentRequest);
     Department assignDepartment(String departmentName);
     void deleteDepartment(int id);
     List<DepartmentDto> getDepartments();

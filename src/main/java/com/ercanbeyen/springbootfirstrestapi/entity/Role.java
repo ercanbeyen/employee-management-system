@@ -3,6 +3,7 @@ package com.ercanbeyen.springbootfirstrestapi.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,7 +18,7 @@ public class Role extends BaseEntity {
     private String name;
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Employee> employees;
+    private List<Employee> employees = new ArrayList<>();
 
 
     public void removeEmployee(Employee employee) {

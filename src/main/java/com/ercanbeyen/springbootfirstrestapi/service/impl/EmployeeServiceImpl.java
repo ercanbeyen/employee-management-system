@@ -154,7 +154,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional
     @Override
     public EmployeeDto updateEmployee(int id, EmployeeDto employeeDto) {
-
         log.debug("Employee update operation is started");
 
         Employee employee = employeeRepository.findById(id).orElseThrow(
@@ -187,6 +186,26 @@ public class EmployeeServiceImpl implements EmployeeService {
         return modelMapper.map(updatedEmployee, EmployeeDto.class);
     }
 
+    @Transactional
+    @Override
+    public EmployeeDto updateSalary(int id, Salary salary) {
+        log.debug("Employee salary update operation is started");
+
+        Employee employee = employeeRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFound("Employee with id " + id + " is not found")
+        );
+
+        Salary updatedSalary = salaryService.updateSalary(employee.getSalary().getId(), salary);
+        employee.setSalary(updatedSalary);
+        log.debug("Salary of the employee with id {} is updated; currency: {} and amount: {}", employee.getId(), salary.getCurrency(), salary.getAmount());
+
+        Employee updatedEmployee = employeeRepository.save(employee);
+        log.debug("Employee salary update operation is completed");
+
+        return modelMapper.map(updatedEmployee, EmployeeDto.class);
+    }
+
+
     @Override
     public void deleteEmployee(int id) {
         Employee employee = employeeRepository.findById(id).orElseThrow(
@@ -201,6 +220,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.debug("Bidirectional connections are removed");
 
         employeeRepository.deleteById(id);
+        log.debug("Employee with id " + id + " is deleted");
     }
 
     @Override

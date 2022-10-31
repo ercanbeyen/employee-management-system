@@ -1,10 +1,13 @@
 package com.ercanbeyen.springbootfirstrestapi.service.impl;
 
+import com.ercanbeyen.springbootfirstrestapi.dto.CreateDepartmentRequest;
 import com.ercanbeyen.springbootfirstrestapi.dto.DepartmentDto;
+import com.ercanbeyen.springbootfirstrestapi.dto.UpdateDepartmentRequest;
 import com.ercanbeyen.springbootfirstrestapi.entity.Department;
 import com.ercanbeyen.springbootfirstrestapi.exception.ResourceNotFound;
 import com.ercanbeyen.springbootfirstrestapi.repository.DepartmentRepository;
 import com.ercanbeyen.springbootfirstrestapi.service.DepartmentService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,9 +23,10 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentRepository departmentRepository;
 
     @Override
-    public DepartmentDto createDepartment(DepartmentDto departmentDto) {
+    public DepartmentDto createDepartment(CreateDepartmentRequest createDepartmentRequest) {
         Department department = new Department();
-        department.setName(departmentDto.getName());
+        //department.setName(departmentDto.getName());
+        department.setName(createDepartmentRequest.getName());
         department.setLatestChangeAt(new Date());
         department.setLatestChangeBy("Admin");
 
@@ -30,8 +34,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public DepartmentDto updateDepartment(int id, DepartmentDto departmentDto) {
-        String departmentName = departmentDto.getName();
+    public DepartmentDto updateDepartment(int id, UpdateDepartmentRequest updateDepartmentRequest) {
+        String departmentName = updateDepartmentRequest.getName();
 
         Department departmentInDb = departmentRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFound("Department " + departmentName + " is not found")
@@ -47,14 +51,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Department assignDepartment(String departmentName) {
-        return departmentRepository.findByName(departmentName).orElseGet(
-                () -> {
-                    Department department = new Department();
-                    department.setName(departmentName);
-                    department.setLatestChangeAt(new Date());
-                    department.setLatestChangeBy("Admin");
-                    return departmentRepository.save(department);
-                }
+        return departmentRepository.findByName(departmentName).orElseThrow(
+                () -> new ResourceNotFound("Department " + departmentName + " is not found")
         );
     }
 

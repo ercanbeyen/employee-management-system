@@ -1,6 +1,8 @@
 package com.ercanbeyen.springbootfirstrestapi.controller;
 
+import com.ercanbeyen.springbootfirstrestapi.dto.CreateDepartmentRequest;
 import com.ercanbeyen.springbootfirstrestapi.dto.DepartmentDto;
+import com.ercanbeyen.springbootfirstrestapi.dto.UpdateDepartmentRequest;
 import com.ercanbeyen.springbootfirstrestapi.service.DepartmentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +20,8 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public ResponseEntity<DepartmentDto> createDepartment(@RequestBody DepartmentDto departmentDto) {
-        DepartmentDto createdDepartment = departmentService.createDepartment(departmentDto);
+    public ResponseEntity<DepartmentDto> createDepartment(@RequestBody CreateDepartmentRequest createDepartmentRequest) {
+        DepartmentDto createdDepartment = departmentService.createDepartment(createDepartmentRequest);
         return new ResponseEntity<>(createdDepartment, HttpStatus.CREATED);
     }
 
@@ -36,9 +38,9 @@ public class DepartmentController {
     }
 
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<DepartmentDto> updateDepartment(@PathVariable("id") int id, @RequestBody DepartmentDto departmentDto) {
-        DepartmentDto updatedDepartment = departmentService.updateDepartment(id, departmentDto);
+    @PutMapping("/{id}")
+    public ResponseEntity<DepartmentDto> updateDepartment(@PathVariable("id") int id, @RequestBody UpdateDepartmentRequest updateDepartmentRequest) {
+        DepartmentDto updatedDepartment = departmentService.updateDepartment(id, updateDepartmentRequest);
         return ResponseEntity.ok(updatedDepartment);
     }
 
