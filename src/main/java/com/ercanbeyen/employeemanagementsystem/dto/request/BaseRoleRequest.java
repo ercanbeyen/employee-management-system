@@ -1,4 +1,4 @@
-package com.ercanbeyen.employeemanagementsystem.dto;
+package com.ercanbeyen.employeemanagementsystem.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

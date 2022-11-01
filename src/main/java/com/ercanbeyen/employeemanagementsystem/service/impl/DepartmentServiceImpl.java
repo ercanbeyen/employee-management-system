@@ -1,8 +1,8 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
-import com.ercanbeyen.employeemanagementsystem.dto.CreateDepartmentRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.CreateDepartmentRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.DepartmentDto;
-import com.ercanbeyen.employeemanagementsystem.dto.UpdateDepartmentRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateDepartmentRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.Department;
 
 import com.ercanbeyen.employeemanagementsystem.exception.DepartmentNotFound;

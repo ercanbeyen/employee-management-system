@@ -1,9 +1,9 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
-import com.ercanbeyen.employeemanagementsystem.dto.CreateRoleRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.CreateRoleRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.RoleDto;
 
-import com.ercanbeyen.employeemanagementsystem.dto.UpdateRoleRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateRoleRequest;
 import com.ercanbeyen.employeemanagementsystem.service.RoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

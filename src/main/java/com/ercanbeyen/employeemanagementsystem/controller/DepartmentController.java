@@ -1,8 +1,8 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
-import com.ercanbeyen.employeemanagementsystem.dto.CreateDepartmentRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.CreateDepartmentRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.DepartmentDto;
-import com.ercanbeyen.employeemanagementsystem.dto.UpdateDepartmentRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateDepartmentRequest;
 import com.ercanbeyen.employeemanagementsystem.service.DepartmentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

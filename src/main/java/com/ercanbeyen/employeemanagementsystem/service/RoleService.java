@@ -1,8 +1,8 @@
 package com.ercanbeyen.employeemanagementsystem.service;
 
-import com.ercanbeyen.employeemanagementsystem.dto.CreateRoleRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.CreateRoleRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.RoleDto;
-import com.ercanbeyen.employeemanagementsystem.dto.UpdateRoleRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateRoleRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.Role;
 
 import java.util.List;
