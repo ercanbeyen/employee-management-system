@@ -20,7 +20,7 @@ public class ImageUtils {
                 outputStream.write(temp, 0, size);
             }
             outputStream.close();
-        } catch (Exception exception) {
+        } catch (Exception ignored) {
 
         }
 
@@ -39,7 +39,7 @@ public class ImageUtils {
                 outputStream.write(temp, 0, size);
             }
             outputStream.close();
-        } catch (Exception exception) {
+        } catch (Exception ignored) {
 
         }
 

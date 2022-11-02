@@ -1,18 +1,17 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
 import com.ercanbeyen.employeemanagementsystem.entity.Image;
+import com.ercanbeyen.employeemanagementsystem.exception.ImageNotFound;
+
 import com.ercanbeyen.employeemanagementsystem.repository.ImageRepository;
 import com.ercanbeyen.employeemanagementsystem.service.ImageService;
 import com.ercanbeyen.employeemanagementsystem.util.ImageUtils;
-import org.apache.tomcat.util.json.JSONParser;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -34,14 +33,16 @@ public class ImageServiceImpl implements ImageService {
         image.setLatestChangeBy("Admin");
         image.setLatestChangeAt(new Date());
 
-
         return "image file called " + file.getOriginalFilename() + " is uploaded successfully";
 
     }
 
     @Override
     public byte[] downloadImage(String fileName) {
-        Optional<Image> dbImage = imageRepository.findByName(fileName);
-        return ImageUtils.decompressImage(dbImage.get().getData());
+         Image dbImage = imageRepository.findByName(fileName).orElseThrow(
+                 () -> new ImageNotFound("Image called " + fileName + " is not found")
+         );
+
+        return ImageUtils.decompressImage(dbImage.getData());
     }
 }

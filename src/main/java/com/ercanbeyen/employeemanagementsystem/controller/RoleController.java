@@ -4,6 +4,7 @@ import com.ercanbeyen.employeemanagementsystem.dto.request.CreateRoleRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.RoleDto;
 
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateRoleRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.service.RoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,32 +22,33 @@ public class RoleController {
     }
 
     @PostMapping
-    public ResponseEntity<RoleDto> createRole(@RequestBody CreateRoleRequest createRoleRequest) {
+    public ResponseEntity<Object> createRole(@RequestBody CreateRoleRequest createRoleRequest) {
         RoleDto createdRole = roleService.createRole(createRoleRequest);
-        return new ResponseEntity<>(createdRole, HttpStatus.CREATED);
+        //return new ResponseEntity<>(createdRole, HttpStatus.CREATED);
+        return ResponseHandler.generateResponse(HttpStatus.CREATED, true, "Success", createdRole);
     }
 
     @GetMapping
-    public ResponseEntity<List<RoleDto>> getRoles() {
+    public ResponseEntity<Object> getRoles() {
         List<RoleDto> roles = roleService.getRoles();
-        return ResponseEntity.ok(roles);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", roles);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RoleDto> getRole(@PathVariable("id") int id) {
+    public ResponseEntity<Object> getRole(@PathVariable("id") int id) {
         RoleDto role = roleService.getRole(id);
-        return ResponseEntity.ok(role);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", role);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RoleDto> updateRole(int id, @RequestBody UpdateRoleRequest updateRoleRequest) {
+    public ResponseEntity<Object> updateRole(int id, @RequestBody UpdateRoleRequest updateRoleRequest) {
         RoleDto updatedRole = roleService.updateRole(id, updateRoleRequest);
-        return ResponseEntity.ok(updatedRole);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", updatedRole);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRole(@PathVariable("id") int id) {
+    public ResponseEntity<Object> deleteRole(@PathVariable("id") int id) {
         roleService.deleteRole(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseHandler.generateResponse(HttpStatus.NO_CONTENT, true, "Success", null);
     }
 }

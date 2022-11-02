@@ -1,5 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.advice;
 
+import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.exception.*;
 
 import org.apache.commons.lang3.StringUtils;
@@ -9,12 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -50,8 +50,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String errorMessage = convertField(ex.getMessage()) + " is invalid";
-        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), errorMessage);
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+        return ResponseHandler.generateResponse(HttpStatus.BAD_REQUEST, false, errorMessage, null);
     }
 
     @ExceptionHandler(value = {DataIntegrityViolationException.class})
@@ -61,9 +60,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         String constraintName = exDetail.getConstraintName();
         String errorMessage = convertField(constraintName) + " should be unique!";
-        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), errorMessage);
 
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_ACCEPTABLE);
+        return ResponseHandler.generateResponse(HttpStatus.NOT_ACCEPTABLE, false, errorMessage, null);
     }
 
     @Override
@@ -82,30 +80,29 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             errors.put(objectName, defaultMessage);
         });
 
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return ResponseHandler.generateResponse(HttpStatus.BAD_REQUEST, false, "Error", errors);
     }
 
-    @ExceptionHandler({EmployeeNotFound.class, DepartmentNotFound.class, RoleNotFound.class, SalaryNotFound.class}) // custom classes
+    @ExceptionHandler({
+            EmployeeNotFound.class, DepartmentNotFound.class,
+            RoleNotFound.class, SalaryNotFound.class, ImageNotFound.class
+    }) // custom classes
     public final ResponseEntity<?> handleItemNotFound(Exception exception) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+        return ResponseHandler.generateResponse(HttpStatus.NOT_FOUND, false, exception.getMessage(), null);
     }
 
     @ExceptionHandler(EmployeeForbidden.class)
     public final ResponseEntity<?> handleEmployeeForbidden(Exception exception) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.FORBIDDEN);
+        return ResponseHandler.generateResponse(HttpStatus.FORBIDDEN, false, exception.getMessage(), null);
     }
 
     @ExceptionHandler(ResourceNotAcceptable.class)
     public final ResponseEntity<?> handleItemNotAcceptable(Exception exception) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_ACCEPTABLE);
+        return ResponseHandler.generateResponse(HttpStatus.NOT_ACCEPTABLE, false, exception.getMessage(), null);
     }
 
     @ExceptionHandler(Exception.class) // general class (used if exception is other than the handled ones)
     public final ResponseEntity<?> handleGeneralException(Exception exception) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.EXPECTATION_FAILED);
+        return ResponseHandler.generateResponse(HttpStatus.EXPECTATION_FAILED, false, exception.getMessage(), null);
     }
 }

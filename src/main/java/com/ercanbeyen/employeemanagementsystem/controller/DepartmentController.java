@@ -3,6 +3,7 @@ package com.ercanbeyen.employeemanagementsystem.controller;
 import com.ercanbeyen.employeemanagementsystem.dto.request.CreateDepartmentRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.DepartmentDto;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateDepartmentRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.service.DepartmentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,34 +21,34 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public ResponseEntity<DepartmentDto> createDepartment(@RequestBody CreateDepartmentRequest createDepartmentRequest) {
+    public ResponseEntity<Object> createDepartment(@RequestBody CreateDepartmentRequest createDepartmentRequest) {
         DepartmentDto createdDepartment = departmentService.createDepartment(createDepartmentRequest);
-        return new ResponseEntity<>(createdDepartment, HttpStatus.CREATED);
+        return ResponseHandler.generateResponse(HttpStatus.CREATED, true, "Success", createdDepartment);
     }
 
     @GetMapping
-    public ResponseEntity<List<DepartmentDto>> getDepartments() {
+    public ResponseEntity<Object> getDepartments() {
         List<DepartmentDto> departments = departmentService.getDepartments();
-        return ResponseEntity.ok(departments);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", departments);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DepartmentDto> getDepartment(@PathVariable("id") int id) {
+    public ResponseEntity<Object> getDepartment(@PathVariable("id") int id) {
         DepartmentDto department = departmentService.getDepartment(id);
-        return ResponseEntity.ok(department);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", department);
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<DepartmentDto> updateDepartment(@PathVariable("id") int id, @RequestBody UpdateDepartmentRequest updateDepartmentRequest) {
+    public ResponseEntity<Object> updateDepartment(@PathVariable("id") int id, @RequestBody UpdateDepartmentRequest updateDepartmentRequest) {
         DepartmentDto updatedDepartment = departmentService.updateDepartment(id, updateDepartmentRequest);
-        return ResponseEntity.ok(updatedDepartment);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", updatedDepartment);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDepartment(@PathVariable("id") int id) {
+    public ResponseEntity<Object> deleteDepartment(@PathVariable("id") int id) {
         departmentService.deleteDepartment(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseHandler.generateResponse(HttpStatus.NO_CONTENT, true, "Success", null);
     }
 
 }

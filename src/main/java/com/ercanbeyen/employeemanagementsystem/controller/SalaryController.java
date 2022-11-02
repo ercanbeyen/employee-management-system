@@ -1,5 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
+import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.service.SalaryService;
 import org.springframework.http.HttpStatus;
@@ -20,20 +21,20 @@ public class SalaryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Salary> updateSalary(int id, @RequestBody @Valid Salary salary) {
+    public ResponseEntity<Object> updateSalary(int id, @RequestBody @Valid Salary salary) {
         Salary updatedSalary = salaryService.updateSalary(id, salary);
-        return new ResponseEntity<>(updatedSalary, HttpStatus.OK);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", updatedSalary);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Salary> getSalary(@PathVariable("id") int id) {
+    public ResponseEntity<Object> getSalary(@PathVariable("id") int id) {
         Salary salary = salaryService.getSalary(id);
-        return new ResponseEntity<>(salary, HttpStatus.OK);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", salary);
     }
 
     @GetMapping
-    public ResponseEntity<List<Salary>> getSalaries() {
+    public ResponseEntity<Object> getSalaries() {
         List<Salary> salaries = salaryService.getSalaries();
-        return new ResponseEntity<>(salaries, HttpStatus.OK);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", salaries);
     }
 }

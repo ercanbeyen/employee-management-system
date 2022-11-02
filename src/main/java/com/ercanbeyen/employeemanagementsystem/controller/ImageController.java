@@ -1,5 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
+import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.service.ImageService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,21 +19,17 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
-    /*
-    * TODO: Write a custom response class
-    * */
 
     @PostMapping
     public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
         String uploadMessage = imageService.uploadImage(file);
-        //JSONObject uploadMessage = imageService.uploadImage(file);
-        return ResponseEntity.status(HttpStatus.OK).body(uploadMessage);
-        //return new ResponseEntity<Object>(uploadMessage, HttpStatus.OK);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", uploadMessage);
     }
 
     @GetMapping("/{fileName}")
     public ResponseEntity<?> downloadImage(@PathVariable String fileName) {
         byte[] image = imageService.downloadImage(fileName);
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(image);
+        //return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", ))
     }
 }

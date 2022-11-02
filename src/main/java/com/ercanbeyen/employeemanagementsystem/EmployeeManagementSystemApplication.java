@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "Employee API", version = "1.0", description = "Employee Information"))
+@OpenAPIDefinition(info = @Info(title = "Employee API", version = "1.0", description = "Employee Management System"))
 public class EmployeeManagementSystemApplication {
 
 	public static void main(String[] args) {
