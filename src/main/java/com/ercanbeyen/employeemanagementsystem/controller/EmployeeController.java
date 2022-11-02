@@ -10,10 +10,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -91,6 +94,18 @@ public class EmployeeController {
     public ResponseEntity<Object> deleteEmployee(@PathVariable("id") int id) {
         employeeService.deleteEmployee(id);
         return ResponseHandler.generateResponse(HttpStatus.NO_CONTENT, true, "Success", null);
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<Object> uploadPhotoForEmployee(@PathVariable("id") int id, @RequestParam("image") MultipartFile file) throws IOException {
+        String uploadMessage = employeeService.uploadImage(id, file);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", uploadMessage);
+    }
+
+    @GetMapping("/{id}/{fileName}")
+    public ResponseEntity<Object> downloadPhotoOfEmployee(@PathVariable("id") int id, @PathVariable("fileName") String fileName) {
+        byte[] downloadedImage = employeeService.downloadImage(id, fileName);
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(downloadedImage);
     }
 
 }

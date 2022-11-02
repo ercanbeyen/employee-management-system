@@ -6,10 +6,7 @@ import com.ercanbeyen.employeemanagementsystem.exception.EmployeeNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
 import com.ercanbeyen.employeemanagementsystem.repository.EmployeeRepository;
-import com.ercanbeyen.employeemanagementsystem.service.DepartmentService;
-import com.ercanbeyen.employeemanagementsystem.service.EmployeeService;
-import com.ercanbeyen.employeemanagementsystem.service.RoleService;
-import com.ercanbeyen.employeemanagementsystem.service.SalaryService;
+import com.ercanbeyen.employeemanagementsystem.service.*;
 import com.ercanbeyen.employeemanagementsystem.util.CustomPage;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +20,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,6 +44,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private final SalaryService salaryService;
 
+    @Autowired
+    private final ImageService imageService;
 
     @Transactional
     @Override
@@ -204,6 +205,38 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.debug("Employee salary update operation is completed");
 
         return modelMapper.map(updatedEmployee, EmployeeDto.class);
+    }
+
+    @Override
+    public String uploadImage(int id, MultipartFile file) throws IOException {
+        log.debug("Upload image operation is started");
+
+        Employee employee = employeeRepository.findById(id).orElseThrow(
+                () -> new EmployeeNotFound("Employee with id " + id + " is not found")
+        );
+
+        log.debug("Employee is found, now upload the image");
+
+        Image uploadedFile = imageService.uploadImage(file);
+        employee.setPhoto(uploadedFile);
+        employeeRepository.save(employee);
+
+        log.debug("Image is uploaded");
+
+        return "image file called " + employee.getPhoto().getName() + " is successfully uploaded";
+    }
+
+    @Override
+    public byte[] downloadImage(int id, String fileName) {
+        log.debug("Download image operation is started");
+
+        Employee employee = employeeRepository.findById(id).orElseThrow(
+                () -> new EmployeeNotFound("Employee with id " + id + " is not found")
+        );
+
+        log.debug("Employee is found, now download the image");
+
+        return imageService.downloadImage(fileName);
     }
 
 

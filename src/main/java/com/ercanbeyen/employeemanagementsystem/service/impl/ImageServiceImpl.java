@@ -6,6 +6,8 @@ import com.ercanbeyen.employeemanagementsystem.exception.ImageNotFound;
 import com.ercanbeyen.employeemanagementsystem.repository.ImageRepository;
 import com.ercanbeyen.employeemanagementsystem.service.ImageService;
 import com.ercanbeyen.employeemanagementsystem.util.ImageUtils;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,14 +15,17 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Date;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
 
     @Autowired
     private ImageRepository imageRepository;
 
     @Override
-    public String uploadImage(MultipartFile file) throws IOException {
+    public Image uploadImage(MultipartFile file) throws IOException {
+        log.debug("Upload Image operation is continuing");
 
         Image image = imageRepository.save(
                 Image.builder()
@@ -30,10 +35,12 @@ public class ImageServiceImpl implements ImageService {
                         .build()
         );
 
+        log.debug("Image is uploaded");
+
         image.setLatestChangeBy("Admin");
         image.setLatestChangeAt(new Date());
 
-        return "image file called " + file.getOriginalFilename() + " is uploaded successfully";
+        return image;
 
     }
 
@@ -42,6 +49,8 @@ public class ImageServiceImpl implements ImageService {
          Image dbImage = imageRepository.findByName(fileName).orElseThrow(
                  () -> new ImageNotFound("Image called " + fileName + " is not found")
          );
+
+         log.debug("Image is found in the database, so decompressing is started");
 
         return ImageUtils.decompressImage(dbImage.getData());
     }
