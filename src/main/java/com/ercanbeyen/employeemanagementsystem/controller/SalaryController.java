@@ -1,5 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
+import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.service.SalaryService;
@@ -21,20 +22,20 @@ public class SalaryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateSalary(int id, @RequestBody @Valid Salary salary) {
+    public ResponseEntity<Object> updateSalary(int id, @RequestBody @Valid SalaryDto salary) {
         Salary updatedSalary = salaryService.updateSalary(id, salary);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", updatedSalary);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getSalary(@PathVariable("id") int id) {
-        Salary salary = salaryService.getSalary(id);
+        SalaryDto salary = salaryService.getSalary(id);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", salary);
     }
 
     @GetMapping
     public ResponseEntity<Object> getSalaries() {
-        List<Salary> salaries = salaryService.getSalaries();
+        List<SalaryDto> salaries = salaryService.getSalaries();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", salaries);
     }
 }

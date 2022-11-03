@@ -1,10 +1,13 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
+import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.exception.SalaryNotFound;
 import com.ercanbeyen.employeemanagementsystem.repository.SalaryRepository;
 import com.ercanbeyen.employeemanagementsystem.service.SalaryService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,9 @@ import java.util.List;
 public class SalaryServiceImpl implements SalaryService {
     @Autowired
     private final SalaryRepository salaryRepository;
+
+    @Autowired
+    private final ModelMapper modelMapper;
 
     @Override
     public Salary createSalary(Salary salary) {
@@ -30,25 +36,28 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
-    public Salary getSalary(int id) {
-        return salaryRepository.findById(id).orElseThrow(
+    public SalaryDto getSalary(int id) {
+        Salary salary = salaryRepository.findById(id).orElseThrow(
                 () -> new SalaryNotFound("Salary with id " + id + " is not found")
         );
+
+        return modelMapper.map(salary, SalaryDto.class);
     }
 
     @Override
-    public List<Salary> getSalaries() {
-        return salaryRepository.findAll();
+    public List<SalaryDto> getSalaries() {
+        List<Salary> salaries = salaryRepository.findAll();
+        return modelMapper.map(salaries, new TypeToken<List<SalaryDto>>(){}.getType());
     }
 
     @Override
-    public Salary updateSalary(int id, Salary salary) {
+    public Salary updateSalary(int id, SalaryDto salaryDto) {
         Salary salaryInDb = salaryRepository.findById(id).orElseThrow(
                 () -> new SalaryNotFound("Salary with id " + id + " is not found")
         );
 
-        salaryInDb.setCurrency(salary.getCurrency());
-        salaryInDb.setAmount(salary.getAmount());
+        salaryInDb.setCurrency(salaryDto.getCurrency());
+        salaryInDb.setAmount(salaryDto.getAmount());
         salaryInDb.setLatestChangeAt(new Date());
         salaryInDb.setLatestChangeBy("Admin");
 

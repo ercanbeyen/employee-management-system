@@ -2,6 +2,7 @@ package com.ercanbeyen.employeemanagementsystem.controller;
 
 import com.ercanbeyen.employeemanagementsystem.dto.DepartmentDto;
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
+import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
@@ -66,7 +67,6 @@ public class EmployeeController {
     @PutMapping("/{id}/details")
     public ResponseEntity<Object> updateEmployeeDetails(@PathVariable("id") int id, @Valid @RequestBody UpdateEmployeeDetailsRequest request) {
         EmployeeDto updatedEmployee = employeeService.updateEmployeeDetails(id, request);
-        //return ResponseEntity.ok(updatedEmployee);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", updatedEmployee);
     }
 
@@ -77,8 +77,8 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}/salary")
-    public ResponseEntity<Object> updateSalary(@PathVariable("id") int id, @Valid @RequestBody Salary salary) {
-        EmployeeDto employeeDto = employeeService.updateSalary(id, salary);
+    public ResponseEntity<Object> updateSalary(@PathVariable("id") int id, @Valid @RequestBody SalaryDto salaryDto) {
+        EmployeeDto employeeDto = employeeService.updateSalary(id, salaryDto);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", employeeDto);
     }
 
@@ -113,13 +113,13 @@ public class EmployeeController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<Object> uploadPhotoForEmployee(@PathVariable("id") int id, @RequestParam("image") MultipartFile file) throws IOException {
+    public ResponseEntity<Object> uploadPhoto(@PathVariable("id") int id, @RequestParam("image") MultipartFile file) throws IOException {
         String uploadMessage = employeeService.uploadImage(id, file);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", uploadMessage);
     }
 
     @GetMapping("/{id}/{fileName}")
-    public ResponseEntity<Object> downloadPhotoOfEmployee(@PathVariable("id") int id, @PathVariable("fileName") String fileName) {
+    public ResponseEntity<Object> downloadPhoto(@PathVariable("id") int id, @PathVariable("fileName") String fileName) {
         byte[] downloadedImage = employeeService.downloadImage(id, fileName);
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(downloadedImage);
     }

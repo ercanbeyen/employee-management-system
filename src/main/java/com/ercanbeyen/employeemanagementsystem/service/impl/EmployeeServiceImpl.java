@@ -1,5 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
+import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
@@ -171,22 +172,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setGender(request.getGender());
         log.debug("Employee details are updated");
 
-        /*
-        Department department = departmentService.assignDepartment(employeeDto.getDepartment());
-        employee.setDepartment(department);
-        log.debug("Department of the employee is updated to {}", department.getName());
-
-        Role role = roleService.assignRole(employeeDto.getRole());
-        employee.setRole(role);
-        log.debug("Role of the employee is updated to {}", role.getName());
-         */
-
-        /*
-        Salary salary = salaryService.updateSalary(employee.getSalary().getId(), employeeDto.getSalary());
-        employee.setSalary(salary);
-        log.debug("Salary of the employee is updated; currency: {} and amount: {}", salary.getCurrency(), salary.getAmount());
-         */
-
         Employee updatedEmployee = employeeRepository.save(employee);
         log.debug("Employee update operation is completed");
 
@@ -195,16 +180,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Transactional
     @Override
-    public EmployeeDto updateSalary(int id, Salary salary) {
+    public EmployeeDto updateSalary(int id, SalaryDto salaryDto) {
         log.debug("Employee salary update operation is started");
 
         Employee employee = employeeRepository.findById(id).orElseThrow(
                 () -> new EmployeeNotFound("Employee with id " + id + " is not found")
         );
 
-        Salary updatedSalary = salaryService.updateSalary(employee.getSalary().getId(), salary);
+        Salary updatedSalary = salaryService.updateSalary(employee.getSalary().getId(), salaryDto);
         employee.setSalary(updatedSalary);
-        log.debug("Salary of the employee with id {} is updated; currency: {} and amount: {}", employee.getId(), salary.getCurrency(), salary.getAmount());
+        log.debug("Salary of the employee with id {} is updated; currency: {} and amount: {}", employee.getId(), salaryDto.getCurrency(), salaryDto.getAmount());
 
         Employee updatedEmployee = employeeRepository.save(employee);
         log.debug("Employee salary update operation is completed");
