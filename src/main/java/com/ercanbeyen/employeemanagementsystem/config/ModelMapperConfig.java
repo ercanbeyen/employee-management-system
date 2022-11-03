@@ -25,6 +25,7 @@ public class ModelMapperConfig {
         TypeMap<Employee, EmployeeDto> employeePropertyMapper = modelMapper.createTypeMap(Employee.class, EmployeeDto.class);
         employeePropertyMapper.addMappings(mapper -> mapper.map(src -> src.getDepartment().getName(), EmployeeDto::setDepartment));
         employeePropertyMapper.addMappings(mapper -> mapper.map(src -> src.getRole().getName(), EmployeeDto::setRole));
+        employeePropertyMapper.addMappings(mapper -> mapper.map(src -> src.getPhoto().getName(), EmployeeDto::setPhotoFile));
 
         return modelMapper;
     }

@@ -1,5 +1,7 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.exception.EmployeeNotFound;
@@ -153,23 +155,23 @@ public class EmployeeServiceImpl implements EmployeeService {
         throw new EmployeeNotFound("Employee with id " + id + " is not found");
     }
 
-    @Transactional
     @Override
-    public EmployeeDto updateEmployee(int id, EmployeeDto employeeDto) {
-        log.debug("Employee update operation is started");
+    public EmployeeDto updateEmployeeDetails(int id, UpdateEmployeeDetailsRequest request) {
+        log.debug("Employee details update operation is started");
 
         Employee employee = employeeRepository.findById(id).orElseThrow(
                 () -> new EmployeeNotFound("Employee with id " + id + " is not found")
         );
 
-        employee.setFirstName(employeeDto.getFirstName());
-        employee.setLastName(employeeDto.getLastName());
-        employee.setEmail(employeeDto.getEmail());
+        employee.setFirstName(request.getFirstName());
+        employee.setLastName(request.getLastName());
+        employee.setEmail(request.getEmail());
         employee.setContactNumber(employee.getContactNumber());
-        employee.setNationality(employeeDto.getNationality());
-        employee.setGender(employeeDto.getGender());
+        employee.setNationality(request.getNationality());
+        employee.setGender(request.getGender());
         log.debug("Employee details are updated");
 
+        /*
         Department department = departmentService.assignDepartment(employeeDto.getDepartment());
         employee.setDepartment(department);
         log.debug("Department of the employee is updated to {}", department.getName());
@@ -177,10 +179,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         Role role = roleService.assignRole(employeeDto.getRole());
         employee.setRole(role);
         log.debug("Role of the employee is updated to {}", role.getName());
+         */
 
+        /*
         Salary salary = salaryService.updateSalary(employee.getSalary().getId(), employeeDto.getSalary());
         employee.setSalary(salary);
         log.debug("Salary of the employee is updated; currency: {} and amount: {}", salary.getCurrency(), salary.getAmount());
+         */
 
         Employee updatedEmployee = employeeRepository.save(employee);
         log.debug("Employee update operation is completed");
@@ -207,6 +212,27 @@ public class EmployeeServiceImpl implements EmployeeService {
         return modelMapper.map(updatedEmployee, EmployeeDto.class);
     }
 
+    @Transactional
+    @Override
+    public EmployeeDto updateOccupation(int id, UpdateOccupationRequest request) {
+        log.debug("Employee's department and role updates are starting");
+
+        Employee employee = employeeRepository.findById(id).orElseThrow(
+                () -> new EmployeeNotFound("Employee with id " + id + " is not found")
+        );
+
+        Department updatedDepartment = departmentService.assignDepartment(request.getDepartment());
+        employee.setDepartment(updatedDepartment);
+        log.debug("Department is updated");
+
+        Role updatedRole = roleService.assignRole(request.getRole());
+        employee.setRole(updatedRole);
+        log.debug("Role is updated");
+
+        return modelMapper.map(employeeRepository.save(employee), EmployeeDto.class);
+    }
+
+    @Transactional
     @Override
     public String uploadImage(int id, MultipartFile file) throws IOException {
         log.debug("Upload image operation is started");
@@ -220,8 +246,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         Image uploadedFile = imageService.uploadImage(file);
         employee.setPhoto(uploadedFile);
         employeeRepository.save(employee);
-
-        log.debug("Image is uploaded");
 
         return "image file called " + employee.getPhoto().getName() + " is successfully uploaded";
     }

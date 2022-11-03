@@ -1,15 +1,17 @@
-
-package com.ercanbeyen.employeemanagementsystem.dto;
+package com.ercanbeyen.employeemanagementsystem.dto.request;
 
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Gender;
-import com.ercanbeyen.employeemanagementsystem.entity.Salary;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
-@Data
-public class EmployeeDto {
-
+@Getter
+@Setter
+@NoArgsConstructor
+public class UpdateEmployeeDetailsRequest {
     @NotBlank(message = "First name should not be blank")
     private String firstName;
 
@@ -25,12 +27,4 @@ public class EmployeeDto {
     private String nationality;
 
     private Gender gender;
-
-    private String department;
-
-    private String role;
-
-    private Salary salary;
-
-    private String photoFile = null;
 }

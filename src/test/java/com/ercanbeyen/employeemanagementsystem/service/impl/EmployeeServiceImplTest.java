@@ -1,6 +1,8 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
@@ -15,7 +17,11 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,6 +46,9 @@ public class EmployeeServiceImplTest {
 
     @Mock
     private SalaryServiceImpl salaryService;
+
+    @Mock
+    private ImageServiceImpl imageService;
 
     private List<EmployeeDto> getMockEmployeesDtos() {
         String nationality = "Turkey";
@@ -133,6 +142,26 @@ public class EmployeeServiceImplTest {
         employee2.setSalary(salary2);
 
         return Arrays.asList(employee1, employee2);
+    }
+
+    private UpdateEmployeeDetailsRequest getUpdateEmployeeDetailsRequest(EmployeeDto employeeDto) {
+        UpdateEmployeeDetailsRequest request = new UpdateEmployeeDetailsRequest();
+
+        request.setFirstName(employeeDto.getFirstName());
+        request.setLastName(employeeDto.getLastName());
+        request.setEmail(employeeDto.getEmail());
+        request.setContactNumber(employeeDto.getContactNumber());
+        request.setNationality(employeeDto.getNationality());
+        request.setGender(employeeDto.getGender());
+
+        return request;
+    }
+
+    private UpdateOccupationRequest getUpdateOccupationRequest(EmployeeDto employeeDto) {
+        UpdateOccupationRequest request = new UpdateOccupationRequest();
+        request.setDepartment(employeeDto.getDepartment());
+        request.setRole(employeeDto.getRole());
+        return request;
     }
 
     @Test
@@ -245,8 +274,8 @@ public class EmployeeServiceImplTest {
     }
 
     @Test
-    @DisplayName("When UpdateEmployee Called With Valid Parameters It Should Return the EmployeeDto")
-    public void whenUpdateEmployeeCalledWithValidParameters_itShouldReturnEmployeeDto() {
+    @DisplayName("When UpdateEmployee Called With Valid Request It Should Return the EmployeeDto")
+    public void whenUpdateEmployeeDetailsCalledWithValidRequest_itShouldReturnEmployeeDto() {
         int id = 1;
         int employeeIndex = 0;
 
@@ -254,31 +283,29 @@ public class EmployeeServiceImplTest {
         EmployeeDto employeeDto = getMockEmployeesDtos().get(employeeIndex);
 
         Optional<Employee> optionalEmployee = Optional.of(employee);
+        UpdateEmployeeDetailsRequest request = getUpdateEmployeeDetailsRequest(employeeDto);
 
         Mockito.when(employeeRepository.findById(id)).thenReturn(optionalEmployee);
-        Mockito.when(departmentService.assignDepartment(employeeDto.getDepartment())).thenReturn(employee.getDepartment());
-        Mockito.when(roleService.assignRole(employeeDto.getRole())).thenReturn(employee.getRole());
-        Mockito.when(salaryService.updateSalary(id, employeeDto.getSalary())).thenReturn(employee.getSalary());
+
         Mockito.when(employeeRepository.save(employee)).thenReturn(employee);
         Mockito.when(modelMapper.map(employee, EmployeeDto.class)).thenReturn(employeeDto);
 
-        EmployeeDto result = employeeService.updateEmployee(id, employeeDto);
+        EmployeeDto result = employeeService.updateEmployeeDetails(id, request);
 
         assertEquals(result, employeeDto);
 
         Mockito.verify(employeeRepository).findById(id);
-        Mockito.verify(departmentService).assignDepartment(employeeDto.getDepartment());
-        Mockito.verify(roleService).assignRole(employeeDto.getRole());
-        Mockito.verify(salaryService).updateSalary(employee.getSalary().getId(), employeeDto.getSalary());
         Mockito.verify(employeeRepository).save(employee);
         Mockito.verify(modelMapper).map(employee, EmployeeDto.class);
     }
 
     @Test
-    @DisplayName("When UpdateEmployee Called With Invalid Id It Should Throw Exception")
-    public void whenUpdateEmployeeCalledWithInvalidId_itShouldThrowError() {
+    @DisplayName("When UpdateEmployeeDetails Called With Invalid Id It Should Throw Exception")
+    public void whenUpdateEmployeeDetailsCalledWithInvalidId_itShouldThrowError() {
         EmployeeDto employeeDto = getMockEmployeesDtos().get(0);
         Optional<Employee> optionalEmployee = Optional.empty();
+
+        UpdateEmployeeDetailsRequest request = getUpdateEmployeeDetailsRequest(employeeDto);
 
         int id = 2;
         String message = "Employee with id " + id + " is not found";
@@ -286,13 +313,77 @@ public class EmployeeServiceImplTest {
         Mockito.when(employeeRepository.findById(id)).thenReturn(optionalEmployee);
 
         RuntimeException exception = assertThrows(EmployeeNotFound.class, () -> {
-            employeeService.updateEmployee(id, employeeDto);
+            employeeService.updateEmployeeDetails(id, request);
         });
 
         assertEquals(message, exception.getMessage());
 
         Mockito.verify(employeeRepository).findById(id);
         Mockito.verifyNoInteractions(modelMapper);
+    }
+
+    /*
+    * TODO: Write unit test for updateSalary method
+    * TODO: Write unit test for updateOccupation method
+    * TODO: Write unit test for uploadImage method
+    * TODO: Write unit test for downloadImage method
+    * */
+
+
+    @Test
+    @DisplayName("When UpdateOccupation Called With Valid Request It Should Return EmployeeDto")
+    public void whenUpdateOccupationCalledWithValidRequest_ItShouldReturnEmployeeDto() {
+        EmployeeDto employeeDto = getMockEmployeesDtos().get(0);
+        Employee employee = getMockEmployees().get(0);
+
+        UpdateOccupationRequest request = getUpdateOccupationRequest(employeeDto);
+        Optional<Employee> optionalEmployee = Optional.of(employee);
+        int id = 1;
+
+        Mockito.when(employeeRepository.findById(id)).thenReturn(optionalEmployee);
+        Mockito.when(departmentService.assignDepartment(request.getDepartment())).thenReturn(employee.getDepartment());
+        Mockito.when(roleService.assignRole(employeeDto.getRole())).thenReturn(employee.getRole());
+        Mockito.when(employeeRepository.save(employee)).thenReturn(employee);
+        Mockito.when(modelMapper.map(employee, EmployeeDto.class)).thenReturn(employeeDto);
+
+        EmployeeDto result = employeeService.updateOccupation(id, request);
+
+        assertEquals(employeeDto, result);
+
+        Mockito.verify(employeeRepository).findById(id);
+        Mockito.verify(departmentService).assignDepartment(request.getDepartment());
+        Mockito.verify(roleService).assignRole(employeeDto.getRole());
+        Mockito.verify(employeeRepository).save(employee);
+        Mockito.verify(modelMapper).map(employee, EmployeeDto.class);
+    }
+
+    @Test
+    @DisplayName("When UpdateSalary Called With Valid Request It Should Return EmployeeDto")
+    public void whenUpdateSalaryCalledWithValidRequest_ItShouldReturnEmployeeDto() {
+        EmployeeDto employeeDto = getMockEmployeesDtos().get(0);
+        Employee employee = getMockEmployees().get(0);
+
+        UpdateOccupationRequest request = getUpdateOccupationRequest(employeeDto);
+        Optional<Employee> optionalEmployee = Optional.of(employee);
+        int id = 1;
+        double amount = 5;
+
+        Salary salary = employee.getSalary();
+        salary.setAmount(amount);
+
+        Mockito.when(employeeRepository.findById(id)).thenReturn(optionalEmployee);
+        Mockito.when(salaryService.updateSalary(employee.getSalary().getId(), salary)).thenReturn(employee.getSalary());
+        Mockito.when(employeeRepository.save(employee)).thenReturn(employee);
+        Mockito.when(modelMapper.map(employee, EmployeeDto.class)).thenReturn(employeeDto);
+
+        EmployeeDto result = employeeService.updateSalary(id, salary);
+
+        assertEquals(employeeDto, result);
+
+        Mockito.verify(employeeRepository).findById(id);
+        Mockito.verify(salaryService).updateSalary(employee.getSalary().getId(), salary);
+        Mockito.verify(employeeRepository).save(employee);
+        Mockito.verify(modelMapper).map(employee, EmployeeDto.class);
     }
 
 

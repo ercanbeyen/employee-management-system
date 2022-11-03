@@ -1,7 +1,11 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
+import com.ercanbeyen.employeemanagementsystem.dto.DepartmentDto;
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
+import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.entity.Employee;
 import com.ercanbeyen.employeemanagementsystem.util.CustomPage;
@@ -59,11 +63,23 @@ public class EmployeeController {
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", employee);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> updateEmployee(@PathVariable("id") int id, @RequestBody @Valid EmployeeDto user) {
-        EmployeeDto updatedEmployee = employeeService.updateEmployee(id, user);
+    @PutMapping("/{id}/details")
+    public ResponseEntity<Object> updateEmployeeDetails(@PathVariable("id") int id, @Valid @RequestBody UpdateEmployeeDetailsRequest request) {
+        EmployeeDto updatedEmployee = employeeService.updateEmployeeDetails(id, request);
         //return ResponseEntity.ok(updatedEmployee);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", updatedEmployee);
+    }
+
+    @PutMapping("/{id}/occupation")
+    public ResponseEntity<Object> updateOccupation(@PathVariable("id") int id, @Valid @RequestBody UpdateOccupationRequest request) {
+        EmployeeDto employeeDto = employeeService.updateOccupation(id, request);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", employeeDto);
+    }
+
+    @PutMapping("/{id}/salary")
+    public ResponseEntity<Object> updateSalary(@PathVariable("id") int id, @Valid @RequestBody Salary salary) {
+        EmployeeDto employeeDto = employeeService.updateSalary(id, salary);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", employeeDto);
     }
 
     @GetMapping("/pagination")
