@@ -4,7 +4,8 @@ import com.ercanbeyen.employeemanagementsystem.dto.request.CreateRoleRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.RoleDto;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateRoleRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.Role;
-import com.ercanbeyen.employeemanagementsystem.exception.RoleNotFound;
+import com.ercanbeyen.employeemanagementsystem.exception.DataConflict;
+import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.repository.RoleRepository;
 import com.ercanbeyen.employeemanagementsystem.service.RoleService;
@@ -37,7 +38,7 @@ public class RoleServiceImpl implements RoleService {
         String roleName = updateRoleRequest.getName();
 
         Role roleInDb = roleRepository.findById(id).orElseThrow(
-                () -> new RoleNotFound("Role " + roleName + " is not found")
+                () -> new DataNotFound("Role " + roleName + " is not found")
         );
 
         roleInDb.setLatestChangeAt(new Date());
@@ -50,12 +51,25 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role assignRole(String roleName) {
         return roleRepository.findByName(roleName).orElseThrow(
-                () -> new RoleNotFound("Role " + roleName + " is not found")
+                () -> new DataNotFound("Role " + roleName + " is not found")
         );
     }
 
     @Override
     public void deleteRole(int id) {
+        Role role = roleRepository.findById(id).orElseThrow(
+                () -> new DataNotFound("Role wih id " + id + " is not found")
+        );
+
+        int numberOfEmployees = role.getEmployees().size();
+
+        if (numberOfEmployees > 0) {
+            throw new DataConflict(
+                    "Role called " + role.getName() + " could not be deleted, because it contains "
+                            + numberOfEmployees + " employee(s)"
+            );
+        }
+
         roleRepository.deleteById(id);
     }
 
@@ -67,7 +81,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public RoleDto getRole(int id) {
         Role role = roleRepository.findById(id).orElseThrow(
-                () -> new RoleNotFound("Role with id " + id + " is not found")
+                () -> new DataNotFound("Role with id " + id + " is not found")
         );
 
         return convertRoleToRoleDto(role);

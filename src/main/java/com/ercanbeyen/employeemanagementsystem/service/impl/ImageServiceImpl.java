@@ -1,7 +1,7 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
 import com.ercanbeyen.employeemanagementsystem.entity.Image;
-import com.ercanbeyen.employeemanagementsystem.exception.ImageNotFound;
+import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.repository.ImageRepository;
 import com.ercanbeyen.employeemanagementsystem.service.ImageService;
@@ -47,7 +47,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public byte[] downloadImage(String fileName) {
          Image dbImage = imageRepository.findByName(fileName).orElseThrow(
-                 () -> new ImageNotFound("Image called " + fileName + " is not found")
+                 () -> new DataNotFound("Image called " + fileName + " is not found")
          );
 
          log.debug("Image is found in the database, so decompressing is started");

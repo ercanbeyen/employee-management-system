@@ -10,5 +10,5 @@ public class SalaryDto {
     Currency currency;
 
     @NotNull(message = "Please enter an amount")
-    double amount;
+    Double amount;
 }

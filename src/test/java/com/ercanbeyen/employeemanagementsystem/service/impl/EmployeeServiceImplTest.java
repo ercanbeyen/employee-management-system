@@ -7,7 +7,7 @@ import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationReque
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
-import com.ercanbeyen.employeemanagementsystem.exception.EmployeeNotFound;
+import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.repository.EmployeeRepository;
 
@@ -309,7 +309,7 @@ public class EmployeeServiceImplTest {
 
         Mockito.when(employeeRepository.findById(id)).thenReturn(optionalEmployee);
 
-        RuntimeException exception = assertThrows(EmployeeNotFound.class, () -> {
+        RuntimeException exception = assertThrows(DataNotFound.class, () -> {
             employeeService.updateEmployeeDetails(id, request);
         });
 

@@ -5,7 +5,7 @@ import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetails
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
-import com.ercanbeyen.employeemanagementsystem.exception.EmployeeNotFound;
+import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
 import com.ercanbeyen.employeemanagementsystem.repository.EmployeeRepository;
@@ -153,7 +153,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             return modelMapper.map(user.get(), EmployeeDto.class);
         }
 
-        throw new EmployeeNotFound("Employee with id " + id + " is not found");
+        throw new DataNotFound("Employee with id " + id + " is not found");
     }
 
     @Override
@@ -161,7 +161,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.debug("Employee details update operation is started");
 
         Employee employee = employeeRepository.findById(id).orElseThrow(
-                () -> new EmployeeNotFound("Employee with id " + id + " is not found")
+                () -> new DataNotFound("Employee with id " + id + " is not found")
         );
 
         employee.setFirstName(request.getFirstName());
@@ -184,7 +184,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.debug("Employee salary update operation is started");
 
         Employee employee = employeeRepository.findById(id).orElseThrow(
-                () -> new EmployeeNotFound("Employee with id " + id + " is not found")
+                () -> new DataNotFound("Employee with id " + id + " is not found")
         );
 
         Salary updatedSalary = salaryService.updateSalary(employee.getSalary().getId(), salaryDto);
@@ -203,7 +203,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.debug("Employee's department and role updates are starting");
 
         Employee employee = employeeRepository.findById(id).orElseThrow(
-                () -> new EmployeeNotFound("Employee with id " + id + " is not found")
+                () -> new DataNotFound("Employee with id " + id + " is not found")
         );
 
         Department updatedDepartment = departmentService.assignDepartment(request.getDepartment());
@@ -223,7 +223,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.debug("Upload image operation is started");
 
         Employee employee = employeeRepository.findById(id).orElseThrow(
-                () -> new EmployeeNotFound("Employee with id " + id + " is not found")
+                () -> new DataNotFound("Employee with id " + id + " is not found")
         );
 
         log.debug("Employee is found, now upload the image");
@@ -240,7 +240,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.debug("Download image operation is started");
 
         Employee employee = employeeRepository.findById(id).orElseThrow(
-                () -> new EmployeeNotFound("Employee with id " + id + " is not found")
+                () -> new DataNotFound("Employee with id " + id + " is not found")
         );
 
         log.debug("Employee is found, now download the image");
@@ -254,7 +254,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.debug("Delete employee operation is started");
 
         Employee employee = employeeRepository.findById(id).orElseThrow(
-                () -> new EmployeeNotFound("Employee with id " + id + " is not found")
+                () -> new DataNotFound("Employee with id " + id + " is not found")
         );
 
         // Remove bidirectional connections between employee&department and employee&role

@@ -2,7 +2,8 @@ package com.ercanbeyen.employeemanagementsystem.service.impl;
 
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
-import com.ercanbeyen.employeemanagementsystem.exception.SalaryNotFound;
+import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
+
 import com.ercanbeyen.employeemanagementsystem.repository.SalaryRepository;
 import com.ercanbeyen.employeemanagementsystem.service.SalaryService;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class SalaryServiceImpl implements SalaryService {
     @Override
     public SalaryDto getSalary(int id) {
         Salary salary = salaryRepository.findById(id).orElseThrow(
-                () -> new SalaryNotFound("Salary with id " + id + " is not found")
+                () -> new DataNotFound("Salary with id " + id + " is not found")
         );
 
         return modelMapper.map(salary, SalaryDto.class);
@@ -53,7 +54,7 @@ public class SalaryServiceImpl implements SalaryService {
     @Override
     public Salary updateSalary(int id, SalaryDto salaryDto) {
         Salary salaryInDb = salaryRepository.findById(id).orElseThrow(
-                () -> new SalaryNotFound("Salary with id " + id + " is not found")
+                () -> new DataNotFound("Salary with id " + id + " is not found")
         );
 
         salaryInDb.setCurrency(salaryDto.getCurrency());

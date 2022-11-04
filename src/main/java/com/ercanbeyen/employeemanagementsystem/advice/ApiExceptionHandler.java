@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -46,7 +45,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         return convertedField;
     }
-
 
 
     @Override
@@ -85,21 +83,23 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseHandler.generateResponse(HttpStatus.BAD_REQUEST, false, "Error", errors);
     }
 
-    @ExceptionHandler({
-            EmployeeNotFound.class, DepartmentNotFound.class,
-            RoleNotFound.class, SalaryNotFound.class, ImageNotFound.class
-    }) // custom classes
-    public final ResponseEntity<?> handleItemNotFound(Exception exception) {
+    @ExceptionHandler(DataNotFound.class)
+    public final ResponseEntity<?> handleDataNotFound(Exception exception) {
         return ResponseHandler.generateResponse(HttpStatus.NOT_FOUND, false, exception.getMessage(), null);
     }
 
-    @ExceptionHandler(EmployeeForbidden.class)
-    public final ResponseEntity<?> handleEmployeeForbidden(Exception exception) {
+    @ExceptionHandler(DataForbidden.class)
+    public final ResponseEntity<?> handleDataForbidden(Exception exception) {
         return ResponseHandler.generateResponse(HttpStatus.FORBIDDEN, false, exception.getMessage(), null);
     }
 
-    @ExceptionHandler(ResourceNotAcceptable.class)
-    public final ResponseEntity<?> handleItemNotAcceptable(Exception exception) {
+    @ExceptionHandler(DataConflict.class)
+    public final ResponseEntity<?> handleDataConflict(Exception exception) {
+        return ResponseHandler.generateResponse(HttpStatus.CONFLICT, false, exception.getMessage(), null);
+    }
+
+    @ExceptionHandler(DataNotAcceptable.class)
+    public final ResponseEntity<?> handleDataNotAcceptable(Exception exception) {
         return ResponseHandler.generateResponse(HttpStatus.NOT_ACCEPTABLE, false, exception.getMessage(), null);
     }
 
