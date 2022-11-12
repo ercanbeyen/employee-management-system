@@ -1,11 +1,11 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
-import com.ercanbeyen.employeemanagementsystem.dto.request.CreateRoleRequest;
-import com.ercanbeyen.employeemanagementsystem.dto.RoleDto;
+import com.ercanbeyen.employeemanagementsystem.dto.request.CreateJobTitleRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.JobTitleDto;
 
-import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateRoleRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateJobTitleRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
-import com.ercanbeyen.employeemanagementsystem.service.RoleService;
+import com.ercanbeyen.employeemanagementsystem.service.JobTitleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,41 +13,41 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/roles")
-public class RoleController {
-    private final RoleService roleService;
+@RequestMapping("/jobTitles")
+public class JobTitleController {
+    private final JobTitleService jobTitleService;
 
-    public RoleController(RoleService roleService) {
-        this.roleService = roleService;
+    public JobTitleController(JobTitleService jobTitleService) {
+        this.jobTitleService = jobTitleService;
     }
 
     @PostMapping
-    public ResponseEntity<Object> createRole(@RequestBody CreateRoleRequest createRoleRequest) {
-        RoleDto createdRole = roleService.createRole(createRoleRequest);
+    public ResponseEntity<Object> createRole(@RequestBody CreateJobTitleRequest createRoleRequest) {
+        JobTitleDto createdRole = jobTitleService.createJobTitle(createRoleRequest);
         return ResponseHandler.generateResponse(HttpStatus.CREATED, true, "Success", createdRole);
     }
 
     @GetMapping
     public ResponseEntity<Object> getRoles() {
-        List<RoleDto> roles = roleService.getRoles();
+        List<JobTitleDto> roles = jobTitleService.getJobTitles();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", roles);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getRole(@PathVariable("id") int id) {
-        RoleDto role = roleService.getRole(id);
+        JobTitleDto role = jobTitleService.getJobTitle(id);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", role);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateRole(@PathVariable("id") int id, @RequestBody UpdateRoleRequest updateRoleRequest) {
-        RoleDto updatedRole = roleService.updateRole(id, updateRoleRequest);
+    public ResponseEntity<Object> updateRole(@PathVariable("id") int id, @RequestBody UpdateJobTitleRequest updateRoleRequest) {
+        JobTitleDto updatedRole = jobTitleService.updateJobTitle(id, updateRoleRequest);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", updatedRole);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteRole(@PathVariable("id") int id) {
-        roleService.deleteRole(id);
+        jobTitleService.deleteJobTitle(id);
         return ResponseHandler.generateResponse(HttpStatus.NO_CONTENT, true, "Success", null);
     }
 }

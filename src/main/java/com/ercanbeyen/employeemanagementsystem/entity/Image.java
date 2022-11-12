@@ -15,8 +15,7 @@ import javax.persistence.*;
 public class Image extends BaseEntity {
 
     @Id
-    @SequenceGenerator(name = "image_seq_gen", sequenceName = "image_gen", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "image_gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String name;

@@ -42,7 +42,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final DepartmentService departmentService;
 
     @Autowired
-    private final RoleService roleService;
+    private final JobTitleService jobTitleService;
 
     @Autowired
     private final SalaryService salaryService;
@@ -60,9 +60,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setDepartment(department);
         log.debug("Department is assigned to the employee");
 
-        Role role = roleService.assignRole(employeeDto.getRole());
-        employee.setRole(role);
-        log.debug("Role is assigned to the employee");
+        JobTitle jobTitle = jobTitleService.assignJobTitle(employeeDto.getJobTitle());
+        employee.setJobTitle(jobTitle);
+        log.debug("Job Title is assigned to the employee");
 
         Salary salary = salaryService.createSalary(employeeDto.getSalary());
         employee.setSalary(salary);
@@ -89,7 +89,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             if (role != null) {
                 employees = employees
                         .stream()
-                        .filter(employee -> employee.getRole().getName().equals(role))
+                        .filter(employee -> employee.getJobTitle().getName().equals(role))
                         .collect(Collectors.toList());
 
                 log.debug("Employees are filtered by role called {}", role);
@@ -210,8 +210,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setDepartment(updatedDepartment);
         log.debug("Department is updated");
 
-        Role updatedRole = roleService.assignRole(request.getRole());
-        employee.setRole(updatedRole);
+        JobTitle updatedJobTitle = jobTitleService.assignJobTitle(request.getRole());
+        employee.setJobTitle(updatedJobTitle);
         log.debug("Role is updated");
 
         return modelMapper.map(employeeRepository.save(employee), EmployeeDto.class);
@@ -260,8 +260,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         // Remove bidirectional connections between employee&department and employee&role
         employee.getDepartment().removeEmployee(employee);
         employee.setDepartment(null);
-        employee.getRole().removeEmployee(employee);
-        employee.setRole(null);
+        employee.getJobTitle().removeEmployee(employee);
+        employee.setJobTitle(null);
         log.debug("Bidirectional connections are removed");
 
         employeeRepository.deleteById(id);

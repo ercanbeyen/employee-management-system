@@ -2,10 +2,8 @@ package com.ercanbeyen.employeemanagementsystem.config;
 
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
 
-import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.entity.Employee;
 
-import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
@@ -26,7 +24,7 @@ public class ModelMapperConfig {
 
         TypeMap<Employee, EmployeeDto> employeePropertyMapper = modelMapper.createTypeMap(Employee.class, EmployeeDto.class);
         employeePropertyMapper.addMappings(mapper -> mapper.map(src -> src.getDepartment().getName(), EmployeeDto::setDepartment));
-        employeePropertyMapper.addMappings(mapper -> mapper.map(src -> src.getRole().getName(), EmployeeDto::setRole));
+        employeePropertyMapper.addMappings(mapper -> mapper.map(src -> src.getJobTitle().getName(), EmployeeDto::setJobTitle));
         employeePropertyMapper.addMappings(mapper -> mapper.map(src -> src.getPhoto().getName(), EmployeeDto::setPhotoFile));
         //employeePropertyMapper.addMappings(mapper -> mapper.map(src -> src.getSalary().getAmount()))
 

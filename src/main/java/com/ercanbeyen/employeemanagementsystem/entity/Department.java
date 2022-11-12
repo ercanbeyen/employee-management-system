@@ -11,8 +11,7 @@ import java.util.List;
 public class Department extends BaseEntity {
 
     @Id
-    @SequenceGenerator(name = "department_seq_gen", sequenceName = "department_gen", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "department_gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(unique = true)

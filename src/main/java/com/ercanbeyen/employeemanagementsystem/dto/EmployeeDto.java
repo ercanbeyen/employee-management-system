@@ -28,7 +28,7 @@ public class EmployeeDto {
 
     private String department;
 
-    private String role;
+    private String jobTitle;
 
     private Salary salary;
 

@@ -8,16 +8,15 @@ import java.util.List;
 
 @Entity
 @Data
-public class Role extends BaseEntity {
+public class JobTitle extends BaseEntity {
     @Id
-    @SequenceGenerator(name = "role_seq_gen", sequenceName = "role_gen", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "jobTitle", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Employee> employees = new ArrayList<>();
 
 

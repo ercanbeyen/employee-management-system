@@ -13,8 +13,7 @@ import javax.validation.constraints.Min;
 public class Salary extends BaseEntity {
 
     @JsonIgnore
-    @SequenceGenerator(name = "salary_seq_gen", sequenceName = "salary_gen", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "salary_seq_gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
 

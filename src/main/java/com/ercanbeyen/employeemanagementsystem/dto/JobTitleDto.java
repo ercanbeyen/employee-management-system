@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class RoleDto {
+public class JobTitleDto {
     String name;
     List<String> emails = new ArrayList<>();
 }

@@ -11,8 +11,7 @@ import java.io.Serializable;
 @Entity
 public class Employee implements Serializable {
     @Id
-    @SequenceGenerator(name = "employee_seq_gen", sequenceName = "employee_gen", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_seq_gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(length = 100)
@@ -37,8 +36,8 @@ public class Employee implements Serializable {
     private Department department;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "roleId", referencedColumnName = "id")
-    private Role role;
+    @JoinColumn(name = "jobTitleId", referencedColumnName = "id")
+    private JobTitle jobTitle;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "salaryId", referencedColumnName = "id")

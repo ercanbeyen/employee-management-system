@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UpdateRoleRequest extends BaseRoleRequest {
+public class UpdateJobTitleRequest extends BaseJobTitleRequest {
 
 }

@@ -39,13 +39,10 @@ public class EmployeeServiceImplTest {
     private DepartmentServiceImpl departmentService;
 
     @Mock
-    private RoleServiceImpl roleService;
+    private JobTitleServiceImpl jobTitleService;
 
     @Mock
     private SalaryServiceImpl salaryService;
-
-    @Mock
-    private ImageServiceImpl imageService;
 
     private List<EmployeeDto> getMockEmployeesDtos() {
         String nationality = "Turkey";
@@ -66,7 +63,7 @@ public class EmployeeServiceImplTest {
         employee1.setEmail("test1@email.com");
         employee1.setNationality(nationality);
         employee1.setDepartment(department);
-        employee1.setRole(role);
+        employee1.setJobTitle(role);
         employee1.setSalary(salary1);
 
         id++;
@@ -83,7 +80,7 @@ public class EmployeeServiceImplTest {
         employee2.setEmail("test2@email.com");
         employee2.setNationality(nationality);
         employee2.setDepartment(department);
-        employee2.setRole(role);
+        employee2.setJobTitle(role);
         employee2.setSalary(salary2);
 
         return Arrays.asList(employee1, employee2);
@@ -102,9 +99,9 @@ public class EmployeeServiceImplTest {
         department.setName(departmentName);
 
 
-        Role role = new Role();
-        role.setId(id);
-        role.setName(roleName);
+        JobTitle jobTitle = new JobTitle();
+        jobTitle.setId(id);
+        jobTitle.setName(roleName);
 
         Salary salary1 = new Salary();
         salary1.setId(id);
@@ -118,7 +115,7 @@ public class EmployeeServiceImplTest {
         employee1.setEmail("test1@email.com");
         employee1.setNationality(nationality);
         employee1.setDepartment(department);
-        employee1.setRole(role);
+        employee1.setJobTitle(jobTitle);
         employee1.setSalary(salary1);
 
         id++;
@@ -135,7 +132,7 @@ public class EmployeeServiceImplTest {
         employee2.setEmail("test2@email.com");
         employee2.setNationality(nationality);
         employee2.setDepartment(department);
-        employee2.setRole(role);
+        employee2.setJobTitle(jobTitle);
         employee2.setSalary(salary2);
 
         return Arrays.asList(employee1, employee2);
@@ -157,7 +154,7 @@ public class EmployeeServiceImplTest {
     private UpdateOccupationRequest getUpdateOccupationRequest(EmployeeDto employeeDto) {
         UpdateOccupationRequest request = new UpdateOccupationRequest();
         request.setDepartment(employeeDto.getDepartment());
-        request.setRole(employeeDto.getRole());
+        request.setRole(employeeDto.getJobTitle());
         return request;
     }
 
@@ -169,7 +166,7 @@ public class EmployeeServiceImplTest {
 
         Mockito.when(modelMapper.map(employeeDto, Employee.class)).thenReturn(employee);
         Mockito.when(departmentService.assignDepartment(employeeDto.getDepartment())).thenReturn(employee.getDepartment());
-        Mockito.when(roleService.assignRole(employeeDto.getRole())).thenReturn(employee.getRole());
+        Mockito.when(jobTitleService.assignJobTitle(employeeDto.getJobTitle())).thenReturn(employee.getJobTitle());
         Mockito.when(salaryService.createSalary(employeeDto.getSalary())).thenReturn(employee.getSalary());
         Mockito.when(employeeRepository.save(employee)).thenReturn(employee);
         Mockito.when(modelMapper.map(employee, EmployeeDto.class)).thenReturn(employeeDto);
@@ -180,7 +177,7 @@ public class EmployeeServiceImplTest {
 
         Mockito.verify(modelMapper).map(employeeDto, Employee.class);
         Mockito.verify(departmentService).assignDepartment(employeeDto.getDepartment());
-        Mockito.verify(roleService).assignRole(employeeDto.getRole());
+        Mockito.verify(jobTitleService).assignJobTitle(employeeDto.getJobTitle());
         Mockito.verify(salaryService).createSalary(employeeDto.getSalary());
         Mockito.verify(employeeRepository).save(employee);
         Mockito.verify(modelMapper).map(employee, EmployeeDto.class);
@@ -241,19 +238,19 @@ public class EmployeeServiceImplTest {
         int employeeIndex = 1;
         Integer limit = null;
 
-        Role requestedRole = new Role();
-        requestedRole.setId(2);
-        requestedRole.setName(role);
+        JobTitle requestedJobTitle = new JobTitle();
+        requestedJobTitle.setId(2);
+        requestedJobTitle.setName(role);
 
         List<EmployeeDto> employeeDtos = getMockEmployeesDtos();
 
         EmployeeDto employeeDto = employeeDtos.get(employeeIndex);
-        employeeDto.setRole(role);
+        employeeDto.setJobTitle(role);
 
         List<Employee> employees = getMockEmployees();
 
         Employee employee = employees.get(employeeIndex);
-        employee.setRole(requestedRole);
+        employee.setJobTitle(requestedJobTitle);
 
         List<Employee> requestedEmployees = List.of(employee);
         List<EmployeeDto> requestedEmployeeDtos = List.of(employeeDto);
@@ -331,7 +328,7 @@ public class EmployeeServiceImplTest {
 
         Mockito.when(employeeRepository.findById(id)).thenReturn(optionalEmployee);
         Mockito.when(departmentService.assignDepartment(request.getDepartment())).thenReturn(employee.getDepartment());
-        Mockito.when(roleService.assignRole(employeeDto.getRole())).thenReturn(employee.getRole());
+        Mockito.when(jobTitleService.assignJobTitle(employeeDto.getJobTitle())).thenReturn(employee.getJobTitle());
         Mockito.when(employeeRepository.save(employee)).thenReturn(employee);
         Mockito.when(modelMapper.map(employee, EmployeeDto.class)).thenReturn(employeeDto);
 
@@ -341,7 +338,7 @@ public class EmployeeServiceImplTest {
 
         Mockito.verify(employeeRepository).findById(id);
         Mockito.verify(departmentService).assignDepartment(request.getDepartment());
-        Mockito.verify(roleService).assignRole(employeeDto.getRole());
+        Mockito.verify(jobTitleService).assignJobTitle(employeeDto.getJobTitle());
         Mockito.verify(employeeRepository).save(employee);
         Mockito.verify(modelMapper).map(employee, EmployeeDto.class);
     }
