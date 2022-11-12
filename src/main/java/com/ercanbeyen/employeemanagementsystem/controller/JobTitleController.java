@@ -1,9 +1,8 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
-import com.ercanbeyen.employeemanagementsystem.dto.request.CreateJobTitleRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.JobTitleRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.JobTitleDto;
 
-import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateJobTitleRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.service.JobTitleService;
 import org.springframework.http.HttpStatus;
@@ -22,8 +21,8 @@ public class JobTitleController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createRole(@RequestBody CreateJobTitleRequest createRoleRequest) {
-        JobTitleDto createdRole = jobTitleService.createJobTitle(createRoleRequest);
+    public ResponseEntity<Object> createRole(@RequestBody JobTitleRequest request) {
+        JobTitleDto createdRole = jobTitleService.createJobTitle(request);
         return ResponseHandler.generateResponse(HttpStatus.CREATED, true, "Success", createdRole);
     }
 
@@ -40,8 +39,8 @@ public class JobTitleController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateRole(@PathVariable("id") int id, @RequestBody UpdateJobTitleRequest updateRoleRequest) {
-        JobTitleDto updatedRole = jobTitleService.updateJobTitle(id, updateRoleRequest);
+    public ResponseEntity<Object> updateRole(@PathVariable("id") int id, @RequestBody JobTitleRequest request) {
+        JobTitleDto updatedRole = jobTitleService.updateJobTitle(id, request);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", updatedRole);
     }
 

@@ -1,8 +1,8 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
-import com.ercanbeyen.employeemanagementsystem.dto.request.CreateDepartmentRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.DepartmentRequest;
+
 import com.ercanbeyen.employeemanagementsystem.dto.DepartmentDto;
-import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateDepartmentRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.Department;
 
 import com.ercanbeyen.employeemanagementsystem.exception.DataConflict;
@@ -25,9 +25,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentRepository departmentRepository;
 
     @Override
-    public DepartmentDto createDepartment(CreateDepartmentRequest createDepartmentRequest) {
+    public DepartmentDto createDepartment(DepartmentRequest request) {
         Department department = new Department();
-        department.setName(createDepartmentRequest.getName());
+        department.setName(request.getName());
         department.setLatestChangeAt(new Date());
         department.setLatestChangeBy("Admin");
 
@@ -35,8 +35,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public DepartmentDto updateDepartment(int id, UpdateDepartmentRequest updateDepartmentRequest) {
-        String departmentName = updateDepartmentRequest.getName();
+    public DepartmentDto updateDepartment(int id, DepartmentRequest request) {
+        String departmentName = request.getName();
 
         Department departmentInDb = departmentRepository.findById(id).orElseThrow(
                 () -> new DataNotFound("Department called " + departmentName + " is not found")

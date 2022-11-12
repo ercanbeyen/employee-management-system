@@ -1,8 +1,9 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
-import com.ercanbeyen.employeemanagementsystem.dto.request.CreateDepartmentRequest;
+
 import com.ercanbeyen.employeemanagementsystem.dto.DepartmentDto;
-import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateDepartmentRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.DepartmentRequest;
+
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.service.DepartmentService;
 import org.springframework.http.HttpStatus;
@@ -21,8 +22,8 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createDepartment(@RequestBody CreateDepartmentRequest createDepartmentRequest) {
-        DepartmentDto createdDepartment = departmentService.createDepartment(createDepartmentRequest);
+    public ResponseEntity<Object> createDepartment(@RequestBody DepartmentRequest request) {
+        DepartmentDto createdDepartment = departmentService.createDepartment(request);
         return ResponseHandler.generateResponse(HttpStatus.CREATED, true, "Success", createdDepartment);
     }
 
@@ -40,8 +41,8 @@ public class DepartmentController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateDepartment(@PathVariable("id") int id, @RequestBody UpdateDepartmentRequest updateDepartmentRequest) {
-        DepartmentDto updatedDepartment = departmentService.updateDepartment(id, updateDepartmentRequest);
+    public ResponseEntity<Object> updateDepartment(@PathVariable("id") int id, @RequestBody DepartmentRequest request) {
+        DepartmentDto updatedDepartment = departmentService.updateDepartment(id, request);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", updatedDepartment);
     }
 

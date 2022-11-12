@@ -1,8 +1,8 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
-import com.ercanbeyen.employeemanagementsystem.dto.request.CreateJobTitleRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.JobTitleRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.JobTitleDto;
-import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateJobTitleRequest;
+
 import com.ercanbeyen.employeemanagementsystem.entity.JobTitle;
 import com.ercanbeyen.employeemanagementsystem.exception.DataConflict;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
@@ -25,17 +25,17 @@ public class JobTitleServiceImpl implements JobTitleService {
     private final JobTitleRepository jobTitleRepository;
 
     @Override
-    public JobTitleDto createJobTitle(CreateJobTitleRequest createRoleRequest) {
+    public JobTitleDto createJobTitle(JobTitleRequest request) {
         JobTitle jobTitle = new JobTitle();
-        jobTitle.setName(createRoleRequest.getName());
+        jobTitle.setName(request.getName());
         jobTitle.setLatestChangeAt(new Date());
         jobTitle.setLatestChangeBy("Admin");
         return convertRoleToRoleDto(jobTitleRepository.save(jobTitle));
     }
 
     @Override
-    public JobTitleDto updateJobTitle(int id, UpdateJobTitleRequest updateRoleRequest) {
-        String roleName = updateRoleRequest.getName();
+    public JobTitleDto updateJobTitle(int id, JobTitleRequest request) {
+        String roleName = request.getName();
 
         JobTitle jobTitleInDb = jobTitleRepository.findById(id).orElseThrow(
                 () -> new DataNotFound("Role " + roleName + " is not found")

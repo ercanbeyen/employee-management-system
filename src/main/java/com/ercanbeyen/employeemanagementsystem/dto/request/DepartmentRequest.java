@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BaseJobTitleRequest {
-    @NotBlank(message = "Role name should not be blank")
+public class DepartmentRequest {
+    @NotBlank(message = "Department name should not be empty")
     String name;
 }
