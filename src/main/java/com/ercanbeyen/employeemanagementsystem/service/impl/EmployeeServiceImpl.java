@@ -167,7 +167,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setFirstName(request.getFirstName());
         employee.setLastName(request.getLastName());
         employee.setEmail(request.getEmail());
-        employee.setContactNumber(employee.getContactNumber());
+        employee.setPhoneNumber(employee.getPhoneNumber());
         employee.setNationality(request.getNationality());
         employee.setGender(request.getGender());
         log.debug("Employee details are updated");

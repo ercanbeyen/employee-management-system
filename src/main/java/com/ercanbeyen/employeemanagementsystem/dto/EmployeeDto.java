@@ -20,7 +20,7 @@ public class EmployeeDto {
     @Email(message = "Invalid email address")
     private String email;
 
-    private String contactNumber;
+    private String phoneNumber;
 
     private String nationality;
 

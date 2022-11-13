@@ -144,7 +144,7 @@ public class EmployeeServiceImplTest {
         request.setFirstName(employeeDto.getFirstName());
         request.setLastName(employeeDto.getLastName());
         request.setEmail(employeeDto.getEmail());
-        request.setContactNumber(employeeDto.getContactNumber());
+        request.setContactNumber(employeeDto.getPhoneNumber());
         request.setNationality(employeeDto.getNationality());
         request.setGender(employeeDto.getGender());
 

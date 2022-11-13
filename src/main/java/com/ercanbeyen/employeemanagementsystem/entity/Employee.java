@@ -23,7 +23,8 @@ public class Employee implements Serializable {
     @Column(unique = true)
     private String email;
 
-    private String contactNumber;
+    @Column(length = 20)
+    private String phoneNumber;
 
     private String nationality;
 

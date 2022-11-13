@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### JP Buddy ###
+.jpb/
