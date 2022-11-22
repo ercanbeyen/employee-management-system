@@ -28,6 +28,7 @@ public class Employee implements Serializable {
 
     private String nationality;
 
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     private String address;
@@ -42,6 +43,7 @@ public class Employee implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "salaryId", referencedColumnName = "id")
+
     private Salary salary;
 
     @OneToOne(cascade = CascadeType.ALL)

@@ -21,5 +21,6 @@ public class Salary extends BaseEntity {
     @Max(100)
     private Double amount;
 
+    @Enumerated(EnumType.STRING)
     private Currency currency;
 }
