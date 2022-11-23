@@ -4,6 +4,7 @@ import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.entity.Employee;
 import com.ercanbeyen.employeemanagementsystem.util.CustomPage;
@@ -21,6 +22,7 @@ public interface EmployeeService {
     EmployeeDto getEmployee(int id);
     EmployeeDto updateEmployeeDetails(int id, UpdateEmployeeDetailsRequest request);
     EmployeeDto updateSalary(int id, SalaryDto salaryDto);
+    List<EmployeeDto> updateSalaries(UpdateSalaryRequest request);
     EmployeeDto updateOccupation(int id, UpdateOccupationRequest request);
     String uploadImage(int id, MultipartFile file) throws IOException;
     byte[] downloadImage(int id, String fileName);

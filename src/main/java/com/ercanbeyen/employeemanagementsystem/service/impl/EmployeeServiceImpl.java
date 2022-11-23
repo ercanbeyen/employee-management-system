@@ -3,6 +3,7 @@ package com.ercanbeyen.employeemanagementsystem.service.impl;
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
@@ -195,6 +196,29 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.debug("Employee salary update operation is completed");
 
         return modelMapper.map(updatedEmployee, EmployeeDto.class);
+    }
+
+    @Override
+    public List<EmployeeDto> updateSalaries(UpdateSalaryRequest request) {
+        List<Employee> employees = new ArrayList<>();
+        List<String> emails = request.getEmails();
+        List<Salary> salaries = new ArrayList<>();
+
+        /* Get Employees according to specified emails */
+        for (String email : emails) {
+            Employee employee = employeeRepository
+                    .findByEmail(email)
+                    .orElseThrow(
+                            () -> new DataNotFound("Email " + email + " is not found")
+                    );
+
+            employees.add(employee);
+            salaries.add(employee.getSalary());
+        }
+
+        salaryService.updateSalaries(salaries, request.getPercentage());
+
+        return modelMapper.map(employees, new TypeToken<List<EmployeeDto>>(){}.getType());
     }
 
     @Transactional

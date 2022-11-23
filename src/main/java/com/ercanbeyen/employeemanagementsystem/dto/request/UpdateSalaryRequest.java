@@ -6,10 +6,11 @@ import lombok.Data;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 public class UpdateSalaryRequest {
-    Currency currency;
+    List<String> emails = null;
 
     @Min(0)
     @Max(100)

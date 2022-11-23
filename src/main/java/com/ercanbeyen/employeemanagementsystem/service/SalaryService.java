@@ -11,5 +11,5 @@ public interface SalaryService {
     SalaryDto getSalary(int id);
     List<SalaryDto> getSalaries();
     Salary updateSalary(int id, SalaryDto salary);
-    List<SalaryDto> updateSalaries(UpdateSalaryRequest request);
+    void updateSalaries(List<Salary> salaries, double percentage);
 }

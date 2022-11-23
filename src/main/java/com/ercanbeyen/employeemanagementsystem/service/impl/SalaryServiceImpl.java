@@ -41,8 +41,10 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Override
     public SalaryDto getSalary(int id) {
-        Salary salary = salaryRepository.findById(id).orElseThrow(
-                () -> new DataNotFound("Salary with id " + id + " is not found")
+        Salary salary = salaryRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound("Salary with id " + id + " is not found")
         );
 
         return modelMapper.map(salary, SalaryDto.class);
@@ -56,8 +58,10 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Override
     public Salary updateSalary(int id, SalaryDto salaryDto) {
-        Salary salaryInDb = salaryRepository.findById(id).orElseThrow(
-                () -> new DataNotFound("Salary with id " + id + " is not found")
+        Salary salaryInDb = salaryRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound("Salary with id " + id + " is not found")
         );
 
         salaryInDb.setCurrency(salaryDto.getCurrency());
@@ -69,24 +73,24 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
-    public List<SalaryDto> updateSalaries(UpdateSalaryRequest request) {
-        List<Salary> salaries = salaryRepository.findAll();
-
-        if (request.getCurrency() != null) {
-            salaries = salaries
-                    .stream()
-                    .filter(salary -> salary.getCurrency() == request.getCurrency())
-                    .collect(Collectors.toList());
-        }
-
+    public void updateSalaries(List<Salary> salaries, double percentage) {
+        /* Check the all the salaries are still present */
         salaries.forEach(
                 salary -> {
-                    double newAmount = SalaryUtils.updateSalaryAccordingToPercentage(salary.getAmount(), request.getPercentage());
+                    if (salary == null) {
+                        throw new DataNotFound("Salary is not found");
+                    }
+                }
+        );
+
+        /* Update the salaries */
+        salaries.forEach(
+                salary -> {
+                    double newAmount = SalaryUtils.updateSalaryAccordingToPercentage(salary.getAmount(), percentage);
                     salary.setAmount(newAmount);
-                });
+                }
+        );
 
         salaryRepository.saveAll(salaries);
-
-        return modelMapper.map(salaries, new TypeToken<List<SalaryDto>>(){}.getType());
     }
 }

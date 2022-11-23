@@ -5,6 +5,7 @@ import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
@@ -35,7 +36,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createEmployee(@RequestBody @Valid EmployeeDto employee) {
+    public ResponseEntity<Object> createEmployee(@Valid @RequestBody EmployeeDto employee) {
         EmployeeDto createdEmployee = employeeService.createEmployee(employee);
         return ResponseHandler.generateResponse(HttpStatus.CREATED, true, "Success", createdEmployee);
     }
@@ -80,6 +81,12 @@ public class EmployeeController {
     public ResponseEntity<Object> updateSalary(@PathVariable("id") int id, @Valid @RequestBody SalaryDto salaryDto) {
         EmployeeDto employeeDto = employeeService.updateSalary(id, salaryDto);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", employeeDto);
+    }
+
+    @PutMapping("/salaries")
+    public ResponseEntity<Object> updateSalaries(@Valid @RequestBody UpdateSalaryRequest request) {
+        List<EmployeeDto> employeeDtos = employeeService.updateSalaries(request);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", employeeDtos);
     }
 
     @GetMapping("/pagination")

@@ -39,10 +39,4 @@ public class SalaryController {
         List<SalaryDto> salaryDtos = salaryService.getSalaries();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", salaryDtos);
     }
-
-    @PutMapping
-    public ResponseEntity<Object> updateSalaries(@Valid @RequestBody UpdateSalaryRequest request) {
-        List<SalaryDto> salaryDtos = salaryService.updateSalaries(request);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", salaryDtos);
-    }
 }
