@@ -18,7 +18,6 @@ public class Salary extends BaseEntity {
     private int id;
 
     @Min(0)
-    @Max(100)
     private Double amount;
 
     @Enumerated(EnumType.STRING)

@@ -43,7 +43,6 @@ public class Employee implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "salaryId", referencedColumnName = "id")
-
     private Salary salary;
 
     @OneToOne(cascade = CascadeType.ALL)

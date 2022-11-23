@@ -1,4 +1,4 @@
-package com.ercanbeyen.employeemanagementsystem.dto;
+package com.ercanbeyen.employeemanagementsystem.dto.request;
 
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
 import lombok.Data;
@@ -8,10 +8,11 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class SalaryDto {
+public class UpdateSalaryRequest {
     Currency currency;
 
     @Min(0)
-    @NotNull(message = "Please enter an amount")
-    Double amount;
+    @Max(100)
+    @NotNull(message = "Please enter a percentage")
+    Double percentage;
 }

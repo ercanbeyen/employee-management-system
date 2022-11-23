@@ -1,11 +1,13 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.repository.SalaryRepository;
 import com.ercanbeyen.employeemanagementsystem.service.SalaryService;
+import com.ercanbeyen.employeemanagementsystem.util.SalaryUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -63,5 +66,27 @@ public class SalaryServiceImpl implements SalaryService {
         salaryInDb.setLatestChangeBy("Admin");
 
         return salaryRepository.save(salaryInDb);
+    }
+
+    @Override
+    public List<SalaryDto> updateSalaries(UpdateSalaryRequest request) {
+        List<Salary> salaries = salaryRepository.findAll();
+
+        if (request.getCurrency() != null) {
+            salaries = salaries
+                    .stream()
+                    .filter(salary -> salary.getCurrency() == request.getCurrency())
+                    .collect(Collectors.toList());
+        }
+
+        salaries.forEach(
+                salary -> {
+                    double newAmount = SalaryUtils.updateSalaryAccordingToPercentage(salary.getAmount(), request.getPercentage());
+                    salary.setAmount(newAmount);
+                });
+
+        salaryRepository.saveAll(salaries);
+
+        return modelMapper.map(salaries, new TypeToken<List<SalaryDto>>(){}.getType());
     }
 }
