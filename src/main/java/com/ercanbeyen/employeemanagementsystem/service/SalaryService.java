@@ -10,6 +10,6 @@ public interface SalaryService {
     Salary createSalary(Salary salary);
     SalaryDto getSalary(int id);
     List<SalaryDto> getSalaries();
-    Salary updateSalary(int id, SalaryDto salary);
+    void updateSalary(int id, SalaryDto salary);
     void updateSalaries(List<Salary> salaries, double percentage);
 }

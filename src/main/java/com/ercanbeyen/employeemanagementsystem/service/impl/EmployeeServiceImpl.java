@@ -179,23 +179,20 @@ public class EmployeeServiceImpl implements EmployeeService {
         return modelMapper.map(updatedEmployee, EmployeeDto.class);
     }
 
-    @Transactional
     @Override
     public EmployeeDto updateSalary(int id, SalaryDto salaryDto) {
         log.debug("Employee salary update operation is started");
 
-        Employee employee = employeeRepository.findById(id).orElseThrow(
-                () -> new DataNotFound("Employee with id " + id + " is not found")
+        Employee employee = employeeRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound("Employee with id " + id + " is not found")
         );
 
-        Salary updatedSalary = salaryService.updateSalary(employee.getSalary().getId(), salaryDto);
-        employee.setSalary(updatedSalary);
+        salaryService.updateSalary(employee.getSalary().getId(), salaryDto);
         log.debug("Salary of the employee with id {} is updated; currency: {} and amount: {}", employee.getId(), salaryDto.getCurrency(), salaryDto.getAmount());
 
-        Employee updatedEmployee = employeeRepository.save(employee);
-        log.debug("Employee salary update operation is completed");
-
-        return modelMapper.map(updatedEmployee, EmployeeDto.class);
+        return modelMapper.map(employee, EmployeeDto.class);
     }
 
     @Override

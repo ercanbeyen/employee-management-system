@@ -15,17 +15,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/salaries")
 public class SalaryController {
-
     private final SalaryService salaryService;
 
     public SalaryController(SalaryService salaryService) {
         this.salaryService = salaryService;
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> updateSalary(int id, @Valid @RequestBody SalaryDto salaryDto) {
-        Salary updatedSalary = salaryService.updateSalary(id, salaryDto);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", updatedSalary);
     }
 
     @GetMapping("/{id}")

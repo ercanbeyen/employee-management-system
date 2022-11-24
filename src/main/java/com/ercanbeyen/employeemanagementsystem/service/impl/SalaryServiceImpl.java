@@ -57,7 +57,7 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
-    public Salary updateSalary(int id, SalaryDto salaryDto) {
+    public void updateSalary(int id, SalaryDto salaryDto) {
         Salary salaryInDb = salaryRepository
                 .findById(id)
                 .orElseThrow(
@@ -69,7 +69,7 @@ public class SalaryServiceImpl implements SalaryService {
         salaryInDb.setLatestChangeAt(new Date());
         salaryInDb.setLatestChangeBy("Admin");
 
-        return salaryRepository.save(salaryInDb);
+        salaryRepository.save(salaryInDb);
     }
 
     @Override

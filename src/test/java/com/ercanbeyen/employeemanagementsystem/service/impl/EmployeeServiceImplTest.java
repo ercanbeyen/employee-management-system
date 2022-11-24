@@ -362,8 +362,6 @@ public class EmployeeServiceImplTest {
         salaryDto.setCurrency(salary.getCurrency());
 
         Mockito.when(employeeRepository.findById(id)).thenReturn(optionalEmployee);
-        Mockito.when(salaryService.updateSalary(employee.getSalary().getId(), salaryDto)).thenReturn(employee.getSalary());
-        Mockito.when(employeeRepository.save(employee)).thenReturn(employee);
         Mockito.when(modelMapper.map(employee, EmployeeDto.class)).thenReturn(employeeDto);
 
         EmployeeDto result = employeeService.updateSalary(id, salaryDto);
@@ -372,7 +370,6 @@ public class EmployeeServiceImplTest {
 
         Mockito.verify(employeeRepository).findById(id);
         Mockito.verify(salaryService).updateSalary(employee.getSalary().getId(), salaryDto);
-        Mockito.verify(employeeRepository).save(employee);
         Mockito.verify(modelMapper).map(employee, EmployeeDto.class);
     }
 
