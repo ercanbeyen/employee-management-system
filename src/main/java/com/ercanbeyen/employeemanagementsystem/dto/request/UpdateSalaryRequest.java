@@ -1,6 +1,5 @@
 package com.ercanbeyen.employeemanagementsystem.dto.request;
 
-import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
 import lombok.Data;
 
 import javax.validation.constraints.Max;
@@ -12,7 +11,7 @@ import java.util.List;
 public class UpdateSalaryRequest {
     List<String> emails = null;
 
-    @Min(0)
+    @Min(-100)
     @Max(100)
     @NotNull(message = "Please enter a percentage")
     Double percentage;
