@@ -14,4 +14,5 @@ public interface JobTitleService {
     void deleteJobTitle(int id);
     List<JobTitleDto> getJobTitles();
     JobTitleDto getJobTitle(int id);
+    List<JobTitle> getJobTitlesForStatistics();
 }

@@ -14,4 +14,5 @@ public interface DepartmentService {
     void deleteDepartment(int id);
     List<DepartmentDto> getDepartments();
     DepartmentDto getDepartment(int id);
+    List<Department> getDepartmentsForStatistics();
 }

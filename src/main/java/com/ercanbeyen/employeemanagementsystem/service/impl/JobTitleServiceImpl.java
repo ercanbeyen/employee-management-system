@@ -87,6 +87,11 @@ public class JobTitleServiceImpl implements JobTitleService {
         return convertRoleToRoleDto(jobTitle);
     }
 
+    @Override
+    public List<JobTitle> getJobTitlesForStatistics() {
+        return jobTitleRepository.findAll();
+    }
+
     List<JobTitleDto> convertRolesToRoleDtos(List<JobTitle> jobTitles) {
         List<JobTitleDto> jobTitleDtos = new ArrayList<>();
 

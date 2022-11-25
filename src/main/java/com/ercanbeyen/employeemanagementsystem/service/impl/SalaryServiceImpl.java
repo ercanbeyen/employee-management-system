@@ -1,7 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
-import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
@@ -92,5 +91,10 @@ public class SalaryServiceImpl implements SalaryService {
         );
 
         salaryRepository.saveAll(salaries);
+    }
+
+    @Override
+    public List<Salary> getSalariesForStatistics() {
+        return salaryRepository.findAll();
     }
 }

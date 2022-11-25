@@ -25,4 +25,7 @@ public class Department extends BaseEntity {
         employees.remove(employee);
     }
 
+    public int getSize() {
+        return employees.size();
+    }
 }

@@ -89,6 +89,11 @@ public class DepartmentServiceImpl implements DepartmentService {
         return convertDepartmentToDepartmentDto(department);
     }
 
+    @Override
+    public List<Department> getDepartmentsForStatistics() {
+        return departmentRepository.findAll();
+    }
+
     List<DepartmentDto> convertDepartmentToDepartmentDtos(List<Department> departments) {
         List<DepartmentDto> departmentDtos = new ArrayList<>();
 
