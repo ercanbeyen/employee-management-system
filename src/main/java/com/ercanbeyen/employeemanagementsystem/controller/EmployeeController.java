@@ -1,13 +1,12 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
-import com.ercanbeyen.employeemanagementsystem.dto.DepartmentDto;
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
-import com.ercanbeyen.employeemanagementsystem.entity.Salary;
+
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.entity.Employee;
 import com.ercanbeyen.employeemanagementsystem.util.CustomPage;

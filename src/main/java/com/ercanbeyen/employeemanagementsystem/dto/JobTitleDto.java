@@ -1,12 +1,5 @@
 package com.ercanbeyen.employeemanagementsystem.dto;
 
-import lombok.Data;
+public class JobTitleDto extends ProfessionDto {
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Data
-public class JobTitleDto {
-    String name;
-    List<String> emails = new ArrayList<>();
 }

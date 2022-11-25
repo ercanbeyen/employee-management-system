@@ -26,13 +26,6 @@ public class ModelMapperConfig {
         employeePropertyMapper.addMappings(mapper -> mapper.map(src -> src.getDepartment().getName(), EmployeeDto::setDepartment));
         employeePropertyMapper.addMappings(mapper -> mapper.map(src -> src.getJobTitle().getName(), EmployeeDto::setJobTitle));
         employeePropertyMapper.addMappings(mapper -> mapper.map(src -> src.getPhoto().getName(), EmployeeDto::setPhotoFile));
-        //employeePropertyMapper.addMappings(mapper -> mapper.map(src -> src.getSalary().getAmount()))
-
-        /*
-        TypeMap<Salary, SalaryDto> salaryPropertyMapper = modelMapper.createTypeMap(Salary.class, SalaryDto.class);
-        salaryPropertyMapper.addMappings(mapper -> mapper.map(Salary::getAmount, SalaryDto::setAmount));
-        salaryPropertyMapper.addMappings(mapper -> mapper.map(Salary::getCurrency, SalaryDto::setCurrency));
-         */
 
         return modelMapper;
     }
