@@ -1,6 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.dto.request;
 
-import com.ercanbeyen.employeemanagementsystem.entity.enums.Gender;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Gender;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

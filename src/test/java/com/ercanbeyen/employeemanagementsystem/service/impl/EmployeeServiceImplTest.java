@@ -3,11 +3,11 @@ package com.ercanbeyen.employeemanagementsystem.service.impl;
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
-import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateProfessionRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
-import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
-import com.ercanbeyen.employeemanagementsystem.entity.enums.Role;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.repository.EmployeeRepository;
@@ -158,8 +158,8 @@ public class EmployeeServiceImplTest {
         return request;
     }
 
-    private UpdateOccupationRequest getUpdateOccupationRequest(EmployeeDto employeeDto) {
-        UpdateOccupationRequest request = new UpdateOccupationRequest();
+    private UpdateProfessionRequest getUpdateOccupationRequest(EmployeeDto employeeDto) {
+        UpdateProfessionRequest request = new UpdateProfessionRequest();
         request.setDepartment(employeeDto.getDepartment());
         request.setRole(employeeDto.getJobTitle());
         return request;
@@ -331,7 +331,7 @@ public class EmployeeServiceImplTest {
         EmployeeDto employeeDto = getMockEmployeesDtos().get(0);
         Employee employee = getMockEmployees().get(0);
 
-        UpdateOccupationRequest request = getUpdateOccupationRequest(employeeDto);
+        UpdateProfessionRequest request = getUpdateOccupationRequest(employeeDto);
         Optional<Employee> optionalEmployee = Optional.of(employee);
         int id = 1;
 
@@ -341,7 +341,7 @@ public class EmployeeServiceImplTest {
         Mockito.when(employeeRepository.save(employee)).thenReturn(employee);
         Mockito.when(modelMapper.map(employee, EmployeeDto.class)).thenReturn(employeeDto);
 
-        EmployeeDto result = employeeService.updateOccupation(id, request);
+        EmployeeDto result = employeeService.updateProfession(id, request);
 
         assertEquals(employeeDto, result);
 
@@ -358,7 +358,7 @@ public class EmployeeServiceImplTest {
         EmployeeDto employeeDto = getMockEmployeesDtos().get(0);
         Employee employee = getMockEmployees().get(0);
 
-        UpdateOccupationRequest request = getUpdateOccupationRequest(employeeDto);
+        UpdateProfessionRequest request = getUpdateOccupationRequest(employeeDto);
         Optional<Employee> optionalEmployee = Optional.of(employee);
         int id = 1;
         double amount = 5;

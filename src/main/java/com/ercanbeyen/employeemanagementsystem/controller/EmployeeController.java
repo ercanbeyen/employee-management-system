@@ -1,15 +1,16 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
+import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
-import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateProfessionRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 
-import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.entity.Employee;
-import com.ercanbeyen.employeemanagementsystem.entity.enums.Role;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
 import com.ercanbeyen.employeemanagementsystem.util.CustomPage;
 import com.ercanbeyen.employeemanagementsystem.service.EmployeeService;
 import org.springframework.data.domain.Page;
@@ -38,7 +39,7 @@ public class EmployeeController {
     @PostMapping
     public ResponseEntity<Object> createEmployee(@Valid @RequestBody EmployeeDto employee) {
         EmployeeDto createdEmployee = employeeService.createEmployee(employee);
-        return ResponseHandler.generateResponse(HttpStatus.CREATED, true, "Success", createdEmployee);
+        return ResponseHandler.generateResponse(HttpStatus.CREATED, true, Messages.SUCCESS, createdEmployee);
     }
 
     @GetMapping("/filter")
@@ -49,7 +50,7 @@ public class EmployeeController {
             @RequestParam(required = false) Currency currency,
             @RequestParam(required = false) Integer limit) {
         List<EmployeeDto> employees = employeeService.filterEmployees(role, department, jobTitle, currency, limit);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", employees);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, employees);
     }
 
     @GetMapping("/search")
@@ -57,73 +58,73 @@ public class EmployeeController {
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName) {
         List<EmployeeDto> employees = employeeService.searchEmployees(firstName, lastName);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", employees);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, employees);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getEmployee(@PathVariable("id") int id) {
         EmployeeDto employee = employeeService.getEmployee(id);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", employee);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, employee);
     }
 
     @PutMapping("/{id}/details")
     public ResponseEntity<Object> updateEmployeeDetails(@PathVariable("id") int id, @Valid @RequestBody UpdateEmployeeDetailsRequest request) {
         EmployeeDto updatedEmployee = employeeService.updateEmployeeDetails(id, request);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", updatedEmployee);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, updatedEmployee);
     }
 
     @PutMapping("/{id}/occupation")
-    public ResponseEntity<Object> updateOccupation(@PathVariable("id") int id, @Valid @RequestBody UpdateOccupationRequest request) {
-        EmployeeDto employeeDto = employeeService.updateOccupation(id, request);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", employeeDto);
+    public ResponseEntity<Object> updateOccupation(@PathVariable("id") int id, @Valid @RequestBody UpdateProfessionRequest request) {
+        EmployeeDto employeeDto = employeeService.updateProfession(id, request);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, employeeDto);
     }
 
     @PutMapping("/{id}/salary")
     public ResponseEntity<Object> updateSalary(@PathVariable("id") int id, @Valid @RequestBody SalaryDto salaryDto) {
         EmployeeDto employeeDto = employeeService.updateSalary(id, salaryDto);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", employeeDto);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, employeeDto);
     }
 
     @PutMapping("/salaries")
     public ResponseEntity<Object> updateSalaries(@Valid @RequestBody UpdateSalaryRequest request) {
         List<EmployeeDto> employeeDtos = employeeService.updateSalaries(request);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", employeeDtos);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, employeeDtos);
     }
 
     @GetMapping("/pagination")
     public ResponseEntity<Object> pagination(@RequestParam int currentPage, @RequestParam int pageSize) {
         Page<Employee> page = employeeService.pagination(currentPage, pageSize);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", page);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, page);
     }
 
     @GetMapping("/pagination/v1")
     public ResponseEntity<Object> pagination(Pageable pageable) {
         Page<Employee> page = employeeService.pagination(pageable);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", page);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, page);
     }
 
     @GetMapping("/pagination/v2")
     public ResponseEntity<Object> slice(Pageable pageable) {
         Slice<Employee> slice = employeeService.slice(pageable);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", slice);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, slice);
     }
 
     @GetMapping("/pagination/v3")
     public ResponseEntity<Object> customPagination(Pageable pageable) {
         CustomPage<EmployeeDto> customPage = employeeService.customPagination(pageable);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", customPage);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, customPage);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteEmployee(@PathVariable("id") int id) {
         employeeService.deleteEmployee(id);
-        return ResponseHandler.generateResponse(HttpStatus.NO_CONTENT, true, "Success", null);
+        return ResponseHandler.generateResponse(HttpStatus.NO_CONTENT, true, Messages.SUCCESS, null);
     }
 
     @PostMapping("/{id}")
     public ResponseEntity<Object> uploadPhoto(@PathVariable("id") int id, @RequestParam("image") MultipartFile file) throws IOException {
         String uploadMessage = employeeService.uploadImage(id, file);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", uploadMessage);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, uploadMessage);
     }
 
     @GetMapping("/{id}/{fileName}")

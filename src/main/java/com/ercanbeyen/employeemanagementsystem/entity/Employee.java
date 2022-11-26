@@ -1,7 +1,7 @@
 package com.ercanbeyen.employeemanagementsystem.entity;
 
-import com.ercanbeyen.employeemanagementsystem.entity.enums.Gender;
-import com.ercanbeyen.employeemanagementsystem.entity.enums.Role;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Gender;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
 import lombok.Data;
 
 import javax.persistence.*;

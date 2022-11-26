@@ -4,7 +4,7 @@ import com.ercanbeyen.employeemanagementsystem.dto.response.Statistics;
 import com.ercanbeyen.employeemanagementsystem.entity.Department;
 import com.ercanbeyen.employeemanagementsystem.entity.JobTitle;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
-import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.service.DepartmentService;
 import com.ercanbeyen.employeemanagementsystem.service.JobTitleService;
 import com.ercanbeyen.employeemanagementsystem.service.SalaryService;

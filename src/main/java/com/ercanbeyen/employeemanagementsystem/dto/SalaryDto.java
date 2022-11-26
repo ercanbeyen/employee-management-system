@@ -1,6 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.dto;
 
-import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
 import lombok.Data;
 
 import javax.validation.constraints.Min;

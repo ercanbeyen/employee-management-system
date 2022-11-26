@@ -1,5 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
+import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.dto.response.Statistics;
 import com.ercanbeyen.employeemanagementsystem.service.StatisticsService;
@@ -21,19 +22,19 @@ public class StatisticsController {
     @GetMapping("/departments")
     public ResponseEntity<Object> getDepartmentStatistics() {
         Statistics statistics = statisticsService.getDepartmentStatistics();
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", statistics);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
 
     @GetMapping("/jobTitles")
     public ResponseEntity<Object> getJobTitlesStatistics() {
         Statistics statistics = statisticsService.getJobTitleStatistics();
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", statistics);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
     @GetMapping("/salaries")
     public ResponseEntity<Object> getSalaryStatistics() {
         Statistics statistics = statisticsService.getSalaryStatistics();
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", statistics);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 }

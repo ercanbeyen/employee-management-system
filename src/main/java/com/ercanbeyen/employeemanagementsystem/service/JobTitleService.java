@@ -10,7 +10,7 @@ import java.util.List;
 public interface JobTitleService {
     JobTitleDto createJobTitle(JobTitleRequest request);
     JobTitleDto updateJobTitle(int id, JobTitleRequest request);
-    JobTitle assignJobTitle(String role);
+    JobTitle assignJobTitle(String jobTitle);
     void deleteJobTitle(int id);
     List<JobTitleDto> getJobTitles();
     JobTitleDto getJobTitle(int id);

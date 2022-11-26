@@ -1,6 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.entity;
 
-import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UpdateOccupationRequest {
+public class UpdateProfessionRequest {
     private String department;
     private String role;
 }

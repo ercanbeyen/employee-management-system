@@ -1,5 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
+import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.request.DepartmentRequest;
 
 import com.ercanbeyen.employeemanagementsystem.dto.DepartmentDto;
@@ -39,7 +40,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         String departmentName = request.getName();
 
         Department departmentInDb = departmentRepository.findById(id).orElseThrow(
-                () -> new DataNotFound("Department called " + departmentName + " is not found")
+                () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Department", departmentName))
 
         );
 
@@ -53,23 +54,20 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public Department assignDepartment(String departmentName) {
         return departmentRepository.findByName(departmentName).orElseThrow(
-                () -> new DataNotFound("Department called " + departmentName + " is not found")
+                () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Department", departmentName))
         );
     }
 
     @Override
     public void deleteDepartment(int id) {
         Department department = departmentRepository.findById(id).orElseThrow(
-                () -> new DataNotFound("Department with id " + id + " is not found")
+                () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Department", id))
         );
 
-        int numberOfEmployee = department.getEmployees().size();
+        int numberOfEmployees = department.getEmployees().size();
 
-        if (numberOfEmployee > 0) {
-            throw new DataConflict(
-                    "Department called " + department.getName() + " could not be deleted, because it contains "
-                            + numberOfEmployee + " employee(s)"
-            );
+        if (numberOfEmployees > 0) {
+            throw new DataConflict(String.format(Messages.DELETE_PROFESSION_RESTRICTION, "Department", department.getName(), numberOfEmployees));
         }
 
         departmentRepository.deleteById(id);
@@ -83,7 +81,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public DepartmentDto getDepartment(int id) {
         Department department = departmentRepository.findById(id).orElseThrow(
-                () -> new DataNotFound("Department with id " + id + " is not found")
+                () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Department", id))
         );
 
         return convertDepartmentToDepartmentDto(department);

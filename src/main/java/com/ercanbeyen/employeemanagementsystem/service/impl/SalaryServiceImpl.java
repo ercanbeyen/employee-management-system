@@ -1,5 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
+import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
@@ -43,7 +44,7 @@ public class SalaryServiceImpl implements SalaryService {
         Salary salary = salaryRepository
                 .findById(id)
                 .orElseThrow(
-                        () -> new DataNotFound("Salary with id " + id + " is not found")
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Salary", id))
         );
 
         return modelMapper.map(salary, SalaryDto.class);
@@ -60,7 +61,7 @@ public class SalaryServiceImpl implements SalaryService {
         Salary salaryInDb = salaryRepository
                 .findById(id)
                 .orElseThrow(
-                        () -> new DataNotFound("Salary with id " + id + " is not found")
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Salary", id))
         );
 
         salaryInDb.setCurrency(salaryDto.getCurrency());
@@ -73,15 +74,6 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Override
     public void updateSalaries(List<Salary> salaries, double percentage) {
-        /* Check the all the salaries are still present */
-        salaries.forEach(
-                salary -> {
-                    if (salary == null) {
-                        throw new DataNotFound("Salary is not found");
-                    }
-                }
-        );
-
         /* Update the salaries */
         salaries.forEach(
                 salary -> {

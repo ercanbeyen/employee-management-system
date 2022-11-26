@@ -1,5 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
+import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.request.JobTitleRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.JobTitleDto;
 
@@ -23,30 +24,30 @@ public class JobTitleController {
     @PostMapping
     public ResponseEntity<Object> createRole(@RequestBody JobTitleRequest request) {
         JobTitleDto createdRole = jobTitleService.createJobTitle(request);
-        return ResponseHandler.generateResponse(HttpStatus.CREATED, true, "Success", createdRole);
+        return ResponseHandler.generateResponse(HttpStatus.CREATED, true, Messages.SUCCESS, createdRole);
     }
 
     @GetMapping
     public ResponseEntity<Object> getRoles() {
         List<JobTitleDto> roles = jobTitleService.getJobTitles();
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", roles);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, roles);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getRole(@PathVariable("id") int id) {
         JobTitleDto role = jobTitleService.getJobTitle(id);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", role);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, role);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateRole(@PathVariable("id") int id, @RequestBody JobTitleRequest request) {
         JobTitleDto updatedRole = jobTitleService.updateJobTitle(id, request);
-        return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", updatedRole);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, updatedRole);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteRole(@PathVariable("id") int id) {
         jobTitleService.deleteJobTitle(id);
-        return ResponseHandler.generateResponse(HttpStatus.NO_CONTENT, true, "Success", null);
+        return ResponseHandler.generateResponse(HttpStatus.NO_CONTENT, true, Messages.SUCCESS, null);
     }
 }

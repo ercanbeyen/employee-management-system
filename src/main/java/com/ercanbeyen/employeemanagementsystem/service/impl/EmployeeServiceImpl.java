@@ -1,12 +1,13 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
+import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
-import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateProfessionRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
-import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
-import com.ercanbeyen.employeemanagementsystem.entity.enums.Role;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
@@ -161,7 +162,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository
                 .findById(id)
                 .orElseThrow(
-                        () -> new DataNotFound("Employee with id " + id + " is not found")
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
                 );
 
         return modelMapper.map(employee, EmployeeDto.class);
@@ -174,7 +175,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository
                 .findById(id)
                 .orElseThrow(
-                        () -> new DataNotFound("Employee with id " + id + " is not found")
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
                 );
 
         employee.setFirstName(request.getFirstName());
@@ -198,7 +199,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository
                 .findById(id)
                 .orElseThrow(
-                        () -> new DataNotFound("Employee with id " + id + " is not found")
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
                 );
 
         salaryService.updateSalary(employee.getSalary().getId(), salaryDto);
@@ -218,7 +219,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             Employee employee = employeeRepository
                     .findByEmail(email)
                     .orElseThrow(
-                            () -> new DataNotFound("Email " + email + " is not found")
+                            () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Email", email))
                     );
 
             employees.add(employee);
@@ -232,11 +233,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Transactional
     @Override
-    public EmployeeDto updateOccupation(int id, UpdateOccupationRequest request) {
+    public EmployeeDto updateProfession(int id, UpdateProfessionRequest request) {
         log.debug("Employee's department and role updates are starting");
 
         Employee employee = employeeRepository.findById(id).orElseThrow(
-                () -> new DataNotFound("Employee with id " + id + " is not found")
+                () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
         );
 
         Department updatedDepartment = departmentService.assignDepartment(request.getDepartment());
@@ -258,7 +259,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository
                 .findById(id)
                 .orElseThrow(
-                        () -> new DataNotFound("Employee with id " + id + " is not found")
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
                 );
 
         log.debug("Employee is found, now upload the image");
@@ -277,7 +278,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository
                 .findById(id)
                 .orElseThrow(
-                        () -> new DataNotFound("Employee with id " + id + " is not found")
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
                 );
 
         log.debug("Employee is found, now download the image");
@@ -293,7 +294,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository
                 .findById(id)
                 .orElseThrow(
-                        () -> new DataNotFound("Employee with id " + id + " is not found")
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
                 );
 
         // Remove bidirectional connections between employee&department and employee&role
