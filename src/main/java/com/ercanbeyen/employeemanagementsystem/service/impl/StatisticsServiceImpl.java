@@ -5,7 +5,6 @@ import com.ercanbeyen.employeemanagementsystem.entity.Department;
 import com.ercanbeyen.employeemanagementsystem.entity.JobTitle;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
-import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 import com.ercanbeyen.employeemanagementsystem.service.DepartmentService;
 import com.ercanbeyen.employeemanagementsystem.service.JobTitleService;
 import com.ercanbeyen.employeemanagementsystem.service.SalaryService;

@@ -9,6 +9,7 @@ import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.entity.Employee;
+import com.ercanbeyen.employeemanagementsystem.entity.enums.Role;
 import com.ercanbeyen.employeemanagementsystem.util.CustomPage;
 import com.ercanbeyen.employeemanagementsystem.service.EmployeeService;
 import org.springframework.data.domain.Page;
@@ -42,11 +43,12 @@ public class EmployeeController {
 
     @GetMapping("/filter")
     public ResponseEntity<Object> filterEmployees(
+            @RequestParam(required = false) Role role,
             @RequestParam(required = false) String department,
-            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String jobTitle,
             @RequestParam(required = false) Currency currency,
             @RequestParam(required = false) Integer limit) {
-        List<EmployeeDto> employees = employeeService.filterEmployees(department, role, currency, limit);
+        List<EmployeeDto> employees = employeeService.filterEmployees(role, department, jobTitle, currency, limit);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, "Success", employees);
     }
 

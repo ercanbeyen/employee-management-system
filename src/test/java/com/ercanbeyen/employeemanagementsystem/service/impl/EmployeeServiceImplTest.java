@@ -7,6 +7,7 @@ import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateOccupationReque
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
+import com.ercanbeyen.employeemanagementsystem.entity.enums.Role;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.repository.EmployeeRepository;
@@ -47,7 +48,8 @@ public class EmployeeServiceImplTest {
     private List<EmployeeDto> getMockEmployeesDtos() {
         String nationality = "Turkey";
         String department = "IT";
-        String role = "Developer";
+        String jobTitle = "Developer";
+        Role role = Role.USER;
 
         Currency currency = Currency.TRY;
         int id = 1;
@@ -60,10 +62,11 @@ public class EmployeeServiceImplTest {
         EmployeeDto employee1 = new EmployeeDto();
         employee1.setFirstName("Test-FirstName1");
         employee1.setLastName("Test-LastName1");
+        employee1.setRole(role);
         employee1.setEmail("test1@email.com");
         employee1.setNationality(nationality);
         employee1.setDepartment(department);
-        employee1.setJobTitle(role);
+        employee1.setJobTitle(jobTitle);
         employee1.setSalary(salary1);
 
         id++;
@@ -78,9 +81,10 @@ public class EmployeeServiceImplTest {
         employee2.setFirstName("Test-FirstName2");
         employee2.setLastName("Test-LastName2");
         employee2.setEmail("test2@email.com");
+        employee2.setRole(role);
         employee2.setNationality(nationality);
         employee2.setDepartment(department);
-        employee2.setJobTitle(role);
+        employee2.setJobTitle(jobTitle);
         employee2.setSalary(salary2);
 
         return Arrays.asList(employee1, employee2);
@@ -90,6 +94,7 @@ public class EmployeeServiceImplTest {
         String nationality = "Turkey";
         String departmentName = "IT";
         String roleName = "Developer";
+        Role role = Role.USER;
 
         Currency currency = Currency.TRY;
         int id = 1;
@@ -112,6 +117,7 @@ public class EmployeeServiceImplTest {
         employee1.setId(id);
         employee1.setFirstName("Test-FirstName1");
         employee1.setLastName("Test-LastName1");
+        employee1.setRole(role);
         employee1.setEmail("test1@email.com");
         employee1.setNationality(nationality);
         employee1.setDepartment(department);
@@ -129,6 +135,7 @@ public class EmployeeServiceImplTest {
         employee2.setId(id);
         employee2.setFirstName("Test-FirstName2");
         employee2.setLastName("Test-LastName2");
+        employee2.setRole(role);
         employee2.setEmail("test2@email.com");
         employee2.setNationality(nationality);
         employee2.setDepartment(department);
@@ -211,9 +218,10 @@ public class EmployeeServiceImplTest {
         List<EmployeeDto> employeeDtos = getMockEmployeesDtos();
         List<Employee> employees = getMockEmployees();
 
+        Role role = Role.USER;
         String department = "IT";
         Currency currency = Currency.TRY;
-        String role = "Developer";
+        String jobTitle = "Developer";
         Integer limit = null;
 
         Mockito.when(employeeRepository.findAll()).thenReturn(employees);
@@ -221,7 +229,7 @@ public class EmployeeServiceImplTest {
         Mockito.when(modelMapper.map(employees, new TypeToken<List<EmployeeDto>>(){}.getType())).thenReturn(employeeDtos);
 
 
-        List<EmployeeDto> result = employeeService.filterEmployees(department, role, currency, limit);
+        List<EmployeeDto> result = employeeService.filterEmployees(role, department, jobTitle, currency, limit);
 
         assertEquals(employeeDtos, result);
 
@@ -232,20 +240,21 @@ public class EmployeeServiceImplTest {
     @Test
     @DisplayName("When FilterEmployees Called With Different Parameters It Should Return The Requested EmployeeDto")
     public void whenFilterEmployeesCalledWithDifferentParameters_itShouldReturnTheRequestedEmployeeDto() {
+        Role role = Role.USER;
         String department = "IT";
-        String role = "Business Analyst";
+        String jobTitle = "Business Analyst";
         Currency currency = Currency.TRY;
         int employeeIndex = 1;
         Integer limit = null;
 
         JobTitle requestedJobTitle = new JobTitle();
         requestedJobTitle.setId(2);
-        requestedJobTitle.setName(role);
+        requestedJobTitle.setName(jobTitle);
 
         List<EmployeeDto> employeeDtos = getMockEmployeesDtos();
 
         EmployeeDto employeeDto = employeeDtos.get(employeeIndex);
-        employeeDto.setJobTitle(role);
+        employeeDto.setJobTitle(jobTitle);
 
         List<Employee> employees = getMockEmployees();
 
@@ -259,7 +268,7 @@ public class EmployeeServiceImplTest {
         Mockito.when(modelMapper.map(requestedEmployees, new TypeToken<List<EmployeeDto>>(){}.getType())).thenReturn(requestedEmployeeDtos);
 
 
-        List<EmployeeDto> result = employeeService.filterEmployees(department, role, currency, limit);
+        List<EmployeeDto> result = employeeService.filterEmployees(role, department, jobTitle, currency, limit);
 
         assertEquals(result, requestedEmployeeDtos);
 
