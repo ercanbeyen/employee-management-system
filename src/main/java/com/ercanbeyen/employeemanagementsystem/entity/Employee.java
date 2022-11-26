@@ -1,6 +1,7 @@
 package com.ercanbeyen.employeemanagementsystem.entity;
 
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Gender;
+import com.ercanbeyen.employeemanagementsystem.entity.enums.Role;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -22,6 +23,11 @@ public class Employee implements Serializable {
 
     @Column(unique = true)
     private String email;
+
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(length = 20)
     private String phoneNumber;

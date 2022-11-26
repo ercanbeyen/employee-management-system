@@ -3,8 +3,11 @@ package com.ercanbeyen.employeemanagementsystem.dto;
 
 import com.ercanbeyen.employeemanagementsystem.entity.enums.Gender;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
+import com.ercanbeyen.employeemanagementsystem.entity.enums.Role;
 import lombok.Data;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.*;
 
 @Data
@@ -20,10 +23,16 @@ public class EmployeeDto {
     @Email(message = "Invalid email address")
     private String email;
 
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
+
     private String phoneNumber;
 
     private String nationality;
 
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     private String department;

@@ -1,0 +1,2 @@
+ALTER TABLE Employee
+ADD role VARCHAR(20);

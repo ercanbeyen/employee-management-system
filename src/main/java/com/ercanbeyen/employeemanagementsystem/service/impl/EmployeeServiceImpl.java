@@ -67,7 +67,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Salary salary = salaryService.createSalary(employeeDto.getSalary());
         employee.setSalary(salary);
-        log.debug("Salary is assigned to the user");
+        log.debug("Salary is assigned to the employee");
 
         Employee newEmployee = employeeRepository.save(employee);
         log.debug("Employee creation is completed");
@@ -75,7 +75,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return modelMapper.map(newEmployee, EmployeeDto.class);
     }
 
-    public List<EmployeeDto> filterEmployees(String department, String role, Currency currency, Integer limit) {
+    public List<EmployeeDto> filterEmployees(String department, String jobTitle, Currency currency, Integer limit) {
         log.debug("Employee filtering is started");
         List<Employee> employees = employeeRepository.findAll();
 
@@ -87,13 +87,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             log.debug("Employees are filtered by department called {}", department);
 
-            if (role != null) {
+            if (jobTitle != null) {
                 employees = employees
                         .stream()
-                        .filter(employee -> employee.getJobTitle().getName().equals(role))
+                        .filter(employee -> employee.getJobTitle().getName().equals(jobTitle))
                         .collect(Collectors.toList());
 
-                log.debug("Employees are filtered by role called {}", role);
+                log.debug("Employees are filtered by job title called {}", jobTitle);
             }
         }
 
@@ -133,11 +133,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         if (isFirstNameFull && isLastNameFull) { // search by first name and last name
             employees = employeeRepository.findByFirstNameAndLastName(firstName, lastName);
-        }
-        else if (isFirstNameFull) { // search by first name
+        } else if (isFirstNameFull) { // search by first name
             employees = employeeRepository.findByFirstName(firstName);
-        }
-        else { // search by last name
+        } else { // search by last name
             employees = employeeRepository.findByLastName(lastName);
         }
 
