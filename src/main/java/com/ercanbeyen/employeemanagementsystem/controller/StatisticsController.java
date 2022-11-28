@@ -2,7 +2,7 @@ package com.ercanbeyen.employeemanagementsystem.controller;
 
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
-import com.ercanbeyen.employeemanagementsystem.dto.response.Statistics;
+import com.ercanbeyen.employeemanagementsystem.entity.Statistics;
 import com.ercanbeyen.employeemanagementsystem.service.StatisticsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +35,12 @@ public class StatisticsController {
     @GetMapping("/salaries")
     public ResponseEntity<Object> getSalaryStatistics() {
         Statistics statistics = statisticsService.getSalaryStatistics();
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
+    }
+
+    @GetMapping("/roles")
+    public ResponseEntity<Object> getRoleStatistics() {
+        Statistics statistics = statisticsService.getRoleStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 }

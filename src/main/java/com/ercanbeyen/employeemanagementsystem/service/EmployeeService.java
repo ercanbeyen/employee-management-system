@@ -34,4 +34,6 @@ public interface EmployeeService {
     Page<Employee> pagination(Pageable pageable);
     Page<Employee> slice(Pageable pageable);
     CustomPage<EmployeeDto> customPagination(Pageable pageable);
+    List<Employee> getEmployeesForStatistics();
+    List<Role> findRolesByDepartmentForStatistics(String department);
 }

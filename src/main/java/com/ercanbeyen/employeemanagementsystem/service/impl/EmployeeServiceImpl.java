@@ -9,7 +9,6 @@ import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
-import com.ercanbeyen.employeemanagementsystem.exception.DataNotAcceptable;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
@@ -75,7 +74,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.debug("Salary is assigned to the employee");
 
         Role role = employeeDto.getRole();
-        RoleUtils.checkRoleUpdate(null, role, getRoles(department.getName()));
+        RoleUtils.checkRoleUpdate(null, role, findRolesByDepartment(department.getName()));
         employee.setRole(employeeDto.getRole());
         log.debug("Role is assigned to the employee");
 
@@ -249,7 +248,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Department updatedDepartment = departmentService.findDepartmentByName(request.getDepartment());
 
-        RoleUtils.checkRoleUpdate(employee.getRole(), employee.getRole(), getRoles(updatedDepartment.getName()));
+        RoleUtils.checkRoleUpdate(employee.getRole(), employee.getRole(), findRolesByDepartment(updatedDepartment.getName()));
 
         employee.setDepartment(updatedDepartment);
         employee.setRole(Role.USER); // for consistency in role logic
@@ -273,7 +272,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 );
 
         Role role = request.getRole();
-        RoleUtils.checkRoleUpdate(employeeInDb.getRole(), role, getRoles(employeeInDb.getDepartment().getName()));
+        RoleUtils.checkRoleUpdate(employeeInDb.getRole(), role, findRolesByDepartment(employeeInDb.getDepartment().getName()));
         employeeInDb.setRole(role);
 
         return modelMapper.map(employeeRepository.save(employeeInDb), EmployeeDto.class);
@@ -359,11 +358,22 @@ public class EmployeeServiceImpl implements EmployeeService {
         return new CustomPage<>(page, Arrays.asList(employees));
     }
 
-    private List<Role> getRoles(String departmentName) {
+    @Override
+    public List<Employee> getEmployeesForStatistics() {
+        return employeeRepository.findAll();
+    }
+
+    @Override
+    public List<Role> findRolesByDepartmentForStatistics(String department) {
+        return findRolesByDepartment(department);
+    }
+
+
+    private List<Role> findRolesByDepartment(String department) {
         return employeeRepository
                 .findAll()
                 .stream()
-                .filter(employee -> employee.getDepartment().getName().equals(departmentName))
+                .filter(employee -> employee.getDepartment().getName().equals(department))
                 .map(Employee::getRole)
                 .toList();
     }
