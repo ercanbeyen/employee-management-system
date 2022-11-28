@@ -39,10 +39,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     public DepartmentDto updateDepartment(int id, DepartmentRequest request) {
         String departmentName = request.getName();
 
-        Department departmentInDb = departmentRepository.findById(id).orElseThrow(
-                () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Department", departmentName))
-
-        );
+        Department departmentInDb = departmentRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Department", departmentName))
+                );
 
         departmentInDb.setLatestChangeAt(new Date());
         departmentInDb.setLatestChangeBy("Admin");
@@ -52,17 +53,21 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Department assignDepartment(String departmentName) {
-        return departmentRepository.findByName(departmentName).orElseThrow(
-                () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Department", departmentName))
-        );
+    public Department findDepartmentByName(String department) {
+        return departmentRepository
+                .findByName(department)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Department", department))
+                );
     }
 
     @Override
     public void deleteDepartment(int id) {
-        Department department = departmentRepository.findById(id).orElseThrow(
-                () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Department", id))
-        );
+        Department department = departmentRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Department", id))
+                );
 
         int numberOfEmployees = department.getEmployees().size();
 
@@ -80,9 +85,11 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public DepartmentDto getDepartment(int id) {
-        Department department = departmentRepository.findById(id).orElseThrow(
-                () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Department", id))
-        );
+        Department department = departmentRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Department", id))
+                );
 
         return convertDepartmentToDepartmentDto(department);
     }

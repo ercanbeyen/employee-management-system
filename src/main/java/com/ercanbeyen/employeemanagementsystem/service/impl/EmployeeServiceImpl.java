@@ -2,18 +2,21 @@ package com.ercanbeyen.employeemanagementsystem.service.impl;
 
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
+import com.ercanbeyen.employeemanagementsystem.dto.request.RoleRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateProfessionRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
+import com.ercanbeyen.employeemanagementsystem.exception.DataNotAcceptable;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
 import com.ercanbeyen.employeemanagementsystem.repository.EmployeeRepository;
 import com.ercanbeyen.employeemanagementsystem.service.*;
 import com.ercanbeyen.employeemanagementsystem.util.CustomPage;
+import com.ercanbeyen.employeemanagementsystem.util.RoleUtils;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -59,11 +62,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.debug("Employee creation is started");
         Employee employee = modelMapper.map(employeeDto, Employee.class);
 
-        Department department = departmentService.assignDepartment(employeeDto.getDepartment());
+        Department department = departmentService.findDepartmentByName(employeeDto.getDepartment());
         employee.setDepartment(department);
         log.debug("Department is assigned to the employee");
 
-        JobTitle jobTitle = jobTitleService.assignJobTitle(employeeDto.getJobTitle());
+        JobTitle jobTitle = jobTitleService.findJobTitleByName(employeeDto.getJobTitle());
         employee.setJobTitle(jobTitle);
         log.debug("Job Title is assigned to the employee");
 
@@ -71,6 +74,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setSalary(salary);
         log.debug("Salary is assigned to the employee");
 
+        Role role = employeeDto.getRole();
+        RoleUtils.checkRoleUpdate(null, role, getRoles(department.getName()));
         employee.setRole(employeeDto.getRole());
         log.debug("Role is assigned to the employee");
 
@@ -234,21 +239,44 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional
     @Override
     public EmployeeDto updateProfession(int id, UpdateProfessionRequest request) {
-        log.debug("Employee's department and role updates are starting");
+        log.debug("Employee's department and job title updates are starting");
 
-        Employee employee = employeeRepository.findById(id).orElseThrow(
-                () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
-        );
+        Employee employee = employeeRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
+                );
 
-        Department updatedDepartment = departmentService.assignDepartment(request.getDepartment());
+        Department updatedDepartment = departmentService.findDepartmentByName(request.getDepartment());
+
+        RoleUtils.checkRoleUpdate(employee.getRole(), employee.getRole(), getRoles(updatedDepartment.getName()));
+
         employee.setDepartment(updatedDepartment);
+        employee.setRole(Role.USER); // for consistency in role logic
         log.debug("Department is updated");
 
-        JobTitle updatedJobTitle = jobTitleService.assignJobTitle(request.getRole());
+        JobTitle updatedJobTitle = jobTitleService.findJobTitleByName(request.getJobTitle());
         employee.setJobTitle(updatedJobTitle);
         log.debug("Role is updated");
 
         return modelMapper.map(employeeRepository.save(employee), EmployeeDto.class);
+    }
+
+    @Override
+    public EmployeeDto updateRole(int id, RoleRequest request) {
+        log.debug("Employee's role update is starting");
+
+        Employee employeeInDb = employeeRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
+                );
+
+        Role role = request.getRole();
+        RoleUtils.checkRoleUpdate(employeeInDb.getRole(), role, getRoles(employeeInDb.getDepartment().getName()));
+        employeeInDb.setRole(role);
+
+        return modelMapper.map(employeeRepository.save(employeeInDb), EmployeeDto.class);
     }
 
     @Transactional
@@ -275,7 +303,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public byte[] downloadImage(int id, String fileName) {
         log.debug("Download image operation is started");
 
-        Employee employee = employeeRepository
+        employeeRepository
                 .findById(id)
                 .orElseThrow(
                         () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
@@ -329,6 +357,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         Page<Employee> page = employeeRepository.findAll(pageable);
         EmployeeDto[] employees = modelMapper.map(page.getContent(), EmployeeDto[].class);
         return new CustomPage<>(page, Arrays.asList(employees));
+    }
+
+    private List<Role> getRoles(String departmentName) {
+        return employeeRepository
+                .findAll()
+                .stream()
+                .filter(employee -> employee.getDepartment().getName().equals(departmentName))
+                .map(Employee::getRole)
+                .toList();
     }
 
 }

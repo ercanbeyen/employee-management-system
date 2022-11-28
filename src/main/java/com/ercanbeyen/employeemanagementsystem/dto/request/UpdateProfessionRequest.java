@@ -9,5 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UpdateProfessionRequest {
     private String department;
-    private String role;
+    private String jobTitle;
 }

@@ -38,9 +38,11 @@ public class JobTitleServiceImpl implements JobTitleService {
     public JobTitleDto updateJobTitle(int id, JobTitleRequest request) {
         String jobTitle = request.getName();
 
-        JobTitle jobTitleInDb = jobTitleRepository.findById(id).orElseThrow(
-                () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Job title", jobTitle))
-        );
+        JobTitle jobTitleInDb = jobTitleRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Job title", jobTitle))
+                );
 
         jobTitleInDb.setLatestChangeAt(new Date());
         jobTitleInDb.setLatestChangeBy("Admin");
@@ -50,17 +52,21 @@ public class JobTitleServiceImpl implements JobTitleService {
     }
 
     @Override
-    public JobTitle assignJobTitle(String jobTitle) {
-        return jobTitleRepository.findByName(jobTitle).orElseThrow(
-                () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Job title", jobTitle))
-        );
+    public JobTitle findJobTitleByName(String jobTitle) {
+        return jobTitleRepository
+                .findByName(jobTitle)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Job title", jobTitle))
+                );
     }
 
     @Override
     public void deleteJobTitle(int id) {
-        JobTitle jobTitle = jobTitleRepository.findById(id).orElseThrow(
-                () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Job title", id))
-        );
+        JobTitle jobTitle = jobTitleRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Job title", id))
+                );
 
         int numberOfEmployees = jobTitle.getEmployees().size();
 
@@ -78,9 +84,11 @@ public class JobTitleServiceImpl implements JobTitleService {
 
     @Override
     public JobTitleDto getJobTitle(int id) {
-        JobTitle jobTitle = jobTitleRepository.findById(id).orElseThrow(
-                () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Job title", id))
-        );
+        JobTitle jobTitle = jobTitleRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Job title", id))
+                );
 
         return convertRoleToRoleDto(jobTitle);
     }

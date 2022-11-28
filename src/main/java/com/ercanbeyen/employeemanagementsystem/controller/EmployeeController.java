@@ -3,6 +3,7 @@ package com.ercanbeyen.employeemanagementsystem.controller;
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
+import com.ercanbeyen.employeemanagementsystem.dto.request.RoleRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateProfessionRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
@@ -73,9 +74,19 @@ public class EmployeeController {
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, updatedEmployee);
     }
 
-    @PutMapping("/{id}/occupation")
-    public ResponseEntity<Object> updateOccupation(@PathVariable("id") int id, @Valid @RequestBody UpdateProfessionRequest request) {
+    @PutMapping("/{id}/profession")
+    public ResponseEntity<Object> updateProfession(@PathVariable("id") int id, @Valid @RequestBody UpdateProfessionRequest request) {
         EmployeeDto employeeDto = employeeService.updateProfession(id, request);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, employeeDto);
+    }
+
+    /*
+    * TODO: Test method updateRole on Postman
+    * */
+
+    @PutMapping("/{id}/role")
+    public ResponseEntity<Object> updateRole(@PathVariable("id") int id, @Valid @RequestBody RoleRequest request) {
+        EmployeeDto employeeDto = employeeService.updateRole(id, request);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, employeeDto);
     }
 

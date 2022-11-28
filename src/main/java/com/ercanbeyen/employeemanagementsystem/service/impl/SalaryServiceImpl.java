@@ -62,7 +62,7 @@ public class SalaryServiceImpl implements SalaryService {
                 .findById(id)
                 .orElseThrow(
                         () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Salary", id))
-        );
+                );
 
         salaryInDb.setCurrency(salaryDto.getCurrency());
         salaryInDb.setAmount(salaryDto.getAmount());
