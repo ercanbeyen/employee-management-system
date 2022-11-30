@@ -23,6 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -79,10 +81,6 @@ public class EmployeeController {
         EmployeeDto employeeDto = employeeService.updateProfession(id, request);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, employeeDto);
     }
-
-    /*
-    * TODO: Test method updateRole on Postman
-    * */
 
     @PutMapping("/{id}/role")
     public ResponseEntity<Object> updateRole(@PathVariable("id") int id, @Valid @RequestBody RoleRequest request) {

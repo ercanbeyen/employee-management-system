@@ -1,5 +1,9 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.dto.request.RoleRequest;
@@ -16,6 +20,7 @@ import com.ercanbeyen.employeemanagementsystem.repository.EmployeeRepository;
 import com.ercanbeyen.employeemanagementsystem.service.*;
 import com.ercanbeyen.employeemanagementsystem.util.CustomPage;
 import com.ercanbeyen.employeemanagementsystem.util.RoleUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,23 +31,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EmployeeServiceImpl implements EmployeeService {
+public class EmployeeServiceImpl implements EmployeeService, UserDetailsService {
     @Autowired
     private final EmployeeRepository employeeRepository;
     @Autowired
     private final ModelMapper modelMapper;
-
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
     @Autowired
     private final DepartmentService departmentService;
 
@@ -54,6 +72,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private final ImageService imageService;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Employee employee = employeeRepository
+                .findByEmail(email)
+                .orElseThrow(
+                        () -> new UsernameNotFoundException("Employee not found in the database")
+                );
+
+        log.info("Employee found in the database {}", email);
+
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(employee.getRole().toString()));
+
+        return new org.springframework.security.core.userdetails.User(employee.getEmail(), employee.getPassword(), authorities);
+    }
 
     @Transactional
     @Override
@@ -77,6 +111,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         RoleUtils.checkRoleUpdate(null, role, findRolesByDepartment(department.getName()));
         employee.setRole(employeeDto.getRole());
         log.debug("Role is assigned to the employee");
+
+        String encodedPassword = passwordEncoder.encode(employeeDto.getPassword());
+        employee.setPassword(encodedPassword);
 
         Employee newEmployee = employeeRepository.save(employee);
         log.debug("Employee creation is completed");
@@ -368,6 +405,45 @@ public class EmployeeServiceImpl implements EmployeeService {
         return findRolesByDepartment(department);
     }
 
+    @Override
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            try {
+                String refresh_token = authorizationHeader.substring("Bearer ".length());
+                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(refresh_token);
+                String email = decodedJWT.getSubject();
+                Employee employee = getEmployeeByEmail(email);
+                String access_token = JWT.create()
+                        .withSubject(employee.getEmail())
+                        .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+                        .withIssuer(request.getRequestURL().toString())
+                        .withClaim("roles", employee.getRole().toString())
+                        .sign(algorithm);
+
+                Map<String, String> tokens = new HashMap<>();
+                tokens.put("access_token", access_token);
+                tokens.put("refresh_token", refresh_token);
+                response.setContentType(APPLICATION_JSON_VALUE);
+                new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+
+            } catch (Exception exception) {
+                log.error("Error logging in: {}", exception.getMessage());
+                response.setHeader("error", exception.getMessage());
+                response.setStatus(FORBIDDEN.value());
+                //response.sendError(FORBIDDEN.value());
+                Map<String, String> error = new HashMap<>();
+                error.put("error_message", exception.getMessage());
+                response.setContentType(APPLICATION_JSON_VALUE);
+                new ObjectMapper().writeValue(response.getOutputStream(), error);
+            }
+        } else {
+            throw new RuntimeException("Refresh token is missing");
+        }
+    }
+
 
     private List<Role> findRolesByDepartment(String department) {
         return employeeRepository
@@ -378,4 +454,11 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .toList();
     }
 
+    private Employee getEmployeeByEmail(String email) {
+        return employeeRepository
+                .findByEmail(email)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Email", email))
+                );
+    }
 }

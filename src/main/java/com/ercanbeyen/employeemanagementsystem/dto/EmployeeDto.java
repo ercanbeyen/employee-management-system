@@ -4,13 +4,17 @@ package com.ercanbeyen.employeemanagementsystem.dto;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Gender;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.*;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class EmployeeDto {
 
     @NotBlank(message = "First name should not be blank")
