@@ -22,14 +22,4 @@ public class EmployeeManagementSystemApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(EmployeeManagementSystemApplication.class, args);
 	}
-
-	/*
-	@Bean
-	CommandLineRunner run(EmployeeService employeeService) {
-		return args -> {
-			employeeService.createEmployee(new EmployeeDto("Ercan", "Beyen", "ercanbeyen@email.com", "1234", Role.ADMIN, "122334", "Turkey", Gender.MALE, "IT", "Developer", new Salary(0, 2D, Currency.TRY), null));
-
-		};
-	}
-	*/
 }

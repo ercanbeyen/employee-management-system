@@ -1,7 +1,7 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
-import com.ercanbeyen.employeemanagementsystem.service.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ercanbeyen.employeemanagementsystem.service.TokenService;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,15 +13,14 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/token")
 public class TokenController {
-    @Autowired
-    private final EmployeeService employeeService;
+    private final TokenService tokenService;
 
-    public TokenController(EmployeeService employeeService) {
-        this.employeeService = employeeService;
+    public TokenController(TokenService tokenService) {
+        this.tokenService = tokenService;
     }
 
     @GetMapping("/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        employeeService.refreshToken(request, response);
+        tokenService.refreshToken(request, response);
     }
 }

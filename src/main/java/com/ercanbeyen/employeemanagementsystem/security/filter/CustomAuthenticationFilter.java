@@ -2,6 +2,8 @@ package com.ercanbeyen.employeemanagementsystem.security.filter;
 
 import com.auth0.jwt.algorithms.Algorithm;
 
+import com.ercanbeyen.employeemanagementsystem.constants.numbers.TokenTimes;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,9 +36,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
+
         log.info("Email is {}", email);
-        log.info("Password is {}", email);
+        log.info("Password is {}", password);
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+
         return authenticationManager.authenticate(authenticationToken);
     }
 
@@ -44,12 +49,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         User user = (User) authResult.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-        int access_token_time = 10 * 60 * 1000;
-        final int CONSTANT_REFRESH = 3;
+
         String access_token = JWT
                 .create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + access_token_time))
+                .withExpiresAt(new Date(System.currentTimeMillis() + TokenTimes.ACCESS_TOKEN))
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("role", user.getAuthorities()
                         .stream()
@@ -57,13 +61,15 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                         .collect(Collectors.toList()))
                 .sign(algorithm);
         log.info("Access token is created");
+
         String refresh_token = JWT
                 .create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + CONSTANT_REFRESH * access_token_time))
+                .withExpiresAt(new Date(System.currentTimeMillis() + TokenTimes.REFRESH_TOKEN))
                 .withIssuer(request.getRequestURL().toString())
                 .sign(algorithm);
         log.info("Refresh token is is created");
+
         response.setHeader("access_token", access_token);
         response.setHeader("refresh_token", refresh_token);
     }

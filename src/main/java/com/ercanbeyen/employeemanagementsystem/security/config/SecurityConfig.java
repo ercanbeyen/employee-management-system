@@ -1,7 +1,9 @@
 package com.ercanbeyen.employeemanagementsystem.security.config;
 
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
 import com.ercanbeyen.employeemanagementsystem.security.filter.CustomAuthenticationFilter;
 import com.ercanbeyen.employeemanagementsystem.security.filter.CustomAuthorizationFilter;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,12 +36,54 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/login/**", "/token/refresh/**").permitAll();
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/employees/**").hasAnyAuthority("MANAGER", "ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/employees/**").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().anyRequest().authenticated();
+
+        http.authorizeRequests()
+                .antMatchers("/login/**", "/token/refresh/**")
+                .permitAll();
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.GET,
+                        "/employees/**", "/departments/**", "/jobTitles/**", "/salaries/**")
+                .hasAnyAuthority(Role.ADMIN.toString(), Role.MANAGER.toString());
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.POST,
+                        "/employees/**", "/departments/**", "/jobTitles/**")
+                .hasAnyAuthority(Role.ADMIN.toString());
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.DELETE,
+                        "/employees/**", "/departments/**", "/jobTitles/**")
+                .hasAnyAuthority(Role.ADMIN.toString());
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.PUT,
+                        "/employees/**/salary", "/employees/**/profession", "/employees/salaries/**")
+                .hasAnyAuthority(Role.ADMIN.toString(), Role.MANAGER.toString());
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.PUT,
+                        "/employees/**/details")
+                .hasAnyAuthority(Role.ADMIN.toString(), Role.MANAGER.toString(), Role.USER.toString());
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.PUT,
+                        "/departments/**", "/jobTitles/**")
+                .hasAnyAuthority(Role.ADMIN.toString());
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.GET,
+                        "/statistics/**")
+                .hasAnyAuthority(Role.ADMIN.toString(), Role.MANAGER.toString());
+
+        http.authorizeRequests()
+                .anyRequest()
+                .authenticated();
+
         http.addFilter(customAuthenticationFilter);
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterBefore(new CustomAuthorizationFilter(),
+                UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
