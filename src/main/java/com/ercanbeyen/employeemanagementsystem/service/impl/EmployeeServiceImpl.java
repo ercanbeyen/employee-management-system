@@ -9,6 +9,8 @@ import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
+import com.ercanbeyen.employeemanagementsystem.exception.DataConflict;
+import com.ercanbeyen.employeemanagementsystem.exception.DataForbidden;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
@@ -60,6 +62,8 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 
     @Autowired
     private final ImageService imageService;
+    @Autowired
+    private final AuthenticationService authenticationService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -94,11 +98,6 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         Salary salary = salaryService.createSalary(employeeDto.getSalary());
         employee.setSalary(salary);
         log.debug("Salary is assigned to the employee");
-
-        Role role = employeeDto.getRole();
-        RoleUtils.checkRoleUpdate(null, role, findRolesByDepartment(department.getName()));
-        employee.setRole(employeeDto.getRole());
-        log.debug("Role is assigned to the employee");
 
         String encodedPassword = passwordEncoder.encode(employeeDto.getPassword());
         employee.setPassword(encodedPassword);
@@ -207,6 +206,13 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
                         () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
                 );
 
+        String loggedIn_email = authenticationService.getEmail();
+        String loggedIn_role = authenticationService.getRole();
+
+        if (!loggedIn_email.equals(employee.getEmail()) && !loggedIn_role.equals(String.valueOf(Role.ADMIN))) {
+            throw new DataForbidden("Either you are not the owner of the account or you are not an admin");
+        }
+
         employee.setFirstName(request.getFirstName());
         employee.setLastName(request.getLastName());
         employee.setEmail(request.getEmail());
@@ -231,6 +237,8 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
                         () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
                 );
 
+        checkUpdateSalary(employee);
+
         salaryService.updateSalary(employee.getSalary().getId(), salaryDto);
         log.debug("Salary of the employee with id {} is updated; currency: {} and amount: {}", employee.getId(), salaryDto.getCurrency(), salaryDto.getAmount());
 
@@ -250,6 +258,8 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
                     .orElseThrow(
                             () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Email", email))
                     );
+
+            checkUpdateSalary(employee);
 
             employees.add(employee);
             salaries.add(employee.getSalary());
@@ -273,8 +283,6 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 
         Department updatedDepartment = departmentService.findDepartmentByName(request.getDepartment());
 
-        RoleUtils.checkRoleUpdate(employee.getRole(), employee.getRole(), findRolesByDepartment(updatedDepartment.getName()));
-
         employee.setDepartment(updatedDepartment);
         employee.setRole(Role.USER); // for consistency in role logic
         log.debug("Department is updated");
@@ -297,7 +305,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
                 );
 
         Role role = request.getRole();
-        RoleUtils.checkRoleUpdate(employeeInDb.getRole(), role, findRolesByDepartment(employeeInDb.getDepartment().getName()));
+        RoleUtils.checkRoleUpdate(role, employeeInDb.getDepartment().getName());
         employeeInDb.setRole(role);
 
         return modelMapper.map(employeeRepository.save(employeeInDb), EmployeeDto.class);
@@ -410,5 +418,32 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
                 .filter(employee -> employee.getDepartment().getName().equals(department))
                 .map(Employee::getRole)
                 .toList();
+    }
+
+    private void checkUpdateSalary(Employee employee) {
+        String loggedIn_email = authenticationService.getEmail();
+        String loggedIn_role = authenticationService.getRole();
+        Employee loggedIn_employee = getEmployeeByEmail(loggedIn_email);
+
+        /* If role of the logged in employee is admin, then terminate the method */
+        if (loggedIn_role.equals(String.valueOf(Role.ADMIN))) {
+            return;
+        }
+
+        String employeeDepartment = employee.getDepartment().getName();
+        String loggedIn_department = loggedIn_employee.getDepartment().getName();
+
+        if (!employeeDepartment.equals(loggedIn_department)) { // employee is not in human resource department
+            return;
+        }
+
+        String loggedIn_jobTitle = loggedIn_employee.getJobTitle().getName();
+
+        /* Both user is in HR department */
+        if (loggedIn_jobTitle.equals("Director")) { // only director may update the salary of his/her colleagues in the same department
+            return;
+        }
+
+        throw new DataConflict("You cannot update the salaries of other colleagues in the same department as you");
     }
 }

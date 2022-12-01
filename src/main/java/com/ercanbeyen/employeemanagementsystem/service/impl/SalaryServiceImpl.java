@@ -6,6 +6,7 @@ import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.repository.SalaryRepository;
+import com.ercanbeyen.employeemanagementsystem.service.AuthenticationService;
 import com.ercanbeyen.employeemanagementsystem.service.SalaryService;
 import com.ercanbeyen.employeemanagementsystem.util.SalaryUtils;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,8 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Autowired
     private final ModelMapper modelMapper;
+    @Autowired
+    private final AuthenticationService authenticationService;
 
     @Override
     public Salary createSalary(Salary salary) {
@@ -33,8 +36,10 @@ public class SalaryServiceImpl implements SalaryService {
 
         newSalary.setCurrency(salary.getCurrency());
         newSalary.setAmount(salary.getAmount());
+
         newSalary.setLatestChangeAt(new Date());
-        newSalary.setLatestChangeBy("Admin");
+        String email = authenticationService.getEmail();
+        newSalary.setLatestChangeBy(email);
 
         return salaryRepository.save(newSalary);
     }
@@ -66,8 +71,10 @@ public class SalaryServiceImpl implements SalaryService {
 
         salaryInDb.setCurrency(salaryDto.getCurrency());
         salaryInDb.setAmount(salaryDto.getAmount());
+
         salaryInDb.setLatestChangeAt(new Date());
-        salaryInDb.setLatestChangeBy("Admin");
+        String email = authenticationService.getEmail();
+        salaryInDb.setLatestChangeBy(email);
 
         salaryRepository.save(salaryInDb);
     }

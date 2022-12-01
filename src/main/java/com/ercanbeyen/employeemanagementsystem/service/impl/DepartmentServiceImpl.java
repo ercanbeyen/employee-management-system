@@ -9,10 +9,13 @@ import com.ercanbeyen.employeemanagementsystem.entity.Department;
 import com.ercanbeyen.employeemanagementsystem.exception.DataConflict;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 import com.ercanbeyen.employeemanagementsystem.repository.DepartmentRepository;
+import com.ercanbeyen.employeemanagementsystem.service.AuthenticationService;
 import com.ercanbeyen.employeemanagementsystem.service.DepartmentService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,13 +27,17 @@ import java.util.List;
 public class DepartmentServiceImpl implements DepartmentService {
     @Autowired
     private final DepartmentRepository departmentRepository;
+    @Autowired
+    private final AuthenticationService authenticationService;
 
     @Override
     public DepartmentDto createDepartment(DepartmentRequest request) {
         Department department = new Department();
         department.setName(request.getName());
+
         department.setLatestChangeAt(new Date());
-        department.setLatestChangeBy("Admin");
+        String loggedIn_email = authenticationService.getEmail();
+        department.setLatestChangeBy(loggedIn_email);
 
         return convertDepartmentToDepartmentDto(departmentRepository.save(department));
     }
@@ -45,9 +52,12 @@ public class DepartmentServiceImpl implements DepartmentService {
                         () -> new DataNotFound(String.format(Messages.ITEM_NOT_FOUND, "Department", departmentName))
                 );
 
-        departmentInDb.setLatestChangeAt(new Date());
-        departmentInDb.setLatestChangeBy("Admin");
         departmentInDb.setName(departmentName);
+
+        departmentInDb.setLatestChangeAt(new Date());
+
+        String email = authenticationService.getEmail();
+        departmentInDb.setLatestChangeBy(email);
 
         return convertDepartmentToDepartmentDto(departmentRepository.save(departmentInDb));
     }

@@ -4,6 +4,7 @@ import com.ercanbeyen.employeemanagementsystem.entity.Image;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.repository.ImageRepository;
+import com.ercanbeyen.employeemanagementsystem.service.AuthenticationService;
 import com.ercanbeyen.employeemanagementsystem.service.ImageService;
 import com.ercanbeyen.employeemanagementsystem.util.ImageUtils;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,10 @@ import java.util.Date;
 @Service
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
-
     @Autowired
     private ImageRepository imageRepository;
+    @Autowired
+    private final AuthenticationService authenticationService;
 
     @Override
     public Image uploadImage(MultipartFile file) throws IOException {
@@ -37,7 +39,8 @@ public class ImageServiceImpl implements ImageService {
 
         log.debug("Image is uploaded");
 
-        image.setLatestChangeBy("Admin");
+        String loggedIn_email = authenticationService.getEmail();
+        image.setLatestChangeBy(loggedIn_email);
         image.setLatestChangeAt(new Date());
 
         return image;

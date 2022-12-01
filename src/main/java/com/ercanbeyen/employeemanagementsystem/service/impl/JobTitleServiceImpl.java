@@ -9,6 +9,7 @@ import com.ercanbeyen.employeemanagementsystem.exception.DataConflict;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 
 import com.ercanbeyen.employeemanagementsystem.repository.JobTitleRepository;
+import com.ercanbeyen.employeemanagementsystem.service.AuthenticationService;
 import com.ercanbeyen.employeemanagementsystem.service.JobTitleService;
 import lombok.RequiredArgsConstructor;
 
@@ -24,13 +25,18 @@ import java.util.List;
 public class JobTitleServiceImpl implements JobTitleService {
     @Autowired
     private final JobTitleRepository jobTitleRepository;
+    @Autowired
+    private final AuthenticationService authenticationService;
 
     @Override
     public JobTitleDto createJobTitle(JobTitleRequest request) {
         JobTitle jobTitle = new JobTitle();
         jobTitle.setName(request.getName());
+
         jobTitle.setLatestChangeAt(new Date());
-        jobTitle.setLatestChangeBy("Admin");
+        String email = authenticationService.getEmail();
+        jobTitle.setLatestChangeBy(email);
+
         return convertRoleToRoleDto(jobTitleRepository.save(jobTitle));
     }
 
@@ -45,7 +51,10 @@ public class JobTitleServiceImpl implements JobTitleService {
                 );
 
         jobTitleInDb.setLatestChangeAt(new Date());
-        jobTitleInDb.setLatestChangeBy("Admin");
+
+        String email = authenticationService.getEmail();
+        jobTitleInDb.setLatestChangeBy(email);
+
         jobTitleInDb.setName(jobTitle);
 
         return convertRoleToRoleDto(jobTitleRepository.save(jobTitleInDb));

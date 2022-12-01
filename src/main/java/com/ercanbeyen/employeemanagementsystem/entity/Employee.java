@@ -27,7 +27,7 @@ public class Employee implements Serializable {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.USER;
 
     @Column(length = 20)
     private String phoneNumber;

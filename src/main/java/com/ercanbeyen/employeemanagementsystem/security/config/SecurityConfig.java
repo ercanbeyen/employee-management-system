@@ -44,37 +44,42 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET,
                         "/employees/**", "/departments/**", "/jobTitles/**", "/salaries/**")
-                .hasAnyAuthority(Role.ADMIN.toString(), Role.MANAGER.toString());
+                .hasAnyAuthority(String.valueOf(Role.ADMIN), String.valueOf(Role.MANAGER));
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST,
                         "/employees/**", "/departments/**", "/jobTitles/**")
-                .hasAnyAuthority(Role.ADMIN.toString());
+                .hasAnyAuthority(String.valueOf(Role.ADMIN));
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.DELETE,
                         "/employees/**", "/departments/**", "/jobTitles/**")
-                .hasAnyAuthority(Role.ADMIN.toString());
+                .hasAnyAuthority(String.valueOf(Role.ADMIN));
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.PUT,
-                        "/employees/**/salary", "/employees/**/profession", "/employees/salaries/**")
-                .hasAnyAuthority(Role.ADMIN.toString(), Role.MANAGER.toString());
+                        "/employees/**/salary", "/employees/salaries/**")
+                .hasAnyAuthority(String.valueOf(Role.ADMIN), String.valueOf(Role.MANAGER));
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.PUT,
                         "/employees/**/details")
-                .hasAnyAuthority(Role.ADMIN.toString(), Role.MANAGER.toString(), Role.USER.toString());
+                .hasAnyAuthority(String.valueOf(Role.ADMIN), String.valueOf(Role.MANAGER), String.valueOf(Role.USER));
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.PUT,
-                        "/departments/**", "/jobTitles/**")
-                .hasAnyAuthority(Role.ADMIN.toString());
+                        "/departments/**", "/jobTitles/**", "/employees/**/role")
+                .hasAnyAuthority(String.valueOf(Role.ADMIN));
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.PUT,
+                        "/employees/**/profession")
+                .hasAnyAuthority(String.valueOf(Role.ADMIN), String.valueOf(Role.MANAGER));
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET,
                         "/statistics/**")
-                .hasAnyAuthority(Role.ADMIN.toString(), Role.MANAGER.toString());
+                .hasAnyAuthority(String.valueOf(Role.ADMIN), String.valueOf(Role.MANAGER));
 
         http.authorizeRequests()
                 .anyRequest()
@@ -82,8 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilter(customAuthenticationFilter);
 
-        http.addFilterBefore(new CustomAuthorizationFilter(),
-                UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
