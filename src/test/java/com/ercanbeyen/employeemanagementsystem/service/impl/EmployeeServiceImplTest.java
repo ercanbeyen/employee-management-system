@@ -1,10 +1,12 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
+import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.dto.request.RoleRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateProfessionRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
@@ -20,6 +22,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.*;
 
@@ -46,11 +49,20 @@ public class EmployeeServiceImplTest {
     @Mock
     private SalaryServiceImpl salaryService;
 
+    @Mock
+    private AuthenticationServiceImpl authenticationService;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private List<EmployeeDto> getMockEmployeesDtos() {
-        String nationality = "Turkey";
+        String password = "1234";
+
         String department = "IT";
         String jobTitle = "Developer";
-        Role role = Role.USER;
+        Role role = Role.ADMIN;
+
+        String nationality = "Turkey";
 
         Currency currency = Currency.TRY;
         int id = 1;
@@ -65,6 +77,7 @@ public class EmployeeServiceImplTest {
         employee1.setLastName("Test-LastName1");
         employee1.setRole(role);
         employee1.setEmail("test1@email.com");
+        employee1.setPassword(password);
         employee1.setNationality(nationality);
         employee1.setDepartment(department);
         employee1.setJobTitle(jobTitle);
@@ -82,6 +95,7 @@ public class EmployeeServiceImplTest {
         employee2.setFirstName("Test-FirstName2");
         employee2.setLastName("Test-LastName2");
         employee2.setEmail("test2@email.com");
+        employee2.setPassword(password);
         employee2.setRole(role);
         employee2.setNationality(nationality);
         employee2.setDepartment(department);
@@ -92,10 +106,13 @@ public class EmployeeServiceImplTest {
     }
 
     private List<Employee> getMockEmployees() {
-        String nationality = "Turkey";
+        String password = "1234";
+
         String departmentName = "IT";
         String roleName = "Developer";
-        Role role = Role.USER;
+        Role role = Role.ADMIN;
+
+        String nationality = "Turkey";
 
         Currency currency = Currency.TRY;
         int id = 1;
@@ -120,6 +137,7 @@ public class EmployeeServiceImplTest {
         employee1.setLastName("Test-LastName1");
         employee1.setRole(role);
         employee1.setEmail("test1@email.com");
+        employee1.setPassword(password);
         employee1.setNationality(nationality);
         employee1.setDepartment(department);
         employee1.setJobTitle(jobTitle);
@@ -136,6 +154,7 @@ public class EmployeeServiceImplTest {
         employee2.setId(id);
         employee2.setFirstName("Test-FirstName2");
         employee2.setLastName("Test-LastName2");
+        employee2.setPassword(password);
         employee2.setRole(role);
         employee2.setEmail("test2@email.com");
         employee2.setNationality(nationality);
@@ -166,16 +185,29 @@ public class EmployeeServiceImplTest {
         return request;
     }
 
+    private UpdateSalaryRequest getUpdateSalaryRequest(List<EmployeeDto> employeeDtos, double percentage) {
+        UpdateSalaryRequest request = new UpdateSalaryRequest();
+        List<String> emails = new ArrayList<>();
+        employeeDtos.forEach(
+                employeeDto -> emails.add(employeeDto.getEmail())
+        );
+        request.setEmails(emails);
+        request.setPercentage(percentage);
+        return request;
+    }
+
     @Test
-    @DisplayName("When Create Employee Called With UserDto It Should Return EmployeeDto")
-    public void whenCreateEmployeeCalledWithValidUserDto_itShouldReturnEmployeeDto() {
+    @DisplayName("When Create Employee Called With EmployeeDto It Should Return EmployeeDto")
+    public void whenCreateEmployeeCalledWithValidEmployeeDto_itShouldReturnEmployeeDto() {
         Employee employee = getMockEmployees().get(0);
         EmployeeDto employeeDto = getMockEmployeesDtos().get(0);
+        String password_hash = "2asdfdsdfg";
 
         Mockito.when(modelMapper.map(employeeDto, Employee.class)).thenReturn(employee);
         Mockito.when(departmentService.findDepartmentByName(employeeDto.getDepartment())).thenReturn(employee.getDepartment());
         Mockito.when(jobTitleService.findJobTitleByName(employeeDto.getJobTitle())).thenReturn(employee.getJobTitle());
         Mockito.when(salaryService.createSalary(employeeDto.getSalary())).thenReturn(employee.getSalary());
+        Mockito.when(employeeService.getEncodedPassword(employeeDto.getPassword())).thenReturn(password_hash);
         Mockito.when(employeeRepository.save(employee)).thenReturn(employee);
         Mockito.when(modelMapper.map(employee, EmployeeDto.class)).thenReturn(employeeDto);
 
@@ -187,6 +219,7 @@ public class EmployeeServiceImplTest {
         Mockito.verify(departmentService).findDepartmentByName(employeeDto.getDepartment());
         Mockito.verify(jobTitleService).findJobTitleByName(employeeDto.getJobTitle());
         Mockito.verify(salaryService).createSalary(employeeDto.getSalary());
+        //Mockito.verify(employeeService).getEncodedPassword(employeeDto.getPassword());
         Mockito.verify(employeeRepository).save(employee);
         Mockito.verify(modelMapper).map(employee, EmployeeDto.class);
     }
@@ -209,17 +242,17 @@ public class EmployeeServiceImplTest {
 
         assertEquals(employeeDto, result);
 
-        Mockito.verify(employeeRepository).findById(1);
+        Mockito.verify(employeeRepository).findById(id);
         Mockito.verify(modelMapper).map(employee, EmployeeDto.class);
     }
 
     @Test
     @DisplayName("When FilterEmployees Called With Same Parameters It Should Return All EmployeesDtos")
-    public void whenFilterEmployeesCalledWithNonNullParameters_itShouldReturnUserDtos() {
+    public void whenFilterEmployeesCalledWithNonNullParameters_itShouldReturnEmployeeDtos() {
         List<EmployeeDto> employeeDtos = getMockEmployeesDtos();
         List<Employee> employees = getMockEmployees();
 
-        Role role = Role.USER;
+        Role role = Role.ADMIN;
         String department = "IT";
         Currency currency = Currency.TRY;
         String jobTitle = "Developer";
@@ -241,7 +274,7 @@ public class EmployeeServiceImplTest {
     @Test
     @DisplayName("When FilterEmployees Called With Different Parameters It Should Return The Requested EmployeeDto")
     public void whenFilterEmployeesCalledWithDifferentParameters_itShouldReturnTheRequestedEmployeeDto() {
-        Role role = Role.USER;
+        Role role = Role.ADMIN;
         String department = "IT";
         String jobTitle = "Business Analyst";
         Currency currency = Currency.TRY;
@@ -290,7 +323,8 @@ public class EmployeeServiceImplTest {
         UpdateEmployeeDetailsRequest request = getUpdateEmployeeDetailsRequest(employeeDto);
 
         Mockito.when(employeeRepository.findById(id)).thenReturn(optionalEmployee);
-
+        Mockito.when(authenticationService.getEmail()).thenReturn(employee.getEmail());
+        Mockito.when(authenticationService.getRole()).thenReturn(String.valueOf(employee.getRole()));
         Mockito.when(employeeRepository.save(employee)).thenReturn(employee);
         Mockito.when(modelMapper.map(employee, EmployeeDto.class)).thenReturn(employeeDto);
 
@@ -299,6 +333,8 @@ public class EmployeeServiceImplTest {
         assertEquals(result, employeeDto);
 
         Mockito.verify(employeeRepository).findById(id);
+        Mockito.verify(authenticationService).getEmail();
+        Mockito.verify(authenticationService).getRole();
         Mockito.verify(employeeRepository).save(employee);
         Mockito.verify(modelMapper).map(employee, EmployeeDto.class);
     }
@@ -359,7 +395,6 @@ public class EmployeeServiceImplTest {
         EmployeeDto employeeDto = getMockEmployeesDtos().get(0);
         Employee employee = getMockEmployees().get(0);
 
-        UpdateProfessionRequest request = getUpdateProfessionRequest(employeeDto);
         Optional<Employee> optionalEmployee = Optional.of(employee);
         int id = 1;
         double amount = 5;
@@ -372,6 +407,11 @@ public class EmployeeServiceImplTest {
         salaryDto.setCurrency(salary.getCurrency());
 
         Mockito.when(employeeRepository.findById(id)).thenReturn(optionalEmployee);
+
+        Mockito.when(authenticationService.getEmail()).thenReturn(employee.getEmail());
+        Mockito.when(authenticationService.getRole()).thenReturn(String.valueOf(employee.getRole()));
+        //Mockito.when(employeeService.getEmployeeByEmail(employee.getEmail())).thenReturn(employee);
+        Mockito.when(employeeRepository.findByEmail(employee.getEmail())).thenReturn(optionalEmployee);
         Mockito.when(modelMapper.map(employee, EmployeeDto.class)).thenReturn(employeeDto);
 
         EmployeeDto result = employeeService.updateSalary(id, salaryDto);
@@ -379,8 +419,50 @@ public class EmployeeServiceImplTest {
         assertEquals(employeeDto, result);
 
         Mockito.verify(employeeRepository).findById(id);
+        Mockito.verify(authenticationService).getEmail();
+        Mockito.verify(authenticationService).getRole();
+        Mockito.verify(employeeRepository).findByEmail(employee.getEmail());
         Mockito.verify(salaryService).updateSalary(employee.getSalary().getId(), salaryDto);
         Mockito.verify(modelMapper).map(employee, EmployeeDto.class);
+    }
+
+    @Test
+    @DisplayName("When UpdateSalaries Called With Valid Request It Should Return EmployeeDtos")
+    public void whenUpdateSalariesCalledWithValidRequest_itShouldReturnEmployeeDtos() {
+        List<EmployeeDto> employeeDtos = getMockEmployeesDtos();
+        List<Employee> employees = getMockEmployees();
+
+        Employee employee = getMockEmployees().get(0);
+        double percentage = 20;
+
+        UpdateSalaryRequest request = getUpdateSalaryRequest(employeeDtos, percentage);
+        Optional<Employee> optionalEmployee = Optional.of(employee);
+        Optional<Employee> otherOptionalEmployee = Optional.of(employees.get(1));
+
+        List<Salary> salaries = employees
+                .stream()
+                .map(Employee::getSalary)
+                .toList();
+
+        Mockito.when(employeeRepository.findByEmail(request.getEmails().get(0))).thenReturn(optionalEmployee);
+        Mockito.when(employeeRepository.findByEmail(request.getEmails().get(1))).thenReturn(otherOptionalEmployee);
+        Mockito.when(authenticationService.getEmail()).thenReturn(employee.getEmail());
+        Mockito.when(authenticationService.getRole()).thenReturn(String.valueOf(employee.getRole()));
+        Mockito.when(employeeRepository.findByEmail(employee.getEmail())).thenReturn(optionalEmployee);
+        Mockito.doNothing().when(salaryService).updateSalaries(salaries, request.getPercentage());
+        Mockito.when(modelMapper.map(employees, new TypeToken<List<EmployeeDto>>(){}.getType())).thenReturn(employeeDtos);
+
+        List<EmployeeDto> result = employeeService.updateSalaries(request);
+
+        assertEquals(result, employeeDtos);
+
+        Mockito.verify(employeeRepository, Mockito.times(3)).findByEmail(employee.getEmail());
+        //Mockito.verify(employeeRepository).findByEmail(otherOptionalEmployee.get().getEmail());
+        Mockito.verify(authenticationService, Mockito.times(2)).getEmail();
+        Mockito.verify(authenticationService, Mockito.times(2)).getRole();
+        //Mockito.verify(employeeRepository).findByEmail(employee.getEmail());
+        Mockito.verify(salaryService).updateSalaries(salaries, request.getPercentage());
+        Mockito.verify(modelMapper).map(employees, new TypeToken<List<EmployeeDto>>(){}.getType());
     }
 
 
@@ -417,7 +499,7 @@ public class EmployeeServiceImplTest {
 
 
         RoleRequest request = new RoleRequest();
-        request.setRole(Role.USER);
+        request.setRole(Role.ADMIN);
         int id = 1;
 
         Optional<Employee> optionalEmployee = Optional.of(employee);
@@ -432,5 +514,30 @@ public class EmployeeServiceImplTest {
         Mockito.verify(employeeRepository).findById(id);
         Mockito.verify(employeeRepository).save(employee);
         Mockito.verify(modelMapper).map(employee, EmployeeDto.class);
+    }
+
+    @Test
+    @DisplayName("When UpdatePassword Called With Valid Request It Should Return Message")
+    public void whenUpdatePasswordCalledWithValidRequest_itShouldReturnMessage() {
+        Employee employee = getMockEmployees().get(0);
+        EmployeeDto employeeDto = getMockEmployeesDtos().get(0);
+
+        int id = 1;
+        String newPassword = "123"; // newPassword = confirmationPassword
+        Optional<Employee> optionalEmployee = Optional.of(employee);
+
+        Mockito.when(employeeRepository.findById(id)).thenReturn(optionalEmployee);
+        Mockito.when(authenticationService.getEmail()).thenReturn(employee.getEmail());
+        Mockito.when(authenticationService.getRole()).thenReturn(String.valueOf(employee.getRole()));
+        Mockito.when(employeeRepository.save(employee)).thenReturn(employee);
+
+        String result = employeeService.updatePassword(id, newPassword, newPassword);
+
+        assertEquals(result, Messages.PASSWORD_UPDATE_SUCCESS);
+
+        Mockito.verify(employeeRepository).findById(id);
+        Mockito.verify(authenticationService).getEmail();
+        Mockito.verify(authenticationService).getRole();
+        Mockito.verify(employeeRepository).save(employee);
     }
 }

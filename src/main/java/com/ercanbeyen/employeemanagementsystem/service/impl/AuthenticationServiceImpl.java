@@ -24,6 +24,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return roles.get(0);
     }
 
+    @Override
+    public String getPassword() {
+        Authentication authentication = getAuthentication();
+        return authentication.getCredentials().toString();
+    }
+
     private Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }

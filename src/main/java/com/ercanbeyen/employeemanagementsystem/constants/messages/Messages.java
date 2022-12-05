@@ -7,4 +7,5 @@ public class Messages {
     public static final String DELETE_PROFESSION_RESTRICTION = "%s called %s could not be deleted, because it contains %d employee(s)";
     public static final String SUCCESS = "Success";
     public static final String ROLE_RESTRICTION = "Only user in %s can be assigned to role %s";
+    public static final String PASSWORD_UPDATE_SUCCESS = "Password is updated successfully";
 }

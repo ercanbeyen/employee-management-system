@@ -20,6 +20,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -86,6 +89,12 @@ public class EmployeeController {
     public ResponseEntity<Object> updateRole(@PathVariable("id") int id, @Valid @RequestBody RoleRequest request) {
         EmployeeDto employeeDto = employeeService.updateRole(id, request);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, employeeDto);
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<Object> updatePassword(@PathVariable("id") int id, @RequestParam String newPassword, @RequestParam String confirmationPassword) {
+        String confirmationMessage = employeeService.updatePassword(id, newPassword, confirmationPassword);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, confirmationMessage);
     }
 
     @PutMapping("/{id}/salary")

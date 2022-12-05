@@ -27,6 +27,7 @@ public class EmployeeDto {
     @Email(message = "Invalid email address")
     private String email;
 
+    @NotBlank(message = "Password should not be blank")
     private String password;
 
     @Enumerated(EnumType.STRING)

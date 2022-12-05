@@ -2,10 +2,7 @@ package com.ercanbeyen.employeemanagementsystem.service.impl;
 
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
-import com.ercanbeyen.employeemanagementsystem.dto.request.RoleRequest;
-import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateEmployeeDetailsRequest;
-import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateProfessionRequest;
-import com.ercanbeyen.employeemanagementsystem.dto.request.UpdateSalaryRequest;
+import com.ercanbeyen.employeemanagementsystem.dto.request.*;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
@@ -28,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -99,7 +97,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         employee.setSalary(salary);
         log.debug("Salary is assigned to the employee");
 
-        String encodedPassword = passwordEncoder.encode(employeeDto.getPassword());
+        String encodedPassword = getEncodedPassword(employeeDto.getPassword());
         employee.setPassword(encodedPassword);
 
         Employee newEmployee = employeeRepository.save(employee);
@@ -187,11 +185,18 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 
     @Override
     public EmployeeDto getEmployee(int id) {
+        log.debug("Get employee operation is starting");
+
         Employee employee = employeeRepository
                 .findById(id)
                 .orElseThrow(
                         () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
                 );
+
+        log.debug("Employee is retrieved successfully");
+
+        /*String password = employee.getPassword();
+        System.out.println("Password: " + password);*/
 
         return modelMapper.map(employee, EmployeeDto.class);
     }
@@ -309,6 +314,39 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         employeeInDb.setRole(role);
 
         return modelMapper.map(employeeRepository.save(employeeInDb), EmployeeDto.class);
+    }
+
+    @Override
+    public String updatePassword(int id, String newPassword, String confirmationPassword) {
+        log.debug("Update password operation is starting");
+
+        Employee employee = employeeRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
+                );
+
+        log.debug("Employee is found");
+
+        if (!newPassword.equals(confirmationPassword)) {
+            throw new DataConflict("Passwords are not matching");
+        }
+
+        log.debug("Passwords are matching");
+
+        String loggedIn_role = authenticationService.getRole();
+        String loggedIn_email = authenticationService.getEmail();
+
+        log.debug("Email and role of the logged in user is retrieved");
+
+        if (loggedIn_role.equals(String.valueOf(Role.ADMIN)) || loggedIn_email.equals(employee.getEmail())) {
+            String encodedPassword = getEncodedPassword(newPassword);
+            employee.setPassword(encodedPassword);
+            employeeRepository.save(employee);
+            return Messages.PASSWORD_UPDATE_SUCCESS;
+        }
+
+        throw new DataConflict("Only admin or account owner may update the password");
     }
 
     @Transactional
@@ -445,5 +483,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         }
 
         throw new DataConflict("You cannot update the salaries of other colleagues in the same department as you");
+    }
+
+    public String getEncodedPassword(String password) {
+        return passwordEncoder.encode(password);
     }
 }
