@@ -82,6 +82,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .hasAnyAuthority(String.valueOf(Role.ADMIN), String.valueOf(Role.MANAGER));
 
         http.authorizeRequests()
+                .antMatchers(HttpMethod.POST,
+                        "/tickets/**")
+                .hasAnyAuthority(String.valueOf(Role.ADMIN), String.valueOf(Role.MANAGER), String.valueOf(Role.USER));
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.GET,
+                        "/tickets/**")
+                .hasAnyAuthority(String.valueOf(Role.ADMIN), String.valueOf(Role.MANAGER), String.valueOf(Role.USER));
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.PUT,
+                        "/tickets/**")
+                .hasAnyAuthority(String.valueOf(Role.ADMIN), String.valueOf(Role.MANAGER), String.valueOf(Role.USER));
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.DELETE,
+                        "/tickets/**")
+                .hasAnyAuthority(String.valueOf(Role.ADMIN));
+
+        http.authorizeRequests()
                 .anyRequest()
                 .authenticated();
 
