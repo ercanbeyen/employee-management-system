@@ -54,6 +54,24 @@ public class TicketController {
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, updatedTicket);
     }
 
+    @PutMapping("/{id}/assignment")
+    public ResponseEntity<Object> assignTicketToEmployee(@PathVariable("id") int id, @RequestParam String email) {
+        String assignMessage = ticketService.assignTicket(id, email);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, assignMessage);
+    }
+
+    @PutMapping("/{id}/close")
+    public ResponseEntity<Object> closeTicket(@PathVariable("id") int id) {
+        String closeMessage = ticketService.closeTicket(id);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, closeMessage);
+    }
+
+    @PutMapping("/{id}/reopen")
+    public ResponseEntity<Object> reopenTicket(@PathVariable("id") int id) {
+        String reopenMessage = ticketService.reopenTicket(id);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, reopenMessage);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteTicket(@PathVariable("id") int id) {
         ticketService.deleteTicket(id);

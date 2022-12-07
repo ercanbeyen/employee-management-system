@@ -346,7 +346,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
             return Messages.PASSWORD_UPDATE_SUCCESS;
         }
 
-        throw new DataConflict("Only admin or account owner may update the password");
+        throw new DataForbidden("Only admin or account owner may update the password");
     }
 
     @Transactional

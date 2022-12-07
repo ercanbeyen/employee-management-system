@@ -13,4 +13,7 @@ public interface TicketService {
     List<TicketDto> filterTickets(Boolean closed, Priority priority, Topic topic, Type type, String assigneeEmail, String requesterEmail);
     TicketDto updateTicket(int id, TicketDto ticketDto);
     void deleteTicket(int id);
+    String assignTicket(int id, String email);
+    String closeTicket(int id);
+    String reopenTicket(int id);
 }

@@ -93,6 +93,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.PUT,
+                        "/tickets/**/reopen")
+                .hasAnyAuthority(String.valueOf(Role.ADMIN));
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.PUT,
                         "/tickets/**")
                 .hasAnyAuthority(String.valueOf(Role.ADMIN), String.valueOf(Role.MANAGER), String.valueOf(Role.USER));
 

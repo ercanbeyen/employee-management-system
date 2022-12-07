@@ -9,6 +9,7 @@ import com.ercanbeyen.employeemanagementsystem.dto.TicketDto;
 import com.ercanbeyen.employeemanagementsystem.entity.Employee;
 import com.ercanbeyen.employeemanagementsystem.entity.Ticket;
 import com.ercanbeyen.employeemanagementsystem.exception.DataConflict;
+import com.ercanbeyen.employeemanagementsystem.exception.DataForbidden;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 import com.ercanbeyen.employeemanagementsystem.repository.TicketRepository;
 import com.ercanbeyen.employeemanagementsystem.service.AuthenticationService;
@@ -99,18 +100,10 @@ public class TicketServiceImpl implements TicketService {
                     .toList();
         }
 
-        /* Only admin may observe all the tickets, other roles may observe their own tickets */
-        String loggedIn_role = authenticationService.getRole();
-
-        if (!loggedIn_role.equals(String.valueOf(Role.ADMIN))) {
-            requesterEmail = authenticationService.getEmail();
-        }
-
         if (requesterEmail != null) {
-            String finalRequesterEmail = requesterEmail;
             tickets = tickets
                     .stream()
-                    .filter(ticket -> ticket.getRequester().getEmail().equals(finalRequesterEmail))
+                    .filter(ticket -> ticket.getRequester().getEmail().equals(requesterEmail))
                     .toList();
         }
 
@@ -129,6 +122,15 @@ public class TicketServiceImpl implements TicketService {
 
         log.debug("Ticket is found");
 
+        String loggedIn_email = authenticationService.getEmail();
+        String loggedIn_role = authenticationService.getRole();
+
+        if (!loggedIn_role.equals(String.valueOf(Role.ADMIN)) && !loggedIn_email.equals(ticketInDb.getRequester().getEmail())) {
+            throw new DataForbidden("You cannot update the ticket");
+        }
+
+        log.debug("Logged in employee is either admin or the requester");
+
         if (ticketInDb.isClosed()) {
             throw new DataConflict("Closed tickets cannot be updated");
         }
@@ -142,7 +144,6 @@ public class TicketServiceImpl implements TicketService {
         ticketInDb.setDescription(ticketDto.getDescription());
         log.debug("Related fields are updated");
 
-        String loggedIn_email = authenticationService.getEmail();
         ticketInDb.setLatestChangeBy(loggedIn_email);
         ticketInDb.setLatestChangeAt(new Date());
 
@@ -165,7 +166,106 @@ public class TicketServiceImpl implements TicketService {
         log.debug("Ticket is found");
 
         ticketRepository.deleteById(id);
-
         log.debug("Ticket is deleted");
     }
+
+    @Override
+    public String assignTicket(int id, String email) {
+        log.debug("Ticket assigning is starting");
+
+        Ticket ticket = ticketRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Ticket", id))
+                );
+
+        log.debug("Ticket is found");
+
+        Employee assignee = employeeService.getEmployeeByEmail(email);
+        log.debug("Employee is found");
+
+        ticket.setAssignee(assignee);
+        ticketRepository.save(ticket);
+
+        return "Ticket " + id + " is assigned to employee " + email;
+    }
+
+    @Override
+    public String closeTicket(int id) {
+        log.debug("Ticket closing is starting");
+
+        Ticket ticket = ticketRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Ticket", id))
+                );
+
+        log.debug("Ticket is found");
+
+        if (ticket.isClosed()) {
+            throw new DataConflict("Ticket " + id + " has already been closed");
+        }
+
+        log.debug("Ticket has not closed yet");
+
+        Employee assignee = ticket.getAssignee();
+        String loggedIn_role = authenticationService.getRole();
+        String loggedIn_email = authenticationService.getEmail();
+
+        /* Either assignee or admin may close the ticket */
+        if (!loggedIn_role.equals(String.valueOf(Role.ADMIN)) && !assignee.getEmail().equals(loggedIn_email)) {
+            throw new DataForbidden("Only assignee or admin may close this ticket");
+        }
+
+        log.debug("Assignee is same employee with the logged in employee");
+
+        ticket.setClosed(true);
+        ticket.setLatestChangeAt(new Date());
+        ticket.setLatestChangeBy(loggedIn_email);
+
+        ticketRepository.save(ticket);
+        log.debug("Ticket is closed");
+
+        return "Ticket " + id + " is closed";
+    }
+
+    @Override
+    public String reopenTicket(int id) {
+        log.debug("Ticket closing is starting");
+
+        Ticket ticket = ticketRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Ticket", id))
+                );
+
+        log.debug("Ticket is found");
+
+        if (!ticket.isClosed()) {
+            throw new DataConflict("Ticket " + id + " has already been opened");
+        }
+
+        log.debug("Ticket has been closed");
+
+
+        String loggedIn_role = authenticationService.getRole();
+        String loggedIn_email = authenticationService.getEmail();
+
+        /* Only admin may reopen the ticket */
+        if (!loggedIn_role.equals(String.valueOf(Role.ADMIN))) {
+            throw new DataForbidden("Only admin may reopen the ticket");
+        }
+
+        log.debug("Logged in employee is admin");
+
+        ticket.setClosed(false);
+        ticket.setLatestChangeAt(new Date());
+        ticket.setLatestChangeBy(loggedIn_email);
+
+        ticketRepository.save(ticket);
+        log.debug("Ticket is reopened");
+
+        return "Ticket " + id + " is reopened";
+    }
+
 }
