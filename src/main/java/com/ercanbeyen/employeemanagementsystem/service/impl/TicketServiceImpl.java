@@ -268,4 +268,9 @@ public class TicketServiceImpl implements TicketService {
         return "Ticket " + id + " is reopened";
     }
 
+    @Override
+    public List<Ticket> getTicketForStatistics() {
+        return ticketRepository.findAll();
+    }
+
 }

@@ -4,6 +4,7 @@ import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Priority;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Topic;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Type;
 import com.ercanbeyen.employeemanagementsystem.dto.TicketDto;
+import com.ercanbeyen.employeemanagementsystem.entity.Ticket;
 
 import java.util.List;
 
@@ -16,4 +17,5 @@ public interface TicketService {
     String assignTicket(int id, String email);
     String closeTicket(int id);
     String reopenTicket(int id);
+    List<Ticket> getTicketForStatistics();
 }

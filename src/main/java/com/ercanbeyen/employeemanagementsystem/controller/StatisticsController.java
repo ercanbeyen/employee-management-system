@@ -1,5 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.entity.Statistics;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/statistics")
@@ -21,26 +24,33 @@ public class StatisticsController {
 
     @GetMapping("/departments")
     public ResponseEntity<Object> getDepartmentStatistics() {
-        Statistics statistics = statisticsService.getDepartmentStatistics();
+        Statistics<Integer> statistics = statisticsService.getDepartmentStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
 
     @GetMapping("/jobTitles")
     public ResponseEntity<Object> getJobTitlesStatistics() {
-        Statistics statistics = statisticsService.getJobTitleStatistics();
+        Statistics<Integer> statistics = statisticsService.getJobTitleStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
     @GetMapping("/salaries")
     public ResponseEntity<Object> getSalaryStatistics() {
-        Statistics statistics = statisticsService.getSalaryStatistics();
+        Statistics<Integer> statistics = statisticsService.getSalaryStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
     @GetMapping("/roles")
     public ResponseEntity<Object> getRoleStatistics() {
-        Statistics statistics = statisticsService.getRoleStatistics();
+        Statistics<Map<Role, Integer>> statistics = statisticsService.getRoleStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
+
+    @GetMapping("/tickets")
+    public ResponseEntity<Object> getTicketStatistics() {
+        Statistics<Map<String, Integer>> statistics = statisticsService.getTicketStatistics();
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
+    }
+
 }

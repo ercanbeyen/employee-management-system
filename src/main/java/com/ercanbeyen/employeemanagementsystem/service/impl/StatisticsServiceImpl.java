@@ -1,6 +1,9 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Priority;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Topic;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Type;
 import com.ercanbeyen.employeemanagementsystem.dto.DepartmentDto;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
@@ -27,10 +30,12 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Autowired
     private final EmployeeService employeeService;
+    @Autowired
+    private final TicketService ticketService;
 
     @Override
-    public Statistics getDepartmentStatistics() {
-        Statistics statistics = new Statistics();
+    public Statistics<Integer> getDepartmentStatistics() {
+        Statistics<Integer> statistics = new Statistics<>();
         List<Department> departments = departmentService.getDepartmentsForStatistics();
 
         /* Set minimum */
@@ -75,8 +80,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public Statistics getJobTitleStatistics() {
-        Statistics statistics = new Statistics();
+    public Statistics<Integer> getJobTitleStatistics() {
+        Statistics<Integer> statistics = new Statistics<>();
         List<JobTitle> jobTitles = jobTitleService.getJobTitlesForStatistics();
 
         /* Set minimum */
@@ -122,8 +127,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public Statistics getSalaryStatistics() {
-        Statistics statistics = new Statistics();
+    public Statistics<Integer> getSalaryStatistics() {
+        Statistics<Integer> statistics = new Statistics<>();
         List<Salary> salaries = salaryService.getSalariesForStatistics();
 
         /* Set minimum */
@@ -162,14 +167,14 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .toList();
 
         /* Set sizes */
-        HashMap<Currency, Integer> map = new HashMap<>();
+        HashMap<String, Integer> map = new HashMap<>();
 
         for (Currency currency : currencies) {
-            map.put(currency, 0);
+            map.put(String.valueOf(currency), 0);
         }
 
         for (Salary salary : salaries) {
-            Currency key = salary.getCurrency();
+            String key = String.valueOf(salary.getCurrency());
             Integer value = map.get(key);
             map.put(key, ++value);
         }
@@ -180,9 +185,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public Statistics getRoleStatistics() {
+    public Statistics<Map<Role, Integer>> getRoleStatistics() {
 
-        Statistics statistics = new Statistics();
+        Statistics<Map<Role, Integer>> statistics = new Statistics<>();
 
         /* Set sizes */
         List<DepartmentDto> departments = departmentService.
@@ -197,7 +202,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .distinct()
                 .toList();
 
-        Map<String, HashMap<Role, Integer>> sizesOfDepartments = new HashMap<>();
+        Map<String, Map<Role, Integer>> sizesOfDepartments = new HashMap<>();
 
         for (DepartmentDto department : departments) {
             HashMap<Role, Integer> currentMap = new HashMap<>();
@@ -226,9 +231,9 @@ public class StatisticsServiceImpl implements StatisticsService {
             roleMap.put(role, 0);
         }
 
-        Collection<HashMap<Role, Integer>> departmentRoleMapList = sizesOfDepartments.values();
+        Collection<Map<Role, Integer>> departmentRoleMapList = sizesOfDepartments.values();
 
-        for (HashMap<Role, Integer> departmentRoleSize : departmentRoleMapList) {
+        for (Map<Role, Integer> departmentRoleSize : departmentRoleMapList) {
             for (Role role : departmentRoleSize.keySet()) {
                 int numberOfOccurrenceInDepartment = departmentRoleSize.get(role); // number of occurrence of the role in current department
                 int currentOccurrence = roleMap.get(role);
@@ -266,6 +271,91 @@ public class StatisticsServiceImpl implements StatisticsService {
         statistics.setMaximum(maximumRole.toString());
         statistics.setAverage(average);
 
+        return statistics;
+    }
+
+    @Override
+    public Statistics<Map<String, Integer>> getTicketStatistics() {
+        Statistics<Map<String, Integer>> statistics = new Statistics<>();
+        Map<String, Map<String, Integer>> sizes = new HashMap<>();
+        List<Ticket> tickets = ticketService.getTicketForStatistics();
+
+        /* Fill the type map */
+        Type[] types = new Type[] { Type.BUG, Type.TASK, Type.STORY };
+        Map<String, Integer> typeMap = new HashMap<>();
+
+        for (Type type : types) {
+            typeMap.put(String.valueOf(type), 0);
+        }
+
+        for (Ticket ticket: tickets) {
+            String type = String.valueOf(ticket.getType());
+            int currentOccurrence = typeMap.get(type);
+            typeMap.put(type, ++currentOccurrence);
+        }
+
+        int minimum = Integer.MAX_VALUE;
+        int maximum = Integer.MIN_VALUE;
+        double average = 0;
+        Type maximumType = Type.BUG;
+        Type minimumType = Type.STORY;
+
+        for (Type type : types) {
+            int current = typeMap.get(type.toString());
+            average += current;
+            if (current < minimum) {
+                minimumType = type;
+                minimum = current;
+            }
+            if (current > maximum) {
+                maximumType = type;
+                maximum = current;
+            }
+        }
+
+        int numberOfTypes = types.length;
+        average /= numberOfTypes;
+
+        /* Set minimum, maxim and average */
+        statistics.setMinimum(minimumType.toString());
+        statistics.setMaximum(maximumType.toString());
+        statistics.setAverage(average);
+
+        sizes.put("Type", typeMap);
+
+        /* Fill the topic map */
+        Topic[] topics = new Topic[] { Topic.SOFTWARE, Topic.NETWORK, Topic.HARDWARE };
+        Map<String, Integer> topicMap = new HashMap<>();
+
+        for (Topic topic : topics) {
+            topicMap.put(String.valueOf(topic), 0);
+        }
+
+        for (Ticket ticket: tickets) {
+            String topic = String.valueOf(ticket.getTopic());
+            int currentOccurrence = topicMap.get(topic);
+            topicMap.put(topic, ++currentOccurrence);
+        }
+
+        sizes.put("Topic", topicMap);
+
+        /* Fill the priority map */
+        Priority[] priorities = new Priority[] { Priority.CRITICAL, Priority.IMPORTANT, Priority.NORMAL, Priority.LOW };
+        Map<String, Integer> priorityMap = new HashMap<>();
+
+        for (Priority priority : priorities) {
+            priorityMap.put(String.valueOf(priority), 0);
+        }
+
+        for (Ticket ticket: tickets) {
+            String priority = String.valueOf(ticket.getPriority());
+            int currentOccurrence = priorityMap.get(priority);
+            priorityMap.put(priority, ++currentOccurrence);
+        }
+
+        sizes.put("Priority", priorityMap);
+
+        statistics.setSizes(sizes);
         return statistics;
     }
 }
