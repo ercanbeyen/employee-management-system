@@ -17,5 +17,5 @@ public interface TicketService {
     String assignTicket(int id, String email);
     String closeTicket(int id);
     String reopenTicket(int id);
-    List<Ticket> getTicketForStatistics();
+    List<Ticket> getTicketsForStatistics();
 }

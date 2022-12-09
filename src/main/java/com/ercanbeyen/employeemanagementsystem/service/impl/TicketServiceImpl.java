@@ -269,7 +269,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<Ticket> getTicketForStatistics() {
+    public List<Ticket> getTicketsForStatistics() {
         return ticketRepository.findAll();
     }
 

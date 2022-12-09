@@ -47,6 +47,8 @@ public class Employee implements UserDetails {
 
     private String address;
 
+    private String iban;
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "departmentId", referencedColumnName = "id")
     private Department department;

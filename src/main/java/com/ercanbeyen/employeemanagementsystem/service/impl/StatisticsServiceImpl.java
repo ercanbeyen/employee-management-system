@@ -278,7 +278,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public Statistics<Map<String, Integer>> getTicketStatistics() {
         Statistics<Map<String, Integer>> statistics = new Statistics<>();
         Map<String, Map<String, Integer>> sizes = new HashMap<>();
-        List<Ticket> tickets = ticketService.getTicketForStatistics();
+        List<Ticket> tickets = ticketService.getTicketsForStatistics();
 
         /* Fill the type map */
         Type[] types = new Type[] { Type.BUG, Type.TASK, Type.STORY };
