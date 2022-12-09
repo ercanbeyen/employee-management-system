@@ -33,6 +33,8 @@ public class EmployeeDto {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String iban;
+
     private String phoneNumber;
 
     private String nationality;
