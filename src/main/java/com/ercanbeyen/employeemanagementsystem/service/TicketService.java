@@ -11,7 +11,7 @@ import java.util.List;
 public interface TicketService {
     TicketDto createTicket(TicketDto ticketDto);
     TicketDto getTicket(int id);
-    List<TicketDto> filterTickets(Boolean closed, Priority priority, Topic topic, TicketType ticketType, String assigneeEmail, String requesterEmail);
+    List<TicketDto> getTickets(Boolean closed, Priority priority, Topic topic, TicketType ticketType, String assigneeEmail, String requesterEmail, Boolean sort, Integer limit);
     TicketDto updateTicket(int id, TicketDto ticketDto);
     void deleteTicket(int id);
     String assignTicket(int id, String email);

@@ -16,6 +16,7 @@ import com.ercanbeyen.employeemanagementsystem.service.AuthenticationService;
 import com.ercanbeyen.employeemanagementsystem.service.EmployeeService;
 import com.ercanbeyen.employeemanagementsystem.service.TicketService;
 
+import com.ercanbeyen.employeemanagementsystem.util.TicketUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -68,7 +70,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDto> filterTickets(Boolean closed, Priority priority, Topic topic, TicketType ticketType, String requesterEmail, String assigneeEmail) {
+    public List<TicketDto> getTickets(Boolean closed, Priority priority, Topic topic, TicketType type, String requesterEmail, String assigneeEmail, Boolean sort, Integer limit) {
         log.debug("Ticket filtering operation is starting");
         List<Ticket> tickets = ticketRepository.findAll();
 
@@ -77,6 +79,7 @@ public class TicketServiceImpl implements TicketService {
                     .stream()
                     .filter(ticket -> ticket.isClosed() == closed)
                     .toList();
+            log.debug("Tickets are filtered by closed status");
         }
 
         if (priority != null) {
@@ -84,20 +87,19 @@ public class TicketServiceImpl implements TicketService {
                     .stream()
                     .filter(ticket -> ticket.getPriority() == priority)
                     .toList();
+
+            log.debug("Tickets are filtered by priority {}", priority);
+        } else if (sort != null && sort) {
+            tickets = TicketUtils.sortTickets(tickets);
+            log.debug("Tickets are sorted by priority");
         }
 
-        if (ticketType != null) {
+        if (type != null) {
             tickets = tickets
                     .stream()
-                    .filter(ticket -> ticket.getType() == ticketType)
+                    .filter(ticket -> ticket.getType() == type)
                     .toList();
-        }
-
-        if (assigneeEmail != null) {
-            tickets = tickets
-                    .stream()
-                    .filter(ticket -> ticket.getAssignee().getEmail().equals(assigneeEmail))
-                    .toList();
+            log.debug("Tickets are filtered by type {}", type);
         }
 
         if (requesterEmail != null) {
@@ -105,6 +107,23 @@ public class TicketServiceImpl implements TicketService {
                     .stream()
                     .filter(ticket -> ticket.getRequester().getEmail().equals(requesterEmail))
                     .toList();
+            log.debug("Tickets are filtered by requester {}", requesterEmail);
+        }
+
+        if (assigneeEmail != null) {
+            tickets = tickets
+                    .stream()
+                    .filter(ticket -> ticket.getAssignee().getEmail().equals(assigneeEmail))
+                    .toList();
+            log.debug("Tickets are filtered by assignee {}", assigneeEmail);
+        }
+
+        if (limit != null) {
+            tickets = tickets
+                    .stream()
+                    .limit(limit)
+                    .toList();
+            log.debug("Top {} tickets are fetched", limit);
         }
 
         return modelMapper.map(tickets, new TypeToken<List<TicketDto>>(){}.getType());

@@ -256,14 +256,14 @@ public class EmployeeServiceImplTest {
         String department = "IT";
         Currency currency = Currency.TRY;
         String jobTitle = "Developer";
-        Integer limit = null;
+        Boolean sort = false;
 
         Mockito.when(employeeRepository.findAll()).thenReturn(employees);
 
         Mockito.when(modelMapper.map(employees, new TypeToken<List<EmployeeDto>>(){}.getType())).thenReturn(employeeDtos);
 
 
-        List<EmployeeDto> result = employeeService.filterEmployees(role, department, jobTitle, currency, limit);
+        List<EmployeeDto> result = employeeService.getEmployees(role, department, jobTitle, currency, sort, null);
 
         assertEquals(employeeDtos, result);
 
@@ -279,7 +279,7 @@ public class EmployeeServiceImplTest {
         String jobTitle = "Business Analyst";
         Currency currency = Currency.TRY;
         int employeeIndex = 1;
-        Integer limit = null;
+        Boolean sort = false;
 
         JobTitle requestedJobTitle = new JobTitle();
         requestedJobTitle.setId(2);
@@ -302,7 +302,7 @@ public class EmployeeServiceImplTest {
         Mockito.when(modelMapper.map(requestedEmployees, new TypeToken<List<EmployeeDto>>(){}.getType())).thenReturn(requestedEmployeeDtos);
 
 
-        List<EmployeeDto> result = employeeService.filterEmployees(role, department, jobTitle, currency, limit);
+        List<EmployeeDto> result = employeeService.getEmployees(role, department, jobTitle, currency, sort, null);
 
         assertEquals(result, requestedEmployeeDtos);
 

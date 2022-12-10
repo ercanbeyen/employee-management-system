@@ -1,5 +1,7 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.PaymentType;
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.PaymentDto;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
@@ -26,9 +28,14 @@ public class PaymentController {
         return ResponseHandler.generateResponse(HttpStatus.CREATED, true, Messages.SUCCESS, createdPayment);
     }
 
-    @GetMapping("/filter")
-    public ResponseEntity<Object> filterPayments() {
-        List<PaymentDto> paymentDtos = paymentService.getPayments();
+    @GetMapping
+    public ResponseEntity<Object> getPayments(
+            @RequestParam(required = false) PaymentType type,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Currency currency,
+            @RequestParam(required = false) Boolean sort,
+            @RequestParam(required = false) Integer limit) {
+        List<PaymentDto> paymentDtos = paymentService.getPayments(type, email, currency, sort, limit);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, paymentDtos);
     }
 

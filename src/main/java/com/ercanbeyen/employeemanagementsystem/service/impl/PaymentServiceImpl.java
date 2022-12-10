@@ -1,5 +1,7 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.PaymentType;
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.PaymentDto;
 import com.ercanbeyen.employeemanagementsystem.entity.Employee;
@@ -57,8 +59,55 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<PaymentDto> getPayments() {
-        return modelMapper.map(paymentRepository.findAll(), new TypeToken<List<PaymentDto>>(){}.getType());
+    public List<PaymentDto> getPayments(PaymentType type, String email, Currency currency, Boolean sort, Integer limit) {
+        log.debug("Payment filtering is starting");
+        List<Payment> payments = paymentRepository.findAll();
+
+        if (type != null) {
+            payments = payments
+                    .stream()
+                    .filter(payment -> payment.getType() == type)
+                    .toList();
+            log.debug("Payments are filtered based on type {}", type);
+        }
+
+        if (email != null) {
+            payments = payments
+                    .stream()
+                    .filter(payment -> payment.getEmployee().getEmail().equals(email))
+                    .toList();
+            log.debug("Payments are filtered based on email {}", email);
+        }
+
+        if (currency != null) {
+            payments = payments
+                    .stream()
+                    .filter(payment -> payment.getCurrency() == currency)
+                    .toList();
+            log.debug("Payments are filtered based on currency {}", currency);
+        }
+
+        if (sort != null && sort) {
+            payments = payments
+                    .stream()
+                    .sorted((payment1, payment2) -> {
+                        double amount1 = payment1.getAmount();
+                        double amount2 = payment2.getAmount();
+                        return Double.compare(amount2, amount1);
+                    })
+                    .toList();
+            log.debug("Payments are sorted by amount");
+
+            if (limit != null) {
+                payments = payments
+                        .stream()
+                        .limit(limit)
+                        .toList();
+                log.debug("Get top {} payment based on amount", limit);
+            }
+        }
+
+        return modelMapper.map(payments, new TypeToken<List<PaymentDto>>(){}.getType());
     }
 
     @Override

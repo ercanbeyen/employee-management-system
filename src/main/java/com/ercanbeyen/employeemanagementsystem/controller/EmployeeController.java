@@ -20,14 +20,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -48,14 +43,15 @@ public class EmployeeController {
         return ResponseHandler.generateResponse(HttpStatus.CREATED, true, Messages.SUCCESS, createdEmployee);
     }
 
-    @GetMapping("/filter")
-    public ResponseEntity<Object> filterEmployees(
+    @GetMapping
+    public ResponseEntity<Object> getEmployees(
             @RequestParam(required = false) Role role,
             @RequestParam(required = false) String department,
             @RequestParam(required = false) String jobTitle,
             @RequestParam(required = false) Currency currency,
+            @RequestParam(required = false) Boolean sort,
             @RequestParam(required = false) Integer limit) {
-        List<EmployeeDto> employees = employeeService.filterEmployees(role, department, jobTitle, currency, limit);
+        List<EmployeeDto> employees = employeeService.getEmployees(role, department, jobTitle, currency, sort, limit);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, employees);
     }
 

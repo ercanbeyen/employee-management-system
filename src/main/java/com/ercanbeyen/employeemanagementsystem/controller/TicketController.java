@@ -37,8 +37,10 @@ public class TicketController {
             @RequestParam(required = false) Topic topic,
             @RequestParam(required = false) TicketType ticketType,
             @RequestParam(required = false) String requesterEmail,
-            @RequestParam(required = false) String assigneeEmail) {
-        List<TicketDto> ticketDtos = ticketService.filterTickets(closed, priority, topic, ticketType, requesterEmail, assigneeEmail);
+            @RequestParam(required = false) String assigneeEmail,
+            @RequestParam(required = false) Boolean sort,
+            @RequestParam(required = false) Integer limit) {
+        List<TicketDto> ticketDtos = ticketService.getTickets(closed, priority, topic, ticketType, requesterEmail, assigneeEmail, sort, limit);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, ticketDtos);
     }
 

@@ -106,7 +106,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         return modelMapper.map(newEmployee, EmployeeDto.class);
     }
 
-    public List<EmployeeDto> filterEmployees(Role role, String department, String jobTitle, Currency currency, Integer limit) {
+    public List<EmployeeDto> getEmployees(Role role, String department, String jobTitle, Currency currency, Boolean sort, Integer limit) {
         log.debug("Employee filtering is started");
         List<Employee> employees = employeeRepository.findAll();
 
@@ -143,22 +143,29 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
                     .collect(Collectors.toList());
 
             log.debug("Employees are filtered by currency called {}", currency);
+        }
+
+        if (sort != null && sort) {
+            employees = employees
+                    .stream()
+                    .sorted((employee1, employee2) -> {
+                        double amount1 = employee1.getSalary().getAmount();
+                        double amount2 = employee2.getSalary().getAmount();
+                        return Double.compare(amount2, amount1);
+                    })
+                    .toList();
+
+            log.debug("Employees are sorted by salary amount");
 
             if (limit != null) {
                 employees = employees
                         .stream()
-                        .sorted((employee1, employee2) -> {
-                            double amount1 = employee1.getSalary().getAmount();
-                            double amount2 = employee2.getSalary().getAmount();
-                            return Double.compare(amount2, amount1);
-                        })
                         .limit(limit)
-                        .collect(Collectors.toList());
-
-                log.debug("Employee with top {} salary is selected", limit);
+                        .toList();
+                log.debug("Employees with top {} salary amount are selected", limit);
             }
-
         }
+
         return modelMapper.map(employees, new TypeToken<List<EmployeeDto>>(){}.getType());
     }
 

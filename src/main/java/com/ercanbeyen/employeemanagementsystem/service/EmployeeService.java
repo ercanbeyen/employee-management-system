@@ -16,7 +16,7 @@ import java.util.List;
 
 public interface EmployeeService {
     EmployeeDto createEmployee(EmployeeDto user);
-    List<EmployeeDto> filterEmployees(Role role, String department, String jobTitle, Currency currency, Integer limit);
+    List<EmployeeDto> getEmployees(Role role, String department, String jobTitle, Currency currency, Boolean sort, Integer limit);
     List<EmployeeDto> searchEmployees(String firstName, String lastName);
     EmployeeDto getEmployee(int id);
     EmployeeDto updateEmployeeDetails(int id, UpdateEmployeeDetailsRequest request);
