@@ -1,6 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.constants.enums.ticket;
 
-public enum Type {
+public enum TicketType {
     BUG,
     TASK,
     STORY

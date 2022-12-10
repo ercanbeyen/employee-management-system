@@ -2,7 +2,7 @@ package com.ercanbeyen.employeemanagementsystem.controller;
 
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Priority;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Topic;
-import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Type;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.TicketType;
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.TicketDto;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
@@ -35,10 +35,10 @@ public class TicketController {
             @RequestParam(required = false) Boolean closed,
             @RequestParam(required = false) Priority priority,
             @RequestParam(required = false) Topic topic,
-            @RequestParam(required = false) Type type,
+            @RequestParam(required = false) TicketType ticketType,
             @RequestParam(required = false) String requesterEmail,
             @RequestParam(required = false) String assigneeEmail) {
-        List<TicketDto> ticketDtos = ticketService.filterTickets(closed, priority, topic, type, requesterEmail, assigneeEmail);
+        List<TicketDto> ticketDtos = ticketService.filterTickets(closed, priority, topic, ticketType, requesterEmail, assigneeEmail);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, ticketDtos);
     }
 

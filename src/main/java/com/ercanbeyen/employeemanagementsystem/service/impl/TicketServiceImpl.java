@@ -3,7 +3,7 @@ package com.ercanbeyen.employeemanagementsystem.service.impl;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Priority;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Topic;
-import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Type;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.TicketType;
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.TicketDto;
 import com.ercanbeyen.employeemanagementsystem.entity.Employee;
@@ -68,7 +68,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDto> filterTickets(Boolean closed, Priority priority, Topic topic, Type type, String requesterEmail, String assigneeEmail) {
+    public List<TicketDto> filterTickets(Boolean closed, Priority priority, Topic topic, TicketType ticketType, String requesterEmail, String assigneeEmail) {
         log.debug("Ticket filtering operation is starting");
         List<Ticket> tickets = ticketRepository.findAll();
 
@@ -86,10 +86,10 @@ public class TicketServiceImpl implements TicketService {
                     .toList();
         }
 
-        if (type != null) {
+        if (ticketType != null) {
             tickets = tickets
                     .stream()
-                    .filter(ticket -> ticket.getType() == type)
+                    .filter(ticket -> ticket.getType() == ticketType)
                     .toList();
         }
 

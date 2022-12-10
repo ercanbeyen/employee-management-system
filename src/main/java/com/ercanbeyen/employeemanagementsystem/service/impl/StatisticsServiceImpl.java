@@ -3,7 +3,7 @@ package com.ercanbeyen.employeemanagementsystem.service.impl;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Priority;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Topic;
-import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Type;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.TicketType;
 import com.ercanbeyen.employeemanagementsystem.dto.DepartmentDto;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
@@ -281,11 +281,11 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<Ticket> tickets = ticketService.getTicketsForStatistics();
 
         /* Fill the type map */
-        Type[] types = new Type[] { Type.BUG, Type.TASK, Type.STORY };
+        TicketType[] ticketTypes = new TicketType[] { TicketType.BUG, TicketType.TASK, TicketType.STORY };
         Map<String, Integer> typeMap = new HashMap<>();
 
-        for (Type type : types) {
-            typeMap.put(String.valueOf(type), 0);
+        for (TicketType ticketType : ticketTypes) {
+            typeMap.put(String.valueOf(ticketType), 0);
         }
 
         for (Ticket ticket: tickets) {
@@ -297,28 +297,28 @@ public class StatisticsServiceImpl implements StatisticsService {
         int minimum = Integer.MAX_VALUE;
         int maximum = Integer.MIN_VALUE;
         double average = 0;
-        Type maximumType = Type.BUG;
-        Type minimumType = Type.STORY;
+        TicketType maximumTicketType = TicketType.BUG;
+        TicketType minimumTicketType = TicketType.STORY;
 
-        for (Type type : types) {
-            int current = typeMap.get(type.toString());
+        for (TicketType ticketType : ticketTypes) {
+            int current = typeMap.get(ticketType.toString());
             average += current;
             if (current < minimum) {
-                minimumType = type;
+                minimumTicketType = ticketType;
                 minimum = current;
             }
             if (current > maximum) {
-                maximumType = type;
+                maximumTicketType = ticketType;
                 maximum = current;
             }
         }
 
-        int numberOfTypes = types.length;
+        int numberOfTypes = ticketTypes.length;
         average /= numberOfTypes;
 
         /* Set minimum, maxim and average */
-        statistics.setMinimum(minimumType.toString());
-        statistics.setMaximum(maximumType.toString());
+        statistics.setMinimum(minimumTicketType.toString());
+        statistics.setMaximum(maximumTicketType.toString());
         statistics.setAverage(average);
 
         sizes.put("Type", typeMap);

@@ -3,7 +3,7 @@ package com.ercanbeyen.employeemanagementsystem.dto;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Priority;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Topic;
 
-import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Type;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.TicketType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -20,7 +20,7 @@ public class TicketDto {
     private Topic topic;
 
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private TicketType type;
 
     @NotBlank(message = "Subject should not be blank")
     private String subject;

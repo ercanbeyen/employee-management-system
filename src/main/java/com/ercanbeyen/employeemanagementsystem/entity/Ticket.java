@@ -2,11 +2,10 @@ package com.ercanbeyen.employeemanagementsystem.entity;
 
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Topic;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Priority;
-import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Type;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.TicketType;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @Entity
 @Data
@@ -21,7 +20,7 @@ public class Ticket extends BaseEntity {
     private Priority priority;
 
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private TicketType type;
 
     @Enumerated(EnumType.STRING)
     private Topic topic;

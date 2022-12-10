@@ -2,9 +2,11 @@ package com.ercanbeyen.employeemanagementsystem.config;
 
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
 
+import com.ercanbeyen.employeemanagementsystem.dto.PaymentDto;
 import com.ercanbeyen.employeemanagementsystem.dto.TicketDto;
 import com.ercanbeyen.employeemanagementsystem.entity.Employee;
 
+import com.ercanbeyen.employeemanagementsystem.entity.Payment;
 import com.ercanbeyen.employeemanagementsystem.entity.Ticket;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
@@ -32,6 +34,9 @@ public class ModelMapperConfig {
         TypeMap<Ticket, TicketDto> ticketPropertyMapper = modelMapper.createTypeMap(Ticket.class, TicketDto.class);
         ticketPropertyMapper.addMappings(mapper -> mapper.map(src -> src.getRequester().getEmail(), TicketDto::setRequesterEmail));
         ticketPropertyMapper.addMappings(mapper -> mapper.map(src -> src.getAssignee().getEmail(), TicketDto::setAssigneeEmail));
+
+        TypeMap<Payment, PaymentDto> paymentPropertyMapper = modelMapper.createTypeMap(Payment.class, PaymentDto.class);
+        paymentPropertyMapper.addMappings(mapper -> mapper.map(src -> src.getEmployee().getEmail(), PaymentDto::setEmail));
 
         return modelMapper;
     }
