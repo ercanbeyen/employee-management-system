@@ -6,11 +6,13 @@ import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.PaymentDto;
 import com.ercanbeyen.employeemanagementsystem.entity.Employee;
 import com.ercanbeyen.employeemanagementsystem.entity.Payment;
+import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 import com.ercanbeyen.employeemanagementsystem.repository.PaymentRepository;
 import com.ercanbeyen.employeemanagementsystem.service.AuthenticationService;
 import com.ercanbeyen.employeemanagementsystem.service.EmployeeService;
 import com.ercanbeyen.employeemanagementsystem.service.PaymentService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -44,9 +46,25 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setEmployee(employee);
         log.debug("Employee is found");
 
-        payment.setType(paymentDto.getType());
-        payment.setAmount(paymentDto.getAmount());
-        payment.setCurrency(paymentDto.getCurrency());
+        PaymentType type = paymentDto.getType();
+        payment.setType(type);
+        log.debug("Payment type is {}", type);
+
+        double amount;
+        Currency currency;
+
+        if (type == PaymentType.SALARY) {
+            Salary salary = employee.getSalary();
+            amount = salary.getAmount();
+            currency = salary.getCurrency();
+        } else {
+            amount = paymentDto.getAmount();
+            currency = payment.getCurrency();
+        }
+
+        payment.setAmount(amount);
+        payment.setCurrency(currency);
+        log.debug("Amount and currency are assigned");
 
         String loggedIn_email = authenticationService.getEmail();
         payment.setLatestChangeBy(loggedIn_email);
@@ -132,13 +150,28 @@ public class PaymentServiceImpl implements PaymentService {
         log.debug("Payment is found");
 
         Employee employee = employeeService.getEmployeeByEmail(paymentDto.getEmail());
-
         log.debug("Employee is found");
 
-        paymentInDb.setAmount(paymentDto.getAmount());
-        paymentInDb.setCurrency(paymentDto.getCurrency());
-        paymentInDb.setType(paymentDto.getType());
+        PaymentType type = paymentDto.getType();
+        paymentInDb.setType(type);
+        log.debug("Payment type is {}", type);
+
+        double amount;
+        Currency currency;
+
+        if (type == PaymentType.SALARY) {
+            Salary salary = employee.getSalary();
+            amount = salary.getAmount();
+            currency = salary.getCurrency();
+        } else {
+            amount = paymentDto.getAmount();
+            currency = paymentDto.getCurrency();
+        }
+
+        paymentInDb.setAmount(amount);
+        paymentInDb.setCurrency(currency);
         paymentInDb.setEmployee(employee);
+        log.debug("Amount, currency and employee are assigned");
 
         Payment updatedPayment = paymentRepository.save(paymentInDb);
         log.debug("Payment is updated");
@@ -148,6 +181,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void deletePayment(int id) {
+        paymentRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Payment", id))
+                );
+
         paymentRepository.deleteById(id);
     }
 }
