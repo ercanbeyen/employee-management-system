@@ -281,7 +281,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<Ticket> tickets = ticketService.getTicketsForStatistics();
 
         /* Fill the type map */
-        TicketType[] ticketTypes = new TicketType[] { TicketType.BUG, TicketType.TASK, TicketType.STORY };
+        TicketType[] ticketTypes = TicketType.values();
         Map<String, Integer> typeMap = new HashMap<>();
 
         for (TicketType ticketType : ticketTypes) {
@@ -324,7 +324,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         sizes.put("Type", typeMap);
 
         /* Fill the topic map */
-        Topic[] topics = new Topic[] { Topic.SOFTWARE, Topic.NETWORK, Topic.HARDWARE };
+        Topic[] topics = Topic.values();
         Map<String, Integer> topicMap = new HashMap<>();
 
         for (Topic topic : topics) {
@@ -340,7 +340,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         sizes.put("Topic", topicMap);
 
         /* Fill the priority map */
-        Priority[] priorities = new Priority[] { Priority.CRITICAL, Priority.IMPORTANT, Priority.NORMAL, Priority.LOW };
+        Priority[] priorities = Priority.values();
         Map<String, Integer> priorityMap = new HashMap<>();
 
         for (Priority priority : priorities) {

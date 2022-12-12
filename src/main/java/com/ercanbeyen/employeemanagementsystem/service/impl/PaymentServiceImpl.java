@@ -42,35 +42,7 @@ public class PaymentServiceImpl implements PaymentService {
         log.debug("Payment creation is starting");
         Payment payment = new Payment();
 
-        Employee employee = employeeService.getEmployeeByEmail(paymentDto.getEmail());
-        payment.setEmployee(employee);
-        log.debug("Employee is found");
-
-        PaymentType type = paymentDto.getType();
-        payment.setType(type);
-        log.debug("Payment type is {}", type);
-
-        double amount;
-        Currency currency;
-
-        if (type == PaymentType.SALARY) {
-            Salary salary = employee.getSalary();
-            amount = salary.getAmount();
-            currency = salary.getCurrency();
-        } else {
-            amount = paymentDto.getAmount();
-            currency = payment.getCurrency();
-        }
-
-        payment.setAmount(amount);
-        payment.setCurrency(currency);
-        log.debug("Amount and currency are assigned");
-
-        String loggedIn_email = authenticationService.getEmail();
-        payment.setLatestChangeBy(loggedIn_email);
-        payment.setLatestChangeAt(new Date());
-
-        Payment createdPayment = paymentRepository.save(payment);
+        Payment createdPayment = setPayment(payment, paymentDto);;
         log.debug("Payment is created");
 
         return modelMapper.map(createdPayment, PaymentDto.class);
@@ -146,34 +118,9 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(
                         () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Payment", id))
                 );
-
         log.debug("Payment is found");
 
-        Employee employee = employeeService.getEmployeeByEmail(paymentDto.getEmail());
-        log.debug("Employee is found");
-
-        PaymentType type = paymentDto.getType();
-        paymentInDb.setType(type);
-        log.debug("Payment type is {}", type);
-
-        double amount;
-        Currency currency;
-
-        if (type == PaymentType.SALARY) {
-            Salary salary = employee.getSalary();
-            amount = salary.getAmount();
-            currency = salary.getCurrency();
-        } else {
-            amount = paymentDto.getAmount();
-            currency = paymentDto.getCurrency();
-        }
-
-        paymentInDb.setAmount(amount);
-        paymentInDb.setCurrency(currency);
-        paymentInDb.setEmployee(employee);
-        log.debug("Amount, currency and employee are assigned");
-
-        Payment updatedPayment = paymentRepository.save(paymentInDb);
+        Payment updatedPayment = setPayment(paymentInDb, paymentDto);
         log.debug("Payment is updated");
 
         return modelMapper.map(updatedPayment, PaymentDto.class);
@@ -188,5 +135,37 @@ public class PaymentServiceImpl implements PaymentService {
                 );
 
         paymentRepository.deleteById(id);
+    }
+
+    private Payment setPayment(Payment payment, PaymentDto paymentDto) {
+        Employee employee = employeeService.getEmployeeByEmail(paymentDto.getEmail());
+        log.debug("Employee is found");
+
+        PaymentType type = paymentDto.getType();
+        payment.setType(type);
+        log.debug("Payment type is {}", type);
+
+        double amount;
+        Currency currency;
+
+        if (paymentDto.getType() == PaymentType.SALARY) {
+            Salary salary = employee.getSalary();
+            amount = salary.getAmount();
+            currency = salary.getCurrency();
+        } else {
+            amount = paymentDto.getAmount();
+            currency = payment.getCurrency();
+        }
+
+        payment.setAmount(amount);
+        payment.setCurrency(currency);
+        payment.setEmployee(employee);
+        log.debug("Amount, currency and employee are assigned");
+
+        String loggedIn_email = authenticationService.getEmail();
+        payment.setLatestChangeBy(loggedIn_email);
+        payment.setLatestChangeAt(new Date());
+
+        return paymentRepository.save(payment);
     }
 }
