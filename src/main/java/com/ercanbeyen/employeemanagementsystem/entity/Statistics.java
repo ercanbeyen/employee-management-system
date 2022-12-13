@@ -5,9 +5,9 @@ import lombok.Data;
 import java.util.Map;
 
 @Data
-public class Statistics <T> {
+public class Statistics <T, V> {
     private String minimum;
     private String maximum;
     private Double average;
-    private Map<String, T> sizes;
+    private Map<T, V> sizes;
 }

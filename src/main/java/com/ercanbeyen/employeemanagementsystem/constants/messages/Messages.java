@@ -8,4 +8,5 @@ public class Messages {
     public static final String SUCCESS = "Success";
     public static final String ROLE_RESTRICTION = "Only user in %s can be assigned to role %s";
     public static final String PASSWORD_UPDATE_SUCCESS = "Password is updated successfully";
+    public static final String NOT_HAVE_SUCH_STATISTICS = "The data does not have the indicated statistic value";
 }

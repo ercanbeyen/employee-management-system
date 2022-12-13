@@ -4,6 +4,7 @@ import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Priority;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Topic;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.TicketType;
+import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.DepartmentDto;
 import com.ercanbeyen.employeemanagementsystem.entity.*;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
@@ -21,48 +22,68 @@ import java.util.*;
 public class StatisticsServiceImpl implements StatisticsService {
     @Autowired
     private final DepartmentService departmentService;
-
     @Autowired
     private final JobTitleService jobTitleService;
-
     @Autowired
     private final SalaryService salaryService;
-
     @Autowired
     private final EmployeeService employeeService;
     @Autowired
     private final TicketService ticketService;
 
     @Override
-    public Statistics<Integer> getDepartmentStatistics() {
-        Statistics<Integer> statistics = new Statistics<>();
+    public Statistics<String, Integer> getDepartmentStatistics() {
+        Statistics<String, Integer> statistics = new Statistics<>();
         List<Department> departments = departmentService.getDepartmentsForStatistics();
 
-        /* Set minimum */
-        Department minimumDepartment = departments
-                .stream()
-                .min(Comparator.comparing(Department::getSize))
-                .orElseThrow(NoSuchElementException::new);
+        /* Set minimum and maximum */
+        Department maximumDepartment = null;
+        Department minimumDepartment = null;
+        int maximumDepartmentSize = Integer.MIN_VALUE;
+        int minimumDepartmentSize = Integer.MAX_VALUE;
+        double summationOfSizes = 0;
 
-        statistics.setMinimum(minimumDepartment.getName());
 
-        /* Set maximum */
-        Department maximumDepartment = departments
-                .stream()
-                .max(Comparator.comparing(Department::getSize))
-                .orElseThrow(NoSuchElementException::new);
+        for (Department department : departments) {
+            int currentSize = department.getSize();
 
-        statistics.setMaximum(maximumDepartment.getName());
+            if (currentSize < minimumDepartmentSize) {
+                minimumDepartment = department;
+                minimumDepartmentSize = currentSize;
+            } else if (currentSize > maximumDepartmentSize) {
+                maximumDepartment = department;
+                maximumDepartmentSize = currentSize;
+            }
+
+            summationOfSizes += currentSize;
+        }
+
+        String maximumDepartmentName;
+        String minimumDepartmentName;
+
+        if (minimumDepartment == null && maximumDepartment == null) {
+            minimumDepartmentName = Messages.NOT_HAVE_SUCH_STATISTICS;
+            maximumDepartmentName = Messages.NOT_HAVE_SUCH_STATISTICS;
+        } else if (minimumDepartment == null) {
+            maximumDepartmentName = maximumDepartment.getName();
+            minimumDepartmentName = maximumDepartmentName;
+        } else if (maximumDepartment == null) {
+            minimumDepartmentName = minimumDepartment.getName();
+            maximumDepartmentName = minimumDepartmentName;
+        } else {
+            minimumDepartmentName = minimumDepartment.getName();
+            maximumDepartmentName = maximumDepartment.getName();
+        }
+
+        statistics.setMinimum(minimumDepartmentName);
+        statistics.setMaximum(maximumDepartmentName);
 
         /* Set average */
-        Double average = null;
-        OptionalDouble optionalAverage = departments
-                .stream()
-                .mapToDouble(Department::getSize)
-                .average();
+        double average = 0;
+        int numberOfDepartments = departments.size();
 
-        if (optionalAverage.isPresent()) {
-            average = optionalAverage.getAsDouble();
+        if (numberOfDepartments != 0) {
+            average = summationOfSizes / numberOfDepartments;
         }
 
         statistics.setAverage(average);
@@ -80,39 +101,61 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public Statistics<Integer> getJobTitleStatistics() {
-        Statistics<Integer> statistics = new Statistics<>();
+    public Statistics<String, Integer> getJobTitleStatistics() {
+        Statistics<String, Integer> statistics = new Statistics<>();
         List<JobTitle> jobTitles = jobTitleService.getJobTitlesForStatistics();
 
-        /* Set minimum */
-        JobTitle minimumJobTitle = jobTitles
-                .stream()
-                .min(Comparator.comparing(JobTitle::getSize))
-                .orElseThrow(NoSuchElementException::new);
+        /* Set minimum and maximum */
+        JobTitle maximumJobTitle = null;
+        JobTitle minimumJobTitle = null;
+        int maximumJobTitleSize = Integer.MIN_VALUE;
+        int minimumJobTitleSize = Integer.MAX_VALUE;
+        double summationOfSizes = 0;
 
-        statistics.setMinimum(minimumJobTitle.getName());
+        for (JobTitle jobTitle : jobTitles) {
+            int currentSize = jobTitle.getSize();
 
-        /* Set maximum */
-        JobTitle maximumJobTitle = jobTitles
-                .stream()
-                .max(Comparator.comparing(JobTitle::getSize))
-                .orElseThrow(NoSuchElementException::new);
+            if (currentSize < minimumJobTitleSize) {
+                minimumJobTitle = jobTitle;
+                minimumJobTitleSize = currentSize;
+            } else if (currentSize > maximumJobTitleSize) {
+                maximumJobTitle = jobTitle;
+                maximumJobTitleSize = currentSize;
+            }
 
-        statistics.setMaximum(maximumJobTitle.getName());
+            summationOfSizes += currentSize;
+        }
+
+        String maximumJobTitleName;
+        String minimumJobTitleName;
+
+        if (minimumJobTitle == null && maximumJobTitle == null) {
+            minimumJobTitleName = Messages.NOT_HAVE_SUCH_STATISTICS;
+            maximumJobTitleName = Messages.NOT_HAVE_SUCH_STATISTICS;
+        } else if (minimumJobTitle == null) {
+            maximumJobTitleName = maximumJobTitle.getName();
+            minimumJobTitleName = maximumJobTitleName;
+        } else if (maximumJobTitle == null) {
+            minimumJobTitleName = minimumJobTitle.getName();
+            maximumJobTitleName = minimumJobTitleName;
+        } else {
+            minimumJobTitleName = minimumJobTitle.getName();
+            maximumJobTitleName = maximumJobTitle.getName();
+        }
+
+        statistics.setMinimum(minimumJobTitleName);
+        statistics.setMaximum(maximumJobTitleName);
 
         /* Set average */
-        Double average = null;
+        double average = 0;
+        int numberOfJobTitles = jobTitles.size();
 
-        OptionalDouble optionalAverage = jobTitles
-                .stream()
-                .mapToDouble(JobTitle::getSize)
-                .average();
-
-        if (optionalAverage.isPresent()) {
-            average = optionalAverage.getAsDouble();
+        if (numberOfJobTitles != 0) {
+            average = summationOfSizes / numberOfJobTitles;
         }
 
         statistics.setAverage(average);
+
 
         /* Set sizes */
         HashMap<String, Integer> map = new HashMap<>();
@@ -127,54 +170,71 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public Statistics<Integer> getSalaryStatistics() {
-        Statistics<Integer> statistics = new Statistics<>();
+    public Statistics<Currency,Integer> getSalaryStatistics() {
+        Statistics<Currency, Integer> statistics = new Statistics<>();
         List<Salary> salaries = salaryService.getSalariesForStatistics();
 
-        /* Set minimum */
-        Salary minimumSalary = salaries
-                .stream()
-                .min(Comparator.comparing(Salary::getAmount))
-                .orElseThrow(NoSuchElementException::new);
+        /* Set minimum and maximum */
+        Salary maximumSalary = null;
+        Salary minimumSalary = null;
+        double maximumAmount = Double.MIN_VALUE;
+        double minimumAmount = Double.MAX_VALUE;
+        double summationOfAmounts = 0;
 
-        statistics.setMinimum(minimumSalary.getAmount().toString());
+        for (Salary salary : salaries) {
+            double currentAmount = salary.getAmount();
 
-        /* Set maximum */
-        Salary maximumSalary = salaries
-                .stream()
-                .max(Comparator.comparing(Salary::getAmount))
-                .orElseThrow(NoSuchElementException::new);
+            if (currentAmount < minimumAmount) {
+                minimumSalary = salary;
+                minimumAmount = currentAmount;
+            } else if (currentAmount > maximumAmount) {
+                maximumSalary = salary;
+                maximumAmount = currentAmount;
+            }
 
-        statistics.setMaximum(maximumSalary.getAmount().toString());
+            summationOfAmounts += currentAmount;
+        }
+
+        String maximumSalaryAmount;
+        String minimumSalaryAmount;
+
+        if (minimumSalary == null && maximumSalary == null) {
+            minimumSalaryAmount = Messages.NOT_HAVE_SUCH_STATISTICS;
+            maximumSalaryAmount = Messages.NOT_HAVE_SUCH_STATISTICS;
+        } else if (minimumSalary == null) {
+            maximumSalaryAmount = maximumSalary.getAmount().toString();
+            minimumSalaryAmount = maximumSalaryAmount;
+        } else if (maximumSalary == null) {
+            minimumSalaryAmount = minimumSalary.getAmount().toString();
+            maximumSalaryAmount = minimumSalaryAmount;
+        } else {
+            minimumSalaryAmount = minimumSalary.getAmount().toString();
+            maximumSalaryAmount = maximumSalary.getAmount().toString();
+        }
+
+        statistics.setMinimum(minimumSalaryAmount);
+        statistics.setMaximum(maximumSalaryAmount);
 
         /* Set average */
-        Double average = null;
+        double average = 0;
+        int numberOfSalaries = salaries.size();
 
-        OptionalDouble optionalAverage = salaries
-                .stream()
-                .mapToDouble(Salary::getAmount)
-                .average();
-
-        if (optionalAverage.isPresent()) {
-            average = optionalAverage.getAsDouble();
+        if (numberOfSalaries != 0) {
+            average = summationOfAmounts / numberOfSalaries;
         }
 
         statistics.setAverage(average);
 
-        List<Currency> currencies = salaries
-                .stream()
-                .map(Salary::getCurrency)
-                .toList();
-
         /* Set sizes */
-        HashMap<String, Integer> map = new HashMap<>();
+        HashMap<Currency, Integer> map = new HashMap<>();
+        Currency[] currencies = Currency.values();
 
         for (Currency currency : currencies) {
-            map.put(String.valueOf(currency), 0);
+            map.put(currency, 0);
         }
 
         for (Salary salary : salaries) {
-            String key = String.valueOf(salary.getCurrency());
+            Currency key = salary.getCurrency();
             Integer value = map.get(key);
             map.put(key, ++value);
         }
@@ -185,23 +245,17 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public Statistics<Map<Role, Integer>> getRoleStatistics() {
+    public Statistics<String, Map<Role, Integer>> getRoleStatistics() {
 
-        Statistics<Map<Role, Integer>> statistics = new Statistics<>();
+        Statistics<String, Map<Role, Integer>> statistics = new Statistics<>();
 
         /* Set sizes */
         List<DepartmentDto> departments = departmentService.
                 getDepartments()
                 .stream()
-                .distinct()
                 .toList();
 
-        List<Role> roles = employeeService.getEmployeesForStatistics()
-                .stream()
-                .map(Employee::getRole)
-                .distinct()
-                .toList();
-
+        Role[] roles = Role.values();
         Map<String, Map<Role, Integer>> sizesOfDepartments = new HashMap<>();
 
         for (DepartmentDto department : departments) {
@@ -261,7 +315,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             }
         }
 
-        int numberOfRoles = roles.size();
+        int numberOfRoles = roles.length;
 
         if (numberOfRoles > 0) {
             average /= numberOfRoles;
@@ -275,8 +329,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public Statistics<Map<String, Integer>> getTicketStatistics() {
-        Statistics<Map<String, Integer>> statistics = new Statistics<>();
+    public Statistics<String, Map<String, Integer>> getTicketStatistics() {
+        Statistics<String, Map<String, Integer>> statistics = new Statistics<>();
         Map<String, Map<String, Integer>> sizes = new HashMap<>();
         List<Ticket> tickets = ticketService.getTicketsForStatistics();
 
@@ -354,8 +408,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         sizes.put("Priority", priorityMap);
-
         statistics.setSizes(sizes);
+
         return statistics;
     }
 }

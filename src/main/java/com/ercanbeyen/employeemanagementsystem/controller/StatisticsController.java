@@ -1,6 +1,8 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
+import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
+
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.entity.Statistics;
@@ -24,32 +26,32 @@ public class StatisticsController {
 
     @GetMapping("/departments")
     public ResponseEntity<Object> getDepartmentStatistics() {
-        Statistics<Integer> statistics = statisticsService.getDepartmentStatistics();
+        Statistics<String, Integer> statistics = statisticsService.getDepartmentStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
 
     @GetMapping("/jobTitles")
     public ResponseEntity<Object> getJobTitlesStatistics() {
-        Statistics<Integer> statistics = statisticsService.getJobTitleStatistics();
+        Statistics<String, Integer> statistics = statisticsService.getJobTitleStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
     @GetMapping("/salaries")
     public ResponseEntity<Object> getSalaryStatistics() {
-        Statistics<Integer> statistics = statisticsService.getSalaryStatistics();
+        Statistics<Currency, Integer> statistics = statisticsService.getSalaryStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
     @GetMapping("/roles")
     public ResponseEntity<Object> getRoleStatistics() {
-        Statistics<Map<Role, Integer>> statistics = statisticsService.getRoleStatistics();
+        Statistics<String, Map<Role, Integer>> statistics = statisticsService.getRoleStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
     @GetMapping("/tickets")
     public ResponseEntity<Object> getTicketStatistics() {
-        Statistics<Map<String, Integer>> statistics = statisticsService.getTicketStatistics();
+        Statistics<String, Map<String, Integer>> statistics = statisticsService.getTicketStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
