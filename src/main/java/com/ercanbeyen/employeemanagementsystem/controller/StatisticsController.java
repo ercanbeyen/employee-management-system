@@ -1,6 +1,7 @@
 package com.ercanbeyen.employeemanagementsystem.controller;
 
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
+import com.ercanbeyen.employeemanagementsystem.constants.enums.PaymentType;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
 
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
@@ -52,6 +53,12 @@ public class StatisticsController {
     @GetMapping("/tickets")
     public ResponseEntity<Object> getTicketStatistics() {
         Statistics<String, Map<String, Integer>> statistics = statisticsService.getTicketStatistics();
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
+    }
+
+    @GetMapping("/payments")
+    public ResponseEntity<Object> getPaymentStatistics() {
+        Statistics<PaymentType, Integer> statistics = statisticsService.getPaymentStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 

@@ -3,6 +3,7 @@ package com.ercanbeyen.employeemanagementsystem.service;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.PaymentType;
 import com.ercanbeyen.employeemanagementsystem.dto.PaymentDto;
+import com.ercanbeyen.employeemanagementsystem.entity.Payment;
 
 import java.util.List;
 
@@ -12,4 +13,5 @@ public interface PaymentService {
     PaymentDto getPayment(int id);
     PaymentDto updatePayment(int id, PaymentDto paymentDto);
     void deletePayment(int id);
+    List<Payment> getPaymentsForStatistics();
 }

@@ -137,6 +137,11 @@ public class PaymentServiceImpl implements PaymentService {
         paymentRepository.deleteById(id);
     }
 
+    @Override
+    public List<Payment> getPaymentsForStatistics() {
+        return paymentRepository.findAll();
+    }
+
     private Payment setPayment(Payment payment, PaymentDto paymentDto) {
         Employee employee = employeeService.getEmployeeByEmail(paymentDto.getEmail());
         log.debug("Employee is found");

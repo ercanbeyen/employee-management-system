@@ -1,5 +1,6 @@
 package com.ercanbeyen.employeemanagementsystem.service.impl;
 
+import com.ercanbeyen.employeemanagementsystem.constants.enums.PaymentType;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Priority;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Topic;
@@ -30,6 +31,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final EmployeeService employeeService;
     @Autowired
     private final TicketService ticketService;
+    @Autowired
+    private final PaymentService paymentService;
 
     @Override
     public Statistics<String, Integer> getDepartmentStatistics() {
@@ -409,6 +412,81 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         sizes.put("Priority", priorityMap);
         statistics.setSizes(sizes);
+
+        return statistics;
+    }
+
+    @Override
+    public Statistics<PaymentType, Integer> getPaymentStatistics() {
+        Statistics<PaymentType, Integer> statistics = new Statistics<>();
+        List<Payment> payments = paymentService.getPaymentsForStatistics();
+
+        /* Set minimum and maximum */
+        Payment maximumPayment = null;
+        Payment minimumPayment = null;
+        double maximumAmount = Double.MIN_VALUE;
+        double minimumAmount = Double.MAX_VALUE;
+        double summationOfAmounts = 0;
+
+        for (Payment payment : payments) {
+            double currentAmount = payment.getAmount();
+
+            if (currentAmount < minimumAmount) {
+                minimumPayment = payment;
+                minimumAmount = currentAmount;
+            } else if (currentAmount > maximumAmount) {
+                maximumPayment = payment;
+                maximumAmount = currentAmount;
+            }
+
+            summationOfAmounts += currentAmount;
+        }
+
+        String maximumPaymentAmount;
+        String minimumPaymentAmount;
+
+        if (minimumPayment == null && maximumPayment == null) {
+            minimumPaymentAmount = Messages.NOT_HAVE_SUCH_STATISTICS;
+            maximumPaymentAmount = Messages.NOT_HAVE_SUCH_STATISTICS;
+        } else if (minimumPayment == null) {
+            maximumPaymentAmount = maximumPayment.getAmount().toString();
+            minimumPaymentAmount = maximumPaymentAmount;
+        } else if (maximumPayment == null) {
+            minimumPaymentAmount = minimumPayment.getAmount().toString();
+            maximumPaymentAmount = minimumPaymentAmount;
+        } else {
+            minimumPaymentAmount = minimumPayment.getAmount().toString();
+            maximumPaymentAmount = maximumPayment.getAmount().toString();
+        }
+
+        statistics.setMinimum(minimumPaymentAmount);
+        statistics.setMaximum(maximumPaymentAmount);
+
+        /* Set average */
+        double average = 0;
+        int numberOfPayments = payments.size();
+
+        if (numberOfPayments != 0) {
+            average = summationOfAmounts / numberOfPayments;
+        }
+
+        statistics.setAverage(average);
+
+        /* Set sizes */
+        HashMap<PaymentType, Integer> map = new HashMap<>();
+        PaymentType[] paymentTypes = PaymentType.values();
+
+        for (PaymentType paymentType : paymentTypes) {
+            map.put(paymentType, 0);
+        }
+
+        for (Payment payment : payments) {
+            PaymentType key = payment.getType();
+            Integer occurrence = map.get(key);
+            map.put(key, ++occurrence);
+        }
+
+        statistics.setSizes(map);
 
         return statistics;
     }
