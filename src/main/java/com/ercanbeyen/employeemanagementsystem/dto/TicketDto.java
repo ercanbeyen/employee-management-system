@@ -8,6 +8,8 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class TicketDto {
@@ -31,4 +33,6 @@ public class TicketDto {
     private String requesterEmail;
 
     private String assigneeEmail;
+
+    private List<Integer> commentIds = new ArrayList<>();
 }

@@ -6,6 +6,8 @@ import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.TicketType
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -36,4 +38,7 @@ public class Ticket extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "assigneeId", referencedColumnName = "id")
     private Employee assignee;
+
+    @OneToMany(mappedBy = "ticket", cascade =  CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 }
