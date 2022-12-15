@@ -8,14 +8,15 @@
 
 Main entity in this project is employee and the status of the employees may be managed through this other related entities.
 
-There are 7 entities in this project
+There are 8 entities in this project
 - Employee
 - Job Title
 - Department
 - Salary
 - Image
-- Ticket
 - Payment
+- Ticket
+- Comment
 
 There are 3 roles among the employees
 - Admin
@@ -27,8 +28,9 @@ There are 3 roles among the employees
 - Email address of the employee should be unique.
 - While creating an employee, you may assign one of the existing department and job title in the database.
 - The amount value of the payment should not be negative.
-- The payment includes salary and incentive payments.
-- In order for a ticket to be opened, there must be someone requesting it.
+- The payment includes salary, incentive and bonus payments.
+- In order for a ticket to be opened, someone registered in the system must be a requester.
+- The tickets in the system can be commented on and the employees who comment must be registered in the system.
 
 ### Tech Stack
 ---
