@@ -12,6 +12,10 @@ public class Comment extends BaseEntity {
     private int id;
     private String text;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticketId", referencedColumnName = "id")
+    @JoinColumn(name = "ticket_id", referencedColumnName = "id")
     private Ticket ticket;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id", referencedColumnName = "id")
+    private Employee employee;
 }
