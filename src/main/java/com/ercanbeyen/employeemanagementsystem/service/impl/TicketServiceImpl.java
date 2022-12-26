@@ -24,8 +24,6 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -290,6 +288,15 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<Ticket> getTicketsForStatistics() {
         return ticketRepository.findAll();
+    }
+
+    @Override
+    public Ticket getTicketById(int id) {
+        return ticketRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Ticket", id))
+                );
     }
 
 }

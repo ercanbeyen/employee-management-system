@@ -1,9 +1,11 @@
 package com.ercanbeyen.employeemanagementsystem.config;
 
+import com.ercanbeyen.employeemanagementsystem.dto.CommentDto;
 import com.ercanbeyen.employeemanagementsystem.dto.EmployeeDto;
 
 import com.ercanbeyen.employeemanagementsystem.dto.PaymentDto;
 import com.ercanbeyen.employeemanagementsystem.dto.TicketDto;
+import com.ercanbeyen.employeemanagementsystem.entity.Comment;
 import com.ercanbeyen.employeemanagementsystem.entity.Employee;
 
 import com.ercanbeyen.employeemanagementsystem.entity.Payment;
@@ -37,6 +39,10 @@ public class ModelMapperConfig {
 
         TypeMap<Payment, PaymentDto> paymentPropertyMapper = modelMapper.createTypeMap(Payment.class, PaymentDto.class);
         paymentPropertyMapper.addMappings(mapper -> mapper.map(src -> src.getEmployee().getEmail(), PaymentDto::setEmail));
+
+        TypeMap<Comment, CommentDto> commentPropertyMapper = modelMapper.createTypeMap(Comment.class, CommentDto.class);
+        commentPropertyMapper.addMappings(mapper -> mapper.map(src -> src.getEmployee().getId(), CommentDto::setEmployeeId));
+        commentPropertyMapper.addMappings(mapper -> mapper.map(src -> src.getTicket().getId(), CommentDto::setTicketId));
 
         return modelMapper;
     }
