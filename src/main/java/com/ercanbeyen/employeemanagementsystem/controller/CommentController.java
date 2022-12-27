@@ -27,20 +27,30 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getComments() {
-        List<CommentDto> comments = commentService.getComments();
-        return ResponseHandler.generateResponse(HttpStatus.CREATED, true, Messages.SUCCESS, comments);
+    public ResponseEntity<Object> getComments(
+            @RequestParam int ticketId,
+            @RequestParam(required = false) List<String> emails,
+            @RequestParam(required = false) Boolean sortByDate,
+            @RequestParam(required = false) Boolean descending) {
+        List<CommentDto> comments = commentService.getComments(ticketId, emails, sortByDate, descending);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, comments);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getComment(@PathVariable("id") int id) {
         CommentDto comment = commentService.getComment(id);
-        return ResponseHandler.generateResponse(HttpStatus.CREATED, true, Messages.SUCCESS, comment);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, comment);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateComment(@PathVariable("id") int id, @Valid @RequestBody CommentDto commentDto) {
+        CommentDto updatedComment = commentService.updateComment(id, commentDto);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, updatedComment);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteComment(@PathVariable("id") int id) {
         String message = commentService.deleteComment(id);
-        return ResponseHandler.generateResponse(HttpStatus.CREATED, true, Messages.SUCCESS, message);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, message);
     }
 }

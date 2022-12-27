@@ -3,6 +3,7 @@ package com.ercanbeyen.employeemanagementsystem.service.impl;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.CommentDto;
+import com.ercanbeyen.employeemanagementsystem.entity.BaseEntity;
 import com.ercanbeyen.employeemanagementsystem.entity.Comment;
 import com.ercanbeyen.employeemanagementsystem.entity.Employee;
 import com.ercanbeyen.employeemanagementsystem.entity.Ticket;
@@ -10,6 +11,7 @@ import com.ercanbeyen.employeemanagementsystem.exception.DataConflict;
 import com.ercanbeyen.employeemanagementsystem.exception.DataForbidden;
 import com.ercanbeyen.employeemanagementsystem.exception.DataNotFound;
 import com.ercanbeyen.employeemanagementsystem.repository.CommentRepository;
+import com.ercanbeyen.employeemanagementsystem.repository.EmployeeRepository;
 import com.ercanbeyen.employeemanagementsystem.service.AuthenticationService;
 import com.ercanbeyen.employeemanagementsystem.service.CommentService;
 import com.ercanbeyen.employeemanagementsystem.service.EmployeeService;
@@ -21,13 +23,14 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
+    @Autowired
+    private EmployeeRepository employeeRepository;
     @Autowired
     private final CommentRepository commentRepository;
     @Autowired
@@ -67,8 +70,49 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDto> getComments() {
-        List<Comment> comments = commentRepository.findAll();
+    public List<CommentDto> getComments(int ticketId, List<String> emails, Boolean sortByDate, Boolean descending) {
+        List<Employee> employees = new ArrayList<>();
+
+        if (emails != null) {
+            for (String email : emails) {
+                Employee employee = employeeService.getEmployeeByEmail(email);
+                employees.add(employee);
+            }
+        }
+
+        Ticket ticket = ticketService.getTicketById(ticketId);
+        List<Comment> allComments = ticket.getComments();
+        List<Comment> comments = new ArrayList<>();
+
+        if (employees.size() > 0) {
+            for (Employee employee : employees) {
+                Iterator<Comment> iterator = allComments.iterator();
+                if (iterator.hasNext()) {
+                    Comment comment = iterator.next();
+                    if (comment.getEmployee().getId() == employee.getId()) {
+                        comments.add(comment);
+                        allComments.remove(comment);
+                    }
+                }
+            }
+        } else {
+            comments = allComments;
+        }
+
+        if (sortByDate != null && sortByDate) {
+            if (descending) {
+                comments = comments
+                        .stream()
+                        .sorted((comment1, comment2) -> comment2.getLatestChangeAt().compareTo(comment1.getLatestChangeAt()))
+                        .toList();
+            } else {
+                comments = comments
+                        .stream()
+                        .sorted(Comparator.comparing(BaseEntity::getLatestChangeAt))
+                        .toList();
+            }
+        }
+
         return modelMapper.map(comments, new TypeToken<List<CommentDto>>(){}.getType());
     }
 

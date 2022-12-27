@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CommentService {
     CommentDto createComment(CommentDto commentDto);
-    List<CommentDto> getComments();
+    List<CommentDto> getComments(int ticketId, List<String> emails, Boolean sortByDate, Boolean descending);
     CommentDto getComment(int id);
     CommentDto updateComment(int id, CommentDto commentDto);
     String deleteComment(int id);
