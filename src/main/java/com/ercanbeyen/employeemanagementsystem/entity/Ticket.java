@@ -41,4 +41,25 @@ public class Ticket extends BaseEntity {
 
     @OneToMany(mappedBy = "ticket", cascade =  CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        List<Integer> commentIds = comments
+                .stream()
+                .map(Comment::getId)
+                .toList();
+
+        return "Ticket{" +
+                "id=" + id +
+                ", closed=" + closed +
+                ", priority=" + priority +
+                ", type=" + type +
+                ", topic=" + topic +
+                ", subject='" + subject + '\'' +
+                ", description='" + description + '\'' +
+                ", requester=" + requester +
+                ", assignee=" + assignee +
+                ", commentIds=" + commentIds +
+                '}';
+    }
 }
