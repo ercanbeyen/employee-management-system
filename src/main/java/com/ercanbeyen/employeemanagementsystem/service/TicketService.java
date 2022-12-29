@@ -4,7 +4,10 @@ import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Priority;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.Topic;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.TicketType;
 import com.ercanbeyen.employeemanagementsystem.dto.TicketDto;
+import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.entity.Ticket;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -19,4 +22,7 @@ public interface TicketService {
     String reopenTicket(int id);
     List<Ticket> getTicketsForStatistics();
     Ticket getTicketById(int id);
+    Page<Ticket> pagination(int pageNumber, int pageSize);
+    Page<Ticket> pagination(Pageable pageable);
+    Page<Ticket> slice(Pageable pageable);
 }

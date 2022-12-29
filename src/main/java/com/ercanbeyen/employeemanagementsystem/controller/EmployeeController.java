@@ -106,8 +106,8 @@ public class EmployeeController {
     }
 
     @GetMapping("/pagination")
-    public ResponseEntity<Object> pagination(@RequestParam int currentPage, @RequestParam int pageSize) {
-        Page<Employee> page = employeeService.pagination(currentPage, pageSize);
+    public ResponseEntity<Object> pagination(@RequestParam int pageNumber, @RequestParam int pageSize) {
+        Page<Employee> page = employeeService.pagination(pageNumber, pageSize);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, page);
     }
 

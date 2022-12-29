@@ -6,7 +6,11 @@ import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.TicketType
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.TicketDto;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
+import com.ercanbeyen.employeemanagementsystem.entity.Ticket;
 import com.ercanbeyen.employeemanagementsystem.service.TicketService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -78,6 +82,24 @@ public class TicketController {
     public ResponseEntity<Object> deleteTicket(@PathVariable("id") int id) {
         ticketService.deleteTicket(id);
         return ResponseHandler.generateResponse(HttpStatus.NO_CONTENT, true, Messages.SUCCESS, null);
+    }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<Object> pagination(@RequestParam int pageNumber, @RequestParam int pageSize) {
+        Page<Ticket> page = ticketService.pagination(pageNumber, pageSize);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, page);
+    }
+
+    @GetMapping("/pagination/v1")
+    public ResponseEntity<Object> pagination(Pageable pageable) {
+        Page<Ticket> page = ticketService.pagination(pageable);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, page);
+    }
+
+    @GetMapping("/pagination/v2")
+    public ResponseEntity<Object> slice(Pageable pageable) {
+        Slice<Ticket> slice = ticketService.slice(pageable);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, slice);
     }
 
 }

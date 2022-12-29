@@ -18,6 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -140,6 +143,22 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<Payment> getPaymentsForStatistics() {
         return paymentRepository.findAll();
+    }
+
+    @Override
+    public Page<Payment> pagination(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return paymentRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Payment> pagination(Pageable pageable) {
+        return paymentRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Payment> slice(Pageable pageable) {
+        return paymentRepository.findAll(pageable);
     }
 
     private Payment setPayment(Payment payment, PaymentDto paymentDto) {

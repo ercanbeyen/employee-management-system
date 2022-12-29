@@ -5,7 +5,11 @@ import com.ercanbeyen.employeemanagementsystem.constants.enums.PaymentType;
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.PaymentDto;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
+import com.ercanbeyen.employeemanagementsystem.entity.Payment;
 import com.ercanbeyen.employeemanagementsystem.service.PaymentService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +59,23 @@ public class PaymentController {
     public ResponseEntity<Object> deletePayment(@PathVariable("id") int id) {
         paymentService.deletePayment(id);
         return ResponseHandler.generateResponse(HttpStatus.NO_CONTENT, true, Messages.SUCCESS, null);
+    }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<Object> pagination(@RequestParam int pageNumber, @RequestParam int pageSize) {
+        Page<Payment> page = paymentService.pagination(pageNumber, pageSize);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, page);
+    }
+
+    @GetMapping("/pagination/v1")
+    public ResponseEntity<Object> pagination(Pageable pageable) {
+        Page<Payment> page = paymentService.pagination(pageable);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, page);
+    }
+
+    @GetMapping("/pagination/v2")
+    public ResponseEntity<Object> slice(Pageable pageable) {
+        Slice<Payment> slice = paymentService.slice(pageable);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, slice);
     }
 }

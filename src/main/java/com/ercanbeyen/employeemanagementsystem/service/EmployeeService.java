@@ -28,7 +28,7 @@ public interface EmployeeService {
     String uploadImage(int id, MultipartFile file) throws IOException;
     byte[] downloadImage(int id, String fileName);
     void deleteEmployee(int id);
-    Page<Employee> pagination(int currentPage, int pageSize);
+    Page<Employee> pagination(int pageNumber, int pageSize);
     Page<Employee> pagination(Pageable pageable);
     Page<Employee> slice(Pageable pageable);
     CustomPage<EmployeeDto> customPagination(Pageable pageable);

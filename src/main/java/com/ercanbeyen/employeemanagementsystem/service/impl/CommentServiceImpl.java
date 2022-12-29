@@ -21,6 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -188,5 +191,21 @@ public class CommentServiceImpl implements CommentService {
 
         return message;
 
+    }
+
+    @Override
+    public Page<Comment> pagination(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return commentRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Comment> pagination(Pageable pageable) {
+        return commentRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Comment> slice(Pageable pageable) {
+        return commentRepository.findAll(pageable);
     }
 }

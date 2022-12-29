@@ -12,8 +12,12 @@ import com.ercanbeyen.employeemanagementsystem.repository.DepartmentRepository;
 import com.ercanbeyen.employeemanagementsystem.service.AuthenticationService;
 import com.ercanbeyen.employeemanagementsystem.service.DepartmentService;
 
+import com.ercanbeyen.employeemanagementsystem.util.CustomPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -105,6 +109,22 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public List<Department> getDepartmentsForStatistics() {
         return departmentRepository.findAll();
+    }
+
+    @Override
+    public Page<Department> pagination(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return departmentRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Department> pagination(Pageable pageable) {
+        return departmentRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Department> slice(Pageable pageable) {
+        return departmentRepository.findAll(pageable);
     }
 
     List<DepartmentDto> convertDepartmentToDepartmentDtos(List<Department> departments) {

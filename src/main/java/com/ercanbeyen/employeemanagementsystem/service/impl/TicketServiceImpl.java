@@ -22,6 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -297,6 +300,22 @@ public class TicketServiceImpl implements TicketService {
                 .orElseThrow(
                         () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Ticket", id))
                 );
+    }
+
+    @Override
+    public Page<Ticket> pagination(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return ticketRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Ticket> pagination(Pageable pageable) {
+        return ticketRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Ticket> slice(Pageable pageable) {
+        return ticketRepository.findAll(pageable);
     }
 
 }

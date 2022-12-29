@@ -14,6 +14,9 @@ import com.ercanbeyen.employeemanagementsystem.service.JobTitleService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -105,6 +108,23 @@ public class JobTitleServiceImpl implements JobTitleService {
     @Override
     public List<JobTitle> getJobTitlesForStatistics() {
         return jobTitleRepository.findAll();
+    }
+
+    @Override
+    public Page<JobTitle> pagination(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return jobTitleRepository.findAll(pageable);
+
+    }
+
+    @Override
+    public Page<JobTitle> pagination(Pageable pageable) {
+        return jobTitleRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<JobTitle> slice(Pageable pageable) {
+        return jobTitleRepository.findAll(pageable);
     }
 
     List<JobTitleDto> convertRolesToRoleDtos(List<JobTitle> jobTitles) {

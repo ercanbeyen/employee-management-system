@@ -3,7 +3,11 @@ package com.ercanbeyen.employeemanagementsystem.controller;
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.CommentDto;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
+import com.ercanbeyen.employeemanagementsystem.entity.Comment;
 import com.ercanbeyen.employeemanagementsystem.service.CommentService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,5 +56,23 @@ public class CommentController {
     public ResponseEntity<Object> deleteComment(@PathVariable("id") int id) {
         String message = commentService.deleteComment(id);
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, message);
+    }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<Object> pagination(@RequestParam int pageNumber, @RequestParam int pageSize) {
+        Page<Comment> page = commentService.pagination(pageNumber, pageSize);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, page);
+    }
+
+    @GetMapping("/pagination/v1")
+    public ResponseEntity<Object> pagination(Pageable pageable) {
+        Page<Comment> page = commentService.pagination(pageable);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, page);
+    }
+
+    @GetMapping("/pagination/v2")
+    public ResponseEntity<Object> slice(Pageable pageable) {
+        Slice<Comment> slice = commentService.slice(pageable);
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, slice);
     }
 }

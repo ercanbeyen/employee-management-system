@@ -414,8 +414,8 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     }
 
     @Override
-    public Page<Employee> pagination(int currentPage, int pageSize) {
-        Pageable pageable = PageRequest.of(currentPage, pageSize);
+    public Page<Employee> pagination(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
         return employeeRepository.findAll(pageable);
     }
 

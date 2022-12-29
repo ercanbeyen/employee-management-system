@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -95,5 +98,21 @@ public class SalaryServiceImpl implements SalaryService {
     @Override
     public List<Salary> getSalariesForStatistics() {
         return salaryRepository.findAll();
+    }
+
+    @Override
+    public Page<Salary> pagination(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return salaryRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Salary> pagination(Pageable pageable) {
+        return salaryRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Salary> slice(Pageable pageable) {
+        return salaryRepository.findAll(pageable);
     }
 }
