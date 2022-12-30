@@ -490,4 +490,64 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         return statistics;
     }
+
+    @Override
+    public Statistics<TicketType, Integer> getCommentStatistics() {
+        Statistics<TicketType, Integer> statistics = new Statistics<>();
+
+        /* Set minimum, maximum and average */
+        List<Ticket> tickets = ticketService.getTicketsForStatistics();
+        int maximumNumberOfComments = Integer.MIN_VALUE;
+        int minimumNumberOfComments = Integer.MAX_VALUE;
+        double averageOfComments = 0;
+
+        for (Ticket ticket : tickets) {
+            int currentNumberOfComments = ticket.getNumberOfComments();
+            averageOfComments += currentNumberOfComments;
+
+            if (currentNumberOfComments < minimumNumberOfComments) {
+                minimumNumberOfComments = currentNumberOfComments;
+            }
+
+            if (currentNumberOfComments > maximumNumberOfComments) {
+                maximumNumberOfComments = currentNumberOfComments;
+            }
+        }
+
+        String minimum;
+        String maximum;
+        int numberOfTickets = tickets.size();
+
+        if (numberOfTickets > 0) {
+            averageOfComments /= numberOfTickets;
+            minimum = String.valueOf(minimumNumberOfComments);
+            maximum = String.valueOf(maximumNumberOfComments);
+        } else {
+            minimum = Messages.NOT_HAVE_SUCH_STATISTICS;
+            maximum = Messages.NOT_HAVE_SUCH_STATISTICS;
+        }
+
+        statistics.setMinimum(minimum);
+        statistics.setMaximum(maximum);
+        statistics.setAverage(averageOfComments);
+
+        /* Set sizes */
+        HashMap<TicketType, Integer> map = new HashMap<>();
+        TicketType[] ticketTypes = TicketType.values();
+
+        for (TicketType ticketType : ticketTypes) {
+            map.put(ticketType, 0);
+        }
+
+        for (Ticket ticket : tickets) {
+            TicketType key = ticket.getType();
+            int previousValue = map.get(key);
+            int updatedValue = previousValue + ticket.getNumberOfComments();
+            map.put(key, updatedValue);
+        }
+
+        statistics.setSizes(map);
+
+        return statistics;
+    }
 }

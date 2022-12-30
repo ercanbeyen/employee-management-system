@@ -62,4 +62,8 @@ public class Ticket extends BaseEntity {
                 ", commentIds=" + commentIds +
                 '}';
     }
+
+    public int getNumberOfComments() {
+        return comments.size();
+    }
 }

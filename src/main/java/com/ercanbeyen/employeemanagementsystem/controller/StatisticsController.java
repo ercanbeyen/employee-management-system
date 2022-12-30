@@ -4,6 +4,7 @@ import com.ercanbeyen.employeemanagementsystem.constants.enums.Currency;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.PaymentType;
 import com.ercanbeyen.employeemanagementsystem.constants.enums.Role;
 
+import com.ercanbeyen.employeemanagementsystem.constants.enums.ticket.TicketType;
 import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.entity.Statistics;
@@ -62,4 +63,9 @@ public class StatisticsController {
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
+    @GetMapping("/comments")
+    public ResponseEntity<Object> getCommentStatistics() {
+        Statistics<TicketType, Integer> statistics = statisticsService.getCommentStatistics();
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
+    }
 }
