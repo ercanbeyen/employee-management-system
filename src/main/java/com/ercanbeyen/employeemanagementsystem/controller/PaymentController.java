@@ -7,6 +7,8 @@ import com.ercanbeyen.employeemanagementsystem.dto.PaymentDto;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.entity.Payment;
 import com.ercanbeyen.employeemanagementsystem.service.PaymentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -19,12 +21,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/payments")
+@RequiredArgsConstructor
 public class PaymentController {
+    @Autowired
     private final PaymentService paymentService;
-
-    public PaymentController(PaymentService paymentService) {
-        this.paymentService = paymentService;
-    }
 
     @PostMapping
     public ResponseEntity<Object> createPayment(@Valid @RequestBody PaymentDto paymentDto) {

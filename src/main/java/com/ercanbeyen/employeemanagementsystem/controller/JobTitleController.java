@@ -5,9 +5,10 @@ import com.ercanbeyen.employeemanagementsystem.dto.request.JobTitleRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.JobTitleDto;
 
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
-import com.ercanbeyen.employeemanagementsystem.entity.Department;
 import com.ercanbeyen.employeemanagementsystem.entity.JobTitle;
 import com.ercanbeyen.employeemanagementsystem.service.JobTitleService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -19,12 +20,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/jobTitles")
+@RequiredArgsConstructor
 public class JobTitleController {
+    @Autowired
     private final JobTitleService jobTitleService;
-
-    public JobTitleController(JobTitleService jobTitleService) {
-        this.jobTitleService = jobTitleService;
-    }
 
     @PostMapping
     public ResponseEntity<Object> createJobTitle(@RequestBody JobTitleRequest request) {

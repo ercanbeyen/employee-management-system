@@ -8,6 +8,8 @@ import com.ercanbeyen.employeemanagementsystem.dto.request.DepartmentRequest;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.entity.Department;
 import com.ercanbeyen.employeemanagementsystem.service.DepartmentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -19,12 +21,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/departments")
+@RequiredArgsConstructor
 public class DepartmentController {
+    @Autowired
     private final DepartmentService departmentService;
-
-    public DepartmentController(DepartmentService departmentService) {
-        this.departmentService = departmentService;
-    }
 
     @PostMapping
     public ResponseEntity<Object> createDepartment(@RequestBody DepartmentRequest request) {

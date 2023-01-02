@@ -5,6 +5,8 @@ import com.ercanbeyen.employeemanagementsystem.dto.SalaryDto;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.entity.Salary;
 import com.ercanbeyen.employeemanagementsystem.service.SalaryService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -16,12 +18,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/salaries")
+@RequiredArgsConstructor
 public class SalaryController {
+    @Autowired
     private final SalaryService salaryService;
-
-    public SalaryController(SalaryService salaryService) {
-        this.salaryService = salaryService;
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getSalary(@PathVariable("id") int id) {

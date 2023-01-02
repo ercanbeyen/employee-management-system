@@ -9,6 +9,8 @@ import com.ercanbeyen.employeemanagementsystem.constants.messages.Messages;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.entity.Statistics;
 import com.ercanbeyen.employeemanagementsystem.service.StatisticsService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +21,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/statistics")
+@RequiredArgsConstructor
 public class StatisticsController {
+    @Autowired
     private final StatisticsService statisticsService;
-
-    public StatisticsController(StatisticsService statisticsService) {
-        this.statisticsService = statisticsService;
-    }
 
     @GetMapping("/departments")
     public ResponseEntity<Object> getDepartmentStatistics() {

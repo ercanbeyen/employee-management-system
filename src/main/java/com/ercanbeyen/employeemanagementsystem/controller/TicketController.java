@@ -8,6 +8,8 @@ import com.ercanbeyen.employeemanagementsystem.dto.TicketDto;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.entity.Ticket;
 import com.ercanbeyen.employeemanagementsystem.service.TicketService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -20,13 +22,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tickets")
-
+@RequiredArgsConstructor
 public class TicketController {
+    @Autowired
     private final TicketService ticketService;
-
-    public TicketController(TicketService ticketService) {
-        this.ticketService = ticketService;
-    }
 
     @PostMapping
     public ResponseEntity<Object> createTicket(@Valid @RequestBody TicketDto ticketDto) {

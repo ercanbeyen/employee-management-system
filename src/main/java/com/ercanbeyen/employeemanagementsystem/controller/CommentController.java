@@ -5,6 +5,8 @@ import com.ercanbeyen.employeemanagementsystem.dto.CommentDto;
 import com.ercanbeyen.employeemanagementsystem.dto.response.ResponseHandler;
 import com.ercanbeyen.employeemanagementsystem.entity.Comment;
 import com.ercanbeyen.employeemanagementsystem.service.CommentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -17,12 +19,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/comments")
+@RequiredArgsConstructor
 public class CommentController {
+    @Autowired
     private final CommentService commentService;
-
-    public CommentController(CommentService commentService) {
-        this.commentService = commentService;
-    }
 
     @PostMapping
     public ResponseEntity<Object> createComment(@Valid @RequestBody CommentDto commentDto) {
