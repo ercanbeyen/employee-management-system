@@ -35,22 +35,16 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Override
     public Salary createSalary(Salary salary) {
-        Salary newSalary = new Salary();
-
-        newSalary.setCurrency(salary.getCurrency());
-        newSalary.setAmount(salary.getAmount());
-
-        newSalary.setLatestChangeAt(new Date());
         String email = authenticationService.getEmail();
-        newSalary.setLatestChangeBy(email);
+        salary.setLatestChangeBy(email);
+        salary.setLatestChangeAt(new Date());
 
-        return salaryRepository.save(newSalary);
+        return salaryRepository.save(salary);
     }
 
     @Override
     public SalaryDto getSalary(int id) {
-        Salary salary = salaryRepository
-                .findById(id)
+        Salary salary = salaryRepository.findById(id)
                 .orElseThrow(
                         () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Salary", id))
         );

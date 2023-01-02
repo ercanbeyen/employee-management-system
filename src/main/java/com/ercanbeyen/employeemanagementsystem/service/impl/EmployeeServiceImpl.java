@@ -51,13 +51,12 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     private final PasswordEncoder passwordEncoder;
     @Autowired
     private final DepartmentService departmentService;
-
     @Autowired
     private final JobTitleService jobTitleService;
-
     @Autowired
     private final SalaryService salaryService;
-
+    @Autowired
+    private final AddressService addressService;
     @Autowired
     private final ImageService imageService;
     @Autowired
@@ -96,6 +95,10 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         Salary salary = salaryService.createSalary(employeeDto.getSalary());
         employee.setSalary(salary);
         log.debug("Salary is assigned to the employee");
+
+        Address address = addressService.createAddress(employeeDto.getAddress());
+        employee.setAddress(address);
+        log.debug("Address is assigned to the employee");
 
         String encodedPassword = getEncodedPassword(employeeDto.getPassword());
         employee.setPassword(encodedPassword);
@@ -231,6 +234,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         employee.setPhoneNumber(employee.getPhoneNumber());
         employee.setNationality(request.getNationality());
         employee.setGender(request.getGender());
+        addressService.updateAddress(employee.getAddress().getId(), request.getAddress());
         log.debug("Employee details are updated");
 
         Employee updatedEmployee = employeeRepository.save(employee);
@@ -243,8 +247,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     public EmployeeDto updateSalary(int id, SalaryDto salaryDto) {
         log.debug("Employee salary update operation is started");
 
-        Employee employee = employeeRepository
-                .findById(id)
+        Employee employee = employeeRepository.findById(id)
                 .orElseThrow(
                         () -> new DataNotFound(String.format(Messages.NOT_FOUND, "Employee", id))
                 );
@@ -410,7 +413,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         log.debug("Bidirectional connections are removed");
 
         employeeRepository.deleteById(id);
-        log.debug("Employee with id " + id + " is deleted");
+        log.debug("Employee " + id + " is deleted");
     }
 
     @Override

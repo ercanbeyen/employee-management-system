@@ -14,15 +14,12 @@ import javax.validation.constraints.Min;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Salary extends BaseEntity {
-
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
-
     @Min(0)
     private Double amount;
-
     @Enumerated(EnumType.STRING)
     private Currency currency;
 }

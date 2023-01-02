@@ -63,6 +63,14 @@ public class EmployeeServiceImplTest {
         Role role = Role.ADMIN;
 
         String nationality = "Turkey";
+        String city = "Istanbul";
+        String postCode = "1234";
+
+        Address address = new Address();
+        address.setCountry(nationality);
+        address.setCity(city);
+        address.setPostCode(postCode);
+
 
         Currency currency = Currency.TRY;
         int id = 1;
@@ -79,6 +87,7 @@ public class EmployeeServiceImplTest {
         employee1.setEmail("test1@email.com");
         employee1.setPassword(password);
         employee1.setNationality(nationality);
+        employee1.setAddress(address);
         employee1.setDepartment(department);
         employee1.setJobTitle(jobTitle);
         employee1.setSalary(salary1);
@@ -98,6 +107,7 @@ public class EmployeeServiceImplTest {
         employee2.setPassword(password);
         employee2.setRole(role);
         employee2.setNationality(nationality);
+        employee2.setAddress(address);
         employee2.setDepartment(department);
         employee2.setJobTitle(jobTitle);
         employee2.setSalary(salary2);
@@ -113,6 +123,13 @@ public class EmployeeServiceImplTest {
         Role role = Role.ADMIN;
 
         String nationality = "Turkey";
+        String city = "Istanbul";
+        String postCode = "1234";
+
+        Address address = new Address();
+        address.setCountry(nationality);
+        address.setCity(city);
+        address.setPostCode(postCode);
 
         Currency currency = Currency.TRY;
         int id = 1;
@@ -139,6 +156,7 @@ public class EmployeeServiceImplTest {
         employee1.setEmail("test1@email.com");
         employee1.setPassword(password);
         employee1.setNationality(nationality);
+        employee1.setAddress(address);
         employee1.setDepartment(department);
         employee1.setJobTitle(jobTitle);
         employee1.setSalary(salary1);
@@ -158,6 +176,7 @@ public class EmployeeServiceImplTest {
         employee2.setRole(role);
         employee2.setEmail("test2@email.com");
         employee2.setNationality(nationality);
+        employee2.setAddress(address);
         employee2.setDepartment(department);
         employee2.setJobTitle(jobTitle);
         employee2.setSalary(salary2);
@@ -348,7 +367,7 @@ public class EmployeeServiceImplTest {
         UpdateEmployeeDetailsRequest request = getUpdateEmployeeDetailsRequest(employeeDto);
 
         int id = 2;
-        String message = "Employee with id " + id + " is not found";
+        String message = "Employee " + id + " is not found";
 
         Mockito.when(employeeRepository.findById(id)).thenReturn(optionalEmployee);
 

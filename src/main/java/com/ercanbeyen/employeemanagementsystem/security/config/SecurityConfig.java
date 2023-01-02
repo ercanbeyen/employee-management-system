@@ -147,6 +147,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .hasAnyAuthority(String.valueOf(Role.ADMIN), String.valueOf(Role.MANAGER), String.valueOf(Role.USER));
 
         http.authorizeRequests()
+                .antMatchers(HttpMethod.GET,
+                        "/addresses/**")
+                .hasAnyAuthority(String.valueOf(Role.ADMIN), String.valueOf(Role.MANAGER));
+
+        http.authorizeRequests()
                 .anyRequest()
                 .authenticated();
 
