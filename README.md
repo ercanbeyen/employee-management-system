@@ -17,6 +17,7 @@ There are 8 entities in this project
 - Payment
 - Ticket
 - Comment
+- Address
 
 There are 3 roles among the employees
 - Admin
@@ -25,10 +26,11 @@ There are 3 roles among the employees
 
 ### Requirements
 
-- Email address of the employee should be unique.
-- While creating an employee, you may assign one of the existing department and job title in the database.
+- Each employee must have an unique email address.
+- While creating an employee, you must fill employee's department, job title, salary and address.
+- While creating an employee, you may select one of the existing department and job title in the database.
 - The amount value of the payment should not be negative.
-- The payment includes salary, incentive and bonus payments.
+- The payment types are salary, incentive and bonus.
 - In order for a ticket to be opened, someone registered in the system must be a requester.
 - The tickets in the system can be commented on and the employees who comment must be registered in the system.
 
