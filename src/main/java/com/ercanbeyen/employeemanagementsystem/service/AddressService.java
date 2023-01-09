@@ -15,4 +15,5 @@ public interface AddressService {
     Page<Address> pagination(int pageNumber, int pageSize);
     Page<Address> pagination(Pageable pageable);
     Page<Address> slice(Pageable pageable);
+    List<Address> getAddressesForStatistics();
 }

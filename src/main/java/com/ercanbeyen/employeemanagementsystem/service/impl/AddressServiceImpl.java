@@ -90,4 +90,9 @@ public class AddressServiceImpl implements AddressService {
         return addressRepository.findAll(pageable);
     }
 
+    @Override
+    public List<Address> getAddressesForStatistics() {
+        return addressRepository.findAll();
+    }
+
 }

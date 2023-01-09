@@ -16,4 +16,5 @@ public interface StatisticsService {
     Statistics<String, Map<String, Integer>> getTicketStatistics();
     Statistics<PaymentType, Integer> getPaymentStatistics();
     Statistics<TicketType, Integer> getCommentStatistics();
+    Statistics<String, Integer> getAddressStatistics();
 }

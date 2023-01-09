@@ -68,4 +68,10 @@ public class StatisticsController {
         Statistics<TicketType, Integer> statistics = statisticsService.getCommentStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
+
+    @GetMapping("/addresses")
+    public ResponseEntity<Object> getAddressStatistics() {
+        Statistics<String, Integer> statistics = statisticsService.getAddressStatistics();
+        return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
+    }
 }

@@ -33,6 +33,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final TicketService ticketService;
     @Autowired
     private final PaymentService paymentService;
+    @Autowired
+    private final AddressService addressService;
 
     @Override
     public Statistics<String, Integer> getDepartmentStatistics() {
@@ -547,6 +549,60 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         statistics.setSizes(map);
+
+        return statistics;
+    }
+
+    @Override
+    public Statistics<String, Integer> getAddressStatistics() {
+        Statistics<String, Integer> statistics = new Statistics<>();
+
+        List<Address> addresses = addressService.getAddressesForStatistics();
+        Map<String, Integer> map = new HashMap<>();
+
+        int maximumCount = Integer.MIN_VALUE;
+        int minimumCount = Integer.MAX_VALUE;
+        String maximumCity = Messages.NOT_HAVE_SUCH_STATISTICS;
+        String minimumCity = Messages.NOT_HAVE_SUCH_STATISTICS;
+        double average = 0;
+
+        for (Address address : addresses) {
+            String city = address.getCity();
+            int occurrence;
+            if (!map.containsKey(city)) {
+                occurrence = 1;
+                map.put(address.getCity(), occurrence);
+            } else {
+                occurrence = map.get(city);
+                map.put(city, ++occurrence);
+            }
+
+            if (occurrence <= minimumCount) {
+                minimumCity = city;
+                minimumCount = occurrence;
+            }
+
+            if (occurrence > maximumCount) {
+                maximumCity = city;
+                maximumCount = occurrence;
+            }
+
+            average++;
+        }
+
+        statistics.setSizes(map);
+        int numberOfCities = map.size();
+
+        if (numberOfCities > 0) {
+            average /= numberOfCities;
+            if (numberOfCities == 1) {
+                maximumCity = minimumCity;
+            }
+        }
+
+        statistics.setMinimum(minimumCity);
+        statistics.setMaximum(maximumCity);
+        statistics.setAverage(average);
 
         return statistics;
     }
