@@ -34,6 +34,13 @@ There are 3 roles among the employees
 - In order for a ticket to be opened, someone registered in the system must be a requester.
 - The tickets in the system can be commented on and the employees who comment must be registered in the system.
 
+### Additional
+Admin and manager roles may observe the statistical value for each entities other than employee.
+
+```
+GET /statistics/{entity}
+```
+
 ### Tech Stack
 ---
 - Java 18
