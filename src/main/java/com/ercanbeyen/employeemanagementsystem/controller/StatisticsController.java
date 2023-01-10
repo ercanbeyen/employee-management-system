@@ -26,50 +26,50 @@ public class StatisticsController {
     @Autowired
     private final StatisticsService statisticsService;
 
-    @GetMapping("/departments")
+    @GetMapping("/department")
     public ResponseEntity<Object> getDepartmentStatistics() {
         Statistics<String, Integer> statistics = statisticsService.getDepartmentStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
 
-    @GetMapping("/jobTitles")
+    @GetMapping("/jobTitle")
     public ResponseEntity<Object> getJobTitlesStatistics() {
         Statistics<String, Integer> statistics = statisticsService.getJobTitleStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
-    @GetMapping("/salaries")
+    @GetMapping("/salary")
     public ResponseEntity<Object> getSalaryStatistics() {
         Statistics<Currency, Integer> statistics = statisticsService.getSalaryStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
-    @GetMapping("/roles")
+    @GetMapping("/role")
     public ResponseEntity<Object> getRoleStatistics() {
         Statistics<String, Map<Role, Integer>> statistics = statisticsService.getRoleStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
-    @GetMapping("/tickets")
+    @GetMapping("/ticket")
     public ResponseEntity<Object> getTicketStatistics() {
         Statistics<String, Map<String, Integer>> statistics = statisticsService.getTicketStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
-    @GetMapping("/payments")
+    @GetMapping("/payment")
     public ResponseEntity<Object> getPaymentStatistics() {
         Statistics<PaymentType, Integer> statistics = statisticsService.getPaymentStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
-    @GetMapping("/comments")
+    @GetMapping("/comment")
     public ResponseEntity<Object> getCommentStatistics() {
         Statistics<TicketType, Integer> statistics = statisticsService.getCommentStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);
     }
 
-    @GetMapping("/addresses")
+    @GetMapping("/address")
     public ResponseEntity<Object> getAddressStatistics() {
         Statistics<String, Integer> statistics = statisticsService.getAddressStatistics();
         return ResponseHandler.generateResponse(HttpStatus.OK, true, Messages.SUCCESS, statistics);

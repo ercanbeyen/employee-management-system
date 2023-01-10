@@ -557,6 +557,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public Statistics<String, Integer> getAddressStatistics() {
         Statistics<String, Integer> statistics = new Statistics<>();
 
+        /* Set minimum, maximum, average and sizes */
         List<Address> addresses = addressService.getAddressesForStatistics();
         Map<String, Integer> map = new HashMap<>();
 
