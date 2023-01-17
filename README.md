@@ -33,6 +33,7 @@ There are 3 roles among the employees
 - The payment types are salary, incentive and bonus.
 - In order for a ticket to be opened, someone registered in the system must be a requester.
 - The tickets in the system can be commented on and the employees who comment must be registered in the system.
+- If you want to apply insert/delete/update operations on entities, you need to migrate the database.
 
 ### Additional
 Admin and manager roles may observe the statistical value for each entities other than employee.
@@ -50,6 +51,7 @@ GET /statistics/{entity}
 - JUnit 5
 - OpenAPI Documentation
 - MySQL
+- Flyway
 
 
 ### Prerequisties
