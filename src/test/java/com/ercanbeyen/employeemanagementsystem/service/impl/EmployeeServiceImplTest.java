@@ -55,6 +55,9 @@ public class EmployeeServiceImplTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private AddressServiceImpl addressService;
+
     private List<EmployeeDto> getMockEmployeesDtos() {
         String password = "1234";
 
@@ -220,13 +223,12 @@ public class EmployeeServiceImplTest {
     public void whenCreateEmployeeCalledWithValidEmployeeDto_itShouldReturnEmployeeDto() {
         Employee employee = getMockEmployees().get(0);
         EmployeeDto employeeDto = getMockEmployeesDtos().get(0);
-        String password_hash = "2asdfdsdfg";
 
         Mockito.when(modelMapper.map(employeeDto, Employee.class)).thenReturn(employee);
         Mockito.when(departmentService.findDepartmentByName(employeeDto.getDepartment())).thenReturn(employee.getDepartment());
         Mockito.when(jobTitleService.findJobTitleByName(employeeDto.getJobTitle())).thenReturn(employee.getJobTitle());
         Mockito.when(salaryService.createSalary(employeeDto.getSalary())).thenReturn(employee.getSalary());
-        Mockito.when(employeeService.getEncodedPassword(employeeDto.getPassword())).thenReturn(password_hash);
+        Mockito.when(addressService.createAddress(employeeDto.getAddress())).thenReturn(employee.getAddress());
         Mockito.when(employeeRepository.save(employee)).thenReturn(employee);
         Mockito.when(modelMapper.map(employee, EmployeeDto.class)).thenReturn(employeeDto);
 
@@ -238,7 +240,7 @@ public class EmployeeServiceImplTest {
         Mockito.verify(departmentService).findDepartmentByName(employeeDto.getDepartment());
         Mockito.verify(jobTitleService).findJobTitleByName(employeeDto.getJobTitle());
         Mockito.verify(salaryService).createSalary(employeeDto.getSalary());
-        //Mockito.verify(employeeService).getEncodedPassword(employeeDto.getPassword());
+        Mockito.verify(addressService).createAddress(employeeDto.getAddress());
         Mockito.verify(employeeRepository).save(employee);
         Mockito.verify(modelMapper).map(employee, EmployeeDto.class);
     }
@@ -429,7 +431,6 @@ public class EmployeeServiceImplTest {
 
         Mockito.when(authenticationService.getEmail()).thenReturn(employee.getEmail());
         Mockito.when(authenticationService.getRole()).thenReturn(String.valueOf(employee.getRole()));
-        //Mockito.when(employeeService.getEmployeeByEmail(employee.getEmail())).thenReturn(employee);
         Mockito.when(employeeRepository.findByEmail(employee.getEmail())).thenReturn(optionalEmployee);
         Mockito.when(modelMapper.map(employee, EmployeeDto.class)).thenReturn(employeeDto);
 
