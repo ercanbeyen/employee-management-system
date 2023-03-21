@@ -49,6 +49,7 @@ GET /statistics/{entity}
 - Spring Data JPA
 - Spring Security
 - JUnit 5
+- Model Mapper
 - OpenAPI Documentation
 - MySQL
 - Flyway
